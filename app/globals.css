@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Urbanist:wght@400;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ...tus estilos personalizados aquí... */
+/* Tipografía principal y títulos */
+body {
+  font-family: 'Urbanist', Arial, sans-serif;
+  background: #fff;
+  color: #222;
+
+}
+
+h1, .font-serif {
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 6px #888;
+}
+
+h2, h3, h4 {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-family: 'Times New Roman', Times, serif;
+  text-shadow: 1px 1px 4px #bbb;
+}
+
+/* Botones */
+button, .btn, .bg-blue-900 {
+  background-color: #1a237e;
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(26,35,126,0.15);
+  transition: background 0.2s;
+}
+
+button:hover, .btn:hover, .bg-blue-900:hover {
+  background-color: #283593;
+}
+
+/* Tarjetas de servicios */
+.card {
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* Imágenes */
+img, .next-image {
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+
+/* Formulario */
+input, textarea {
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #1a237e;
+  box-shadow: 0 0 0 2px #c5cae9;
+}
+
+/* Footer */
+footer {
+  background: #111;
+  color: #fff;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+footer a {
+  color: #90caf9;
+  text-decoration: underline;
+}
+
+footer a:hover {
+  color: #fff;
+}
+
+/* Espaciado general */
+section {
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.3rem;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+}
