@@ -3,13 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ...tus estilos personalizados aquí... */
-/* Tipografía principal y títulos */
 body {
   font-family: 'Urbanist', Arial, sans-serif;
   background: #fff;
   color: #222;
-
 }
 
 h1, .font-serif {
@@ -100,7 +97,7 @@ section {
   .section-title {
     font-size: 1.3rem;
   }
-  h1 {
-    font-size: 1.5rem;
-  }
+  html, body { height: 100%; }
+  body { overflow-x: hidden; }
+  img, video { max-width: 100%; height: auto; display: block; }
 }

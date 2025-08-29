@@ -108,9 +108,9 @@ function LocalBusinessJsonLd() {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" dir="ltr">
-      <body>
+      <body className="overflow-x-hidden">
         <Header />
-        <main>{children}</main>
+        <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">{children}</main>
         <Footer />
         <LocalBusinessJsonLd />
       </body>
