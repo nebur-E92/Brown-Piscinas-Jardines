@@ -71,7 +71,7 @@ function SimpleMonthlyCard({
 }: SimpleMonthlyCardProps) {
   return (
     <div
-      className="relative flex flex-col items-center justify-center rounded-2xl shadow-lg overflow-hidden w-full aspect-[5/3] sm:aspect-[16/9]"
+      className="relative flex flex-col items-center justify-center rounded-2xl shadow-lg overflow-hidden w-full min-h-[220px] aspect-[4/5] sm:aspect-[16/9]"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
