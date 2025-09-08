@@ -34,6 +34,9 @@ export default function Footer() {
                   Tarifas
                 </a>
               </li>
+              <li>
+                <a href="https://blog.brownpiscinasyjardines.com" target="_blank" rel="noopener noreferrer" className="underline">Blog</a>
+              </li>
             </ul>
           </div>
           {/* Columna 3 */}
