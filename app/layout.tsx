@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
 import AnalyticsGate from './components/AnalyticsGate';
+import { Analytics } from '@vercel/analytics/next';
 import { SITE, BUSINESS } from "../lib/seo";
 import type { Metadata } from "next";
 
@@ -114,9 +115,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">{children}</main>
         <Footer />
-        <CookieConsent />
-        <AnalyticsGate />
-        <LocalBusinessJsonLd />
+  <CookieConsent />
+  <AnalyticsGate />
+  <Analytics />
+  <LocalBusinessJsonLd />
       </body>
     </html>
   );
