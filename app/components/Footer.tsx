@@ -35,7 +35,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://blog.brownpiscinasyjardines.com" target="_blank" rel="noopener noreferrer" className="underline">Blog</a>
+                <a href="https://www.brownpiscinasyjardines.es/" target="_blank" rel="noopener noreferrer" className="underline">Blog</a>
               </li>
             </ul>
           </div>

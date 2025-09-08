@@ -17,7 +17,7 @@ export default function Header() {
           <a href="#servicios" className="hover:opacity-80 whitespace-nowrap">Servicios</a>
           <a href="#como-trabajamos" className="hover:opacity-80 whitespace-nowrap">Cómo trabajamos</a>
           <a href="#contacto" className="hover:opacity-80 whitespace-nowrap">Contacto</a>
-          <a href="https://blog.brownpiscinasyjardines.com" className="hover:opacity-80 whitespace-nowrap" target="_blank" rel="noopener noreferrer">Blog</a>
+          <a href="https://www.brownpiscinasyjardines.es/" className="hover:opacity-80 whitespace-nowrap" target="_blank" rel="noopener noreferrer">Blog</a>
           <a href={process.env.NEXT_PUBLIC_WA_LINK ?? 'https://wa.me/34625199394'} className="rounded-full px-4 py-2 border hover:bg-slate-50">WhatsApp</a>
         </nav>
         {/* Mobile trigger */}
@@ -37,7 +37,7 @@ export default function Header() {
             <a onClick={() => setOpen(false)} href="#servicios" className="block py-2">Servicios</a>
             <a onClick={() => setOpen(false)} href="#como-trabajamos" className="block py-2">Cómo trabajamos</a>
             <a onClick={() => setOpen(false)} href="#contacto" className="block py-2">Contacto</a>
-            <a onClick={() => setOpen(false)} href="https://blog.brownpiscinasyjardines.com" className="block py-2" target="_blank" rel="noopener noreferrer">Blog</a>
+            <a onClick={() => setOpen(false)} href="https://www.brownpiscinasyjardines.es/" className="block py-2" target="_blank" rel="noopener noreferrer">Blog</a>
             <a onClick={() => setOpen(false)} href={process.env.NEXT_PUBLIC_WA_LINK ?? 'https://wa.me/34625199394'} className="block w-full text-center rounded-full px-4 py-2 border">WhatsApp</a>
           </nav>
         </div>
