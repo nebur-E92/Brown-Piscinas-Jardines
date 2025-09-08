@@ -18,7 +18,7 @@ export default function HowWeWork() {
         <div className="flex flex-col items-center">
           <FaLeaf size={60} className="text-blue-900 mb-4" />
           <h3 className="text-lg font-bold mb-2">3. Mantenimiento sin preocupaciones</h3>
-          <p className="text-center max-w-md">Nos encargamos de todo de forma periódica o puntual. Tú solo disfrutas tu jardín y piscina perfectos.</p>
+          <p className="text-center max-w-md">Nos encargamos de todo de forma periódica o puntual. Tú solo disfrutas de tu jardín y piscina perfectos.</p>
         </div>
       </div>
     </section>

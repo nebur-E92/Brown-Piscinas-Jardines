@@ -78,15 +78,15 @@ function SimpleMonthlyCard({
         backgroundPosition: "center",
       }}
     >
-      <div className="absolute inset-0 bg-black/40 rounded-2xl" />
-      <div className="relative z-10 flex flex-col h-full justify-between pt-8 sm:pt-10 pb-8 sm:pb-10 px-6 text-white">
+  <div className="absolute inset-0 bg-black/40 rounded-2xl" />
+  <div className="relative flex flex-col h-full justify-center items-center text-center pt-8 sm:pt-10 pb-8 sm:pb-10 px-6 text-white gap-4">
         <div>
           <h4 className="text-2xl font-bold">{title}</h4>
           <p className="mt-1 font-semibold">{description}</p>
         </div>
         <div>
           <span className="font-bold">Incluye:</span>
-          <ul className="list-disc ml-6 mt-1 text-sm">
+          <ul className="list-disc mt-1 text-sm text-left inline-block">
             {includes.map((inc, i) => (
               <li key={i}>{inc}</li>
             ))}
