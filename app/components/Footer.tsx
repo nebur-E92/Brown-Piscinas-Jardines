@@ -37,6 +37,9 @@ export default function Footer() {
               <li>
                 <a href="https://www.brownpiscinasyjardines.es/" target="_blank" rel="noopener noreferrer" className="underline">Blog</a>
               </li>
+              <li>
+                <a href="/docs/aviso-legal.pdf" target="_blank" rel="noopener noreferrer" className="underline">Aviso legal</a>
+              </li>
             </ul>
           </div>
           {/* Columna 3 */}
