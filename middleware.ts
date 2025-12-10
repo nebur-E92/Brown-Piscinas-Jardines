@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
-  if (pathname.startsWith('/analitica-qr')) {
+  const isProtected = pathname.startsWith('/analitica-qr') || pathname.startsWith('/api/qr/export') || pathname.startsWith('/api/qr/reset');
+  if (isProtected) {
     const token = process.env.QR_DASHBOARD_TOKEN;
     const basicUser = process.env.QR_BASIC_USER;
     const basicPass = process.env.QR_BASIC_PASS;

@@ -30,7 +30,7 @@ export function ResetButton() {
       <button
         type="button"
         onClick={handleReset}
-        className="px-3 py-2 text-sm rounded border border-red-300 text-red-700 hover:bg-red-50 disabled:opacity-60"
+        className="px-3 py-2 text-sm rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60"
         disabled={loading}
       >
         {loading ? "Reseteando..." : "Resetear contadores"}
