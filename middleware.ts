@@ -59,5 +59,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/analitica-qr/:path*'],
+  matcher: ['/analitica-qr/:path*', '/api/qr/export', '/api/qr/reset'],
 };

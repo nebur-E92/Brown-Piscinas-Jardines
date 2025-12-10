@@ -142,3 +142,13 @@ export async function addQRConversion(zone: string) {
   const limited = logs.slice(-2000);
   await writeLogsFs(limited);
 }
+
+export async function resetQRData() {
+  if (USE_KV) {
+    await kv.del(KV_KEY_LOGS);
+    await kv.del(KV_KEY_COUNT);
+    await kv.del(KV_KEY_CONV);
+    return;
+  }
+  await writeLogsFs([]);
+}

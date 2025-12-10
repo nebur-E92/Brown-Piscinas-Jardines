@@ -14,7 +14,25 @@ export default async function AnaliticaQRPage() {
 
   return (
     <section className="max-w-6xl mx-auto py-12">
-      <h1 className="page-title">Analítica QR</h1>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+        <h1 className="page-title m-0">Analítica QR</h1>
+        <div className="flex gap-2 flex-wrap">
+          <a
+            href="/api/qr/export"
+            className="px-3 py-2 text-sm rounded border border-neutral-300 hover:bg-neutral-50"
+          >
+            Exportar CSV
+          </a>
+          <form method="POST" action="/api/qr/reset">
+            <button
+              type="submit"
+              className="px-3 py-2 text-sm rounded border border-red-300 text-red-700 hover:bg-red-50"
+            >
+              Resetear contadores
+            </button>
+          </form>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-4 rounded shadow">
           <h2 className="font-semibold mb-3">Resumen por zona</h2>
