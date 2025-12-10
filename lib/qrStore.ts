@@ -90,6 +90,7 @@ export async function getQRLogs() {
   if (kvEnabled) {
     try {
       const raw = await kv.lrange(KV_KEY_LOGS, 0, 1999);
+      console.log('✓ KV getQRLogs returned', raw.length, 'items');
       return raw
         .map((r) => {
           try {
@@ -106,7 +107,9 @@ export async function getQRLogs() {
       kvEnabled = false;
     }
   }
-  return await readLogsFs();
+  const fsLogs = await readLogsFs();
+  console.log('✓ FS fallback returned', fsLogs.length, 'items');
+  return fsLogs;
 }
 
 export async function getQRSummary() {
@@ -114,6 +117,7 @@ export async function getQRSummary() {
     try {
       const counts = (await kv.hgetall<Record<string, string>>(KV_KEY_COUNT)) || {};
       const convs = (await kv.hgetall<Record<string, string>>(KV_KEY_CONV)) || {};
+      console.log('✓ KV getQRSummary: counts=', Object.keys(counts).length, 'convs=', Object.keys(convs).length);
       const byZone: Record<string, { count: number; conv: number }> = {};
       const zones = new Set([...Object.keys(counts), ...Object.keys(convs)]);
       zones.forEach((z) => {
@@ -172,6 +176,7 @@ export async function resetQRData() {
       await kv.del(KV_KEY_LOGS);
       await kv.del(KV_KEY_COUNT);
       await kv.del(KV_KEY_CONV);
+      console.log('✓ KV reset successful');
     } catch (err) {
       console.error('KV resetQRData failed, disabling KV and falling back to fs:', err);
       kvEnabled = false;
@@ -179,4 +184,5 @@ export async function resetQRData() {
   }
   logsCache = [];
   await writeLogsFs([]);
+  console.log('✓ FS reset successful');
 }
