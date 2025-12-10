@@ -8,23 +8,22 @@ export function middleware(req: NextRequest) {
     const basicUser = process.env.QR_BASIC_USER;
     const basicPass = process.env.QR_BASIC_PASS;
 
-    // 1) Cookie existente
-    if (token) {
-      const cookie = req.cookies.get('qr_auth')?.value;
-      if (cookie === token) {
-        return NextResponse.next();
-      }
-    }
-
-    // 2) Token en query -> setear cookie
+    // 0) Token en query: siempre permite refrescar cookie, incluso si ya había una
     if (token) {
       const q = searchParams.get('token');
       if (q === token) {
         const res = NextResponse.next();
         const secure = process.env.NODE_ENV === 'production';
-        // secure solo en prod para que funcione en dev/local
         res.cookies.set('qr_auth', token, { httpOnly: true, secure, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
         return res;
+      }
+    }
+
+    // 1) Cookie existente
+    if (token) {
+      const cookie = req.cookies.get('qr_auth')?.value;
+      if (cookie === token) {
+        return NextResponse.next();
       }
     }
 
