@@ -49,7 +49,7 @@ export default async function AnaliticaQRPage() {
               </tr>
             </thead>
             <tbody>
-              {logs.slice().reverse().map((l, i) => (
+              {logs.slice().reverse().map((l: any, i: number) => (
                 <tr key={i} className="border-t">
                   <td className="py-2">{new Date(l.ts).toLocaleString('es-ES')}</td>
                   <td>{l.zone}</td>
