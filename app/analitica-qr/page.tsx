@@ -1,5 +1,6 @@
 import React from "react";
 import { getQRLogs, getQRSummary } from "../../lib/qrStore";
+import { ResetButton } from "./ResetButton";
 
 export const dynamic = "force-dynamic";
 
@@ -23,14 +24,7 @@ export default async function AnaliticaQRPage() {
           >
             Exportar CSV
           </a>
-          <form method="POST" action="/api/qr/reset">
-            <button
-              type="submit"
-              className="px-3 py-2 text-sm rounded border border-red-300 text-red-700 hover:bg-red-50"
-            >
-              Resetear contadores
-            </button>
-          </form>
+          <ResetButton />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

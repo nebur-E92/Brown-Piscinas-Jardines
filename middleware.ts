@@ -20,7 +20,9 @@ export function middleware(req: NextRequest) {
       const q = searchParams.get('token');
       if (q === token) {
         const res = NextResponse.next();
-        res.cookies.set('qr_auth', token, { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
+        const secure = process.env.NODE_ENV === 'production';
+        // secure solo en prod para que funcione en dev/local
+        res.cookies.set('qr_auth', token, { httpOnly: true, secure, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
         return res;
       }
     }
@@ -31,7 +33,12 @@ export function middleware(req: NextRequest) {
       if (auth.startsWith('Basic ')) {
         try {
           const b64 = auth.slice(6);
-          const decoded = Buffer.from(b64, 'base64').toString('utf8');
+          // atob está disponible en el runtime Edge; usa Buffer solo como respaldo en dev
+          const decoded = typeof atob === 'function'
+            ? atob(b64)
+            : typeof Buffer !== 'undefined'
+              ? Buffer.from(b64, 'base64').toString('utf8')
+              : '';
           const [user, pass] = decoded.split(':');
           if (user === basicUser && pass === basicPass) {
             return NextResponse.next();
