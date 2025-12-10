@@ -15,6 +15,7 @@ type QRLog = {
 const LOGS_DIR = join(process.cwd(), '.qr-logs');
 const LOGS_FILE = join(LOGS_DIR, 'logs.json');
 const USE_KV = !!process.env.KV_REST_API_URL; // Vercel KV available when env exists
+let kvEnabled = USE_KV; // runtime flag to disable KV on failures
 const KV_KEY_LOGS = 'qr:logs';
 const KV_KEY_COUNT = 'qr:summary:count';
 const KV_KEY_CONV = 'qr:summary:conv';
@@ -65,7 +66,7 @@ export async function addQRLog(zone: string, headers: Headers, conv = false) {
   const ref = headers.get('referer');
   const newLog: QRLog = { ts: new Date().toISOString(), zone, ua, device: parseDevice(ua), ip, ref, conv };
 
-  if (USE_KV) {
+  if (kvEnabled) {
     try {
       // Persist log list (max 2000) and counters in KV
       await kv.lpush(KV_KEY_LOGS, JSON.stringify(newLog));
@@ -74,7 +75,8 @@ export async function addQRLog(zone: string, headers: Headers, conv = false) {
       if (conv) await kv.hincrby(KV_KEY_CONV, zone, 1);
       return;
     } catch (err) {
-      console.error('KV addQRLog failed, falling back to fs:', err);
+      console.error('KV addQRLog failed, disabling KV and falling back to fs:', err);
+      kvEnabled = false;
     }
   }
 
@@ -85,7 +87,7 @@ export async function addQRLog(zone: string, headers: Headers, conv = false) {
 }
 
 export async function getQRLogs() {
-  if (USE_KV) {
+  if (kvEnabled) {
     try {
       const raw = await kv.lrange(KV_KEY_LOGS, 0, 1999);
       return raw
@@ -100,14 +102,15 @@ export async function getQRLogs() {
         })
         .filter((x): x is QRLog => !!x);
     } catch (err) {
-      console.error('KV getQRLogs failed, falling back to fs:', err);
+      console.error('KV getQRLogs failed, disabling KV and falling back to fs:', err);
+      kvEnabled = false;
     }
   }
   return await readLogsFs();
 }
 
 export async function getQRSummary() {
-  if (USE_KV) {
+  if (kvEnabled) {
     try {
       const counts = (await kv.hgetall<Record<string, string>>(KV_KEY_COUNT)) || {};
       const convs = (await kv.hgetall<Record<string, string>>(KV_KEY_CONV)) || {};
@@ -121,7 +124,8 @@ export async function getQRSummary() {
       });
       return byZone;
     } catch (err) {
-      console.error('KV getQRSummary failed, falling back to fs:', err);
+      console.error('KV getQRSummary failed, disabling KV and falling back to fs:', err);
+      kvEnabled = false;
     }
   }
 
@@ -144,14 +148,15 @@ export async function addQRConversion(zone: string) {
     conv: true,
   };
 
-  if (USE_KV) {
+  if (kvEnabled) {
     try {
       await kv.lpush(KV_KEY_LOGS, JSON.stringify(newLog));
       await kv.ltrim(KV_KEY_LOGS, 0, 1999);
       await kv.hincrby(KV_KEY_CONV, zone, 1);
       return;
     } catch (err) {
-      console.error('KV addQRConversion failed, falling back to fs:', err);
+      console.error('KV addQRConversion failed, disabling KV and falling back to fs:', err);
+      kvEnabled = false;
     }
   }
 
@@ -162,15 +167,14 @@ export async function addQRConversion(zone: string) {
 }
 
 export async function resetQRData() {
-  if (USE_KV) {
+  if (kvEnabled) {
     try {
       await kv.del(KV_KEY_LOGS);
       await kv.del(KV_KEY_COUNT);
       await kv.del(KV_KEY_CONV);
-      logsCache = [];
-      return;
     } catch (err) {
-      console.error('KV resetQRData failed, falling back to fs:', err);
+      console.error('KV resetQRData failed, disabling KV and falling back to fs:', err);
+      kvEnabled = false;
     }
   }
   logsCache = [];
