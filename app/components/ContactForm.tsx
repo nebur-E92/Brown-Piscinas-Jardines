@@ -10,6 +10,7 @@ export default function ContactForm({ defaults }: Props) {
     telefono: "",
     mensaje: "",
     servicio: "",
+    servicios: "",
     tamano: "",
     frecuencia: "",
     municipio: "",
@@ -38,6 +39,7 @@ export default function ContactForm({ defaults }: Props) {
       className="max-w-md mx-auto p-6 bg-white rounded shadow"
     >
       <input type="hidden" name="servicio" value={form.servicio} />
+      <input type="hidden" name="servicios" value={form.servicios} />
       <input type="hidden" name="tamano" value={form.tamano} />
       <input type="hidden" name="frecuencia" value={form.frecuencia} />
       <input type="hidden" name="municipio" value={form.municipio} />

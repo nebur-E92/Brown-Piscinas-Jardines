@@ -8,12 +8,43 @@ export const metadata = {
 
 function getDefaults(searchParams: Record<string, string | string[] | undefined>) {
   const pick = (k: string) => (Array.isArray(searchParams[k]) ? searchParams[k]?.[0] : searchParams[k]) || "";
+  
+  // Construir mensaje automático con todos los detalles
+  let mensaje = "";
+  const serviciosParam = pick('servicios');
+  const municipio = pick('municipio');
+  const precio = pick('precio');
+  
+  if (serviciosParam) {
+    const servicios = serviciosParam.split(',');
+    mensaje = "Solicitud de presupuesto desde calculadora:\n\n";
+    
+    servicios.forEach((servId) => {
+      // Buscar parámetros relacionados con este servicio
+      const tamano = pick(`${servId}_tamano`);
+      const m2 = pick(`${servId}_m2`);
+      const ml = pick(`${servId}_ml`);
+      const frecuencia = pick(`${servId}_frecuencia`);
+      
+      mensaje += `- Servicio: ${servId}\n`;
+      if (tamano) mensaje += `  Tamaño: ${tamano}\n`;
+      if (m2) mensaje += `  Superficie: ${m2} m²\n`;
+      if (ml) mensaje += `  Metros lineales: ${ml} ml\n`;
+      if (frecuencia) mensaje += `  Frecuencia: ${frecuencia}\n`;
+    });
+    
+    if (municipio) mensaje += `\nMunicipio: ${municipio}\n`;
+    if (precio) mensaje += `Precio orientativo: ${precio}€\n`;
+  }
+  
   return {
     servicio: pick('servicio'),
     tamano: pick('tamano'),
     frecuencia: pick('frecuencia'),
-    municipio: pick('municipio'),
-    precio: pick('precio'),
+    municipio: municipio,
+    precio: precio,
+    servicios: serviciosParam,
+    mensaje: mensaje,
   } as any;
 }
 

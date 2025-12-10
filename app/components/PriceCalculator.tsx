@@ -118,13 +118,35 @@ export default function PriceCalculator() {
   };
 
   const hrefForm = useMemo(() => {
-    const params = new URLSearchParams({
-      servicios: selectedIds.join(","),
-      municipio,
-      precio: precio?.toString() || "",
+    const params = new URLSearchParams();
+    
+    // Servicios seleccionados
+    params.set("servicios", selectedIds.join(","));
+    params.set("municipio", municipio);
+    if (precio) params.set("precio", precio.toFixed(2));
+    
+    // Añadir detalles de cada servicio (tamaño/cantidad/frecuencia)
+    selectedIds.forEach((id) => {
+      const servicio = servicios.find(s => s.id === id);
+      if (!servicio) return;
+      
+      const val = cantidad[id];
+      if (!val) return;
+      
+      // Determinar el tipo de campo según el servicio
+      if (servicio.id === "desbroce" || servicio.id === "limpieza-baldosas") {
+        params.set(`${id}_m2`, val);
+      } else if (servicio.id.includes("setos")) {
+        params.set(`${id}_ml`, val);
+      } else if (servicio.tamanos && Object.keys(servicio.tamanos).length > 0) {
+        params.set(`${id}_tamano`, val);
+      } else if (servicio.frecuencia && Object.keys(servicio.frecuencia).length > 0) {
+        params.set(`${id}_frecuencia`, val);
+      }
     });
+    
     return `/contacto?${params.toString()}`;
-  }, [selectedIds, municipio, precio]);
+  }, [selectedIds, municipio, precio, cantidad, servicios]);
 
   const renderField = (s: Servicio) => {
     // Servicios por m²
