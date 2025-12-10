@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import CookieManageLink from './CookieManageLink';
 
 export default function Footer() {
   return (
@@ -20,14 +21,13 @@ export default function Footer() {
             <h4 className="font-bold mb-2">Legal</h4>
             <ul>
               <li>
-                <a href="/docs/privacy-policy.pdf" target="_blank" rel="noopener noreferrer" className="underline">
-                  Política de privacidad
-                </a>
+                <a href="/sobre-nosotros" className="underline">Sobre nosotros</a>
               </li>
               <li>
-                <a href="/docs/cookies-policy.pdf" target="_blank" rel="noopener noreferrer" className="underline">
-                  Política de cookies
-                </a>
+                <a href="/legal/privacidad" className="underline">Política de privacidad</a>
+              </li>
+              <li>
+                <a href="/legal/cookies" className="underline">Política de cookies</a>
               </li>
               <li>
                 <a href="/docs/Tarifas-Brown.pdf" target="_blank" rel="noopener noreferrer" className="underline">
@@ -38,8 +38,9 @@ export default function Footer() {
                 <a href="https://www.brownpiscinasyjardines.es/" target="_blank" rel="noopener noreferrer" className="underline">Blog</a>
               </li>
               <li>
-                <a href="/docs/aviso-legal.pdf" target="_blank" rel="noopener noreferrer" className="underline">Aviso legal</a>
+                <a href="/legal/aviso-legal" className="underline">Aviso legal</a>
               </li>
+              <li><CookieManageLink /></li>
             </ul>
           </div>
           {/* Columna 3 */}

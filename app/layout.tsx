@@ -3,7 +3,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
 import AnalyticsGate from './components/AnalyticsGate';
-import { Analytics } from '@vercel/analytics/next';
+import WhatsAppFloat from './components/WhatsAppFloat';
 import { SITE, BUSINESS } from "../lib/seo";
 import type { Metadata } from "next";
 
@@ -76,9 +76,21 @@ function LocalBusinessJsonLd() {
       latitude: BUSINESS.geo.lat,
       longitude: BUSINESS.geo.lon,
     },
-    openingHours: BUSINESS.openingHours,
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        opens: "09:00",
+        closes: "20:00",
+      },
+    ],
     sameAs: BUSINESS.sameAs,
-    areaServed: BUSINESS.address.locality,
+    areaServed: ["Salamanca", "Alba de Tormes", "Carbajosa", "Villamayor", "Santa Marta de Tormes", "Castellanos de Villiquera", "Cabrerizos", "Monterrubio de Armuña", "La Rad", "Los Cisnes", "Calzada de Vandunciel"],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "5",
+      reviewCount: "2",
+    },
     makesOffer: [
       {
         "@type": "Service",
@@ -115,9 +127,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">{children}</main>
         <Footer />
+        <WhatsAppFloat />
   <CookieConsent />
   <AnalyticsGate />
-  <Analytics />
   <LocalBusinessJsonLd />
       </body>
     </html>

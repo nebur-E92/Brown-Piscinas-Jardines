@@ -14,11 +14,10 @@ export default function Header() {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6">
           <a href="/" className="hover:opacity-80 whitespace-nowrap">Inicio</a>
-          <a href="#servicios" className="hover:opacity-80 whitespace-nowrap">Servicios</a>
-          <a href="#como-trabajamos" className="hover:opacity-80 whitespace-nowrap">Cómo trabajamos</a>
-          <a href="#contacto" className="hover:opacity-80 whitespace-nowrap">Contacto</a>
-          <a href="https://www.brownpiscinasyjardines.es/" className="hover:opacity-80 whitespace-nowrap" target="_blank" rel="noopener noreferrer">Blog</a>
-          <a href={process.env.NEXT_PUBLIC_WA_LINK ?? 'https://wa.me/34625199394'} className="rounded-full px-4 py-2 border hover:bg-slate-50">WhatsApp</a>
+          <a href="/servicios" className="hover:opacity-80 whitespace-nowrap">Servicios</a>
+          <a href="/calcular-precio" className="hover:opacity-80 whitespace-nowrap">Calcular precio</a>
+          <a href="/opiniones" className="hover:opacity-80 whitespace-nowrap">Opiniones</a>
+          <a href="/contacto" className="hover:opacity-80 whitespace-nowrap">Contacto</a>
         </nav>
         {/* Mobile trigger */}
         <button
@@ -34,11 +33,10 @@ export default function Header() {
         <div className="md:hidden border-t bg-white">
           <nav className="px-4 py-3 space-y-2">
             <a onClick={() => setOpen(false)} href="/" className="block py-2">Inicio</a>
-            <a onClick={() => setOpen(false)} href="#servicios" className="block py-2">Servicios</a>
-            <a onClick={() => setOpen(false)} href="#como-trabajamos" className="block py-2">Cómo trabajamos</a>
-            <a onClick={() => setOpen(false)} href="#contacto" className="block py-2">Contacto</a>
-            <a onClick={() => setOpen(false)} href="https://www.brownpiscinasyjardines.es/" className="block py-2" target="_blank" rel="noopener noreferrer">Blog</a>
-            <a onClick={() => setOpen(false)} href={process.env.NEXT_PUBLIC_WA_LINK ?? 'https://wa.me/34625199394'} className="block w-full text-center rounded-full px-4 py-2 border">WhatsApp</a>
+            <a onClick={() => setOpen(false)} href="/servicios" className="block py-2">Servicios</a>
+            <a onClick={() => setOpen(false)} href="/calcular-precio" className="block py-2">Calcular precio</a>
+            <a onClick={() => setOpen(false)} href="/opiniones" className="block py-2">Opiniones</a>
+            <a onClick={() => setOpen(false)} href="/contacto" className="block py-2">Contacto</a>
           </nav>
         </div>
       )}

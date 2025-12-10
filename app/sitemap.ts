@@ -5,6 +5,15 @@ export const runtime = "edge";
 export default function sitemap() {
   const urls = [
     SITE.baseUrl,
+    `${SITE.baseUrl}/servicios`,
+    `${SITE.baseUrl}/zonas`,
+    `${SITE.baseUrl}/calcular-precio`,
+    `${SITE.baseUrl}/opiniones`,
+    `${SITE.baseUrl}/trabajos`,
+    `${SITE.baseUrl}/contacto`,
+    `${SITE.baseUrl}/legal/aviso-legal`,
+    `${SITE.baseUrl}/legal/privacidad`,
+    `${SITE.baseUrl}/legal/cookies`,
     ...SERVICES.map(s => `${SITE.baseUrl}/servicios/${s.slug}`),
     ...LOCATIONS.map(l => `${SITE.baseUrl}/zonas/${l.slug}`),
   ];

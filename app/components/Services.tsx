@@ -6,6 +6,7 @@ type MonthlyServiceCardProps = {
   description: string;
   advantages: string[];
   price: string;
+  href?: string;
 };
 
 type SimpleMonthlyCardProps = {
@@ -14,6 +15,7 @@ type SimpleMonthlyCardProps = {
   includes: string[];
   price: string;
   bgImage: string;
+  href?: string;
 };
 
 type PuntualServiceCardProps = {
@@ -22,6 +24,7 @@ type PuntualServiceCardProps = {
   description: string;
   price: string;
   gradient: string;
+  href?: string;
 };
 
 function MonthlyServiceCard({
@@ -30,9 +33,10 @@ function MonthlyServiceCard({
   description,
   advantages,
   price,
+  href,
 }: MonthlyServiceCardProps) {
   return (
-  <div className="mx-auto max-w-7xl flex flex-col md:flex-row items-start bg-black text-white rounded-xl shadow-xl mb-12 border p-6 gap-6 sm:gap-10 lg:gap-20">
+  <a href={href || "#"} className="mx-auto max-w-7xl flex flex-col md:flex-row items-start bg-black text-white rounded-xl shadow-xl mb-12 border p-6 gap-6 sm:gap-10 lg:gap-20 no-underline">
       <div className="flex-shrink-0 md:w-[340px]">
         <div className="bg-white rounded-xl p-1">
           <Image
@@ -58,7 +62,7 @@ function MonthlyServiceCard({
         </div>
         <div className="text-3xl sm:text-4xl font-bold mt-2">{price}</div>
       </div>
-    </div>
+    </a>
   );
 }
 
@@ -68,9 +72,10 @@ function SimpleMonthlyCard({
   includes,
   price,
   bgImage,
+  href,
 }: SimpleMonthlyCardProps) {
   return (
-    <div
+    <a href={href || "#"}
       className="relative flex flex-col items-center justify-center rounded-2xl shadow-lg overflow-hidden w-full min-h-[220px] aspect-[4/5] sm:aspect-[16/9]"
       style={{
         backgroundImage: `url(${bgImage})`,
@@ -94,7 +99,7 @@ function SimpleMonthlyCard({
         </div>
         <div className="text-3xl font-bold mt-2">{price}</div>
       </div>
-    </div>
+    </a>
   );
 }
 
@@ -104,9 +109,10 @@ function PuntualServiceCard({
   description,
   price,
   gradient,
+  href,
 }: PuntualServiceCardProps) {
   return (
-    <article
+    <a href={href || "#"}
       className="flex flex-col rounded-xl overflow-hidden shadow-lg"
       style={{ background: gradient }}
     >
@@ -124,7 +130,7 @@ function PuntualServiceCard({
         <p className="mt-1 mb-3 font-medium">{description}</p>
         <div className="text-xl font-bold">{price}</div>
       </div>
-    </article>
+    </a>
   );
 }
 
@@ -151,6 +157,7 @@ export default function Services() {
             "Optimización de desplazamientos y tiempos.",
           ]}
           price="Desde 250 € / mes"
+          href="/servicios/mantenimiento-combinado"
         />
 
         {/* Tarjetas piscina y jardín */}
@@ -166,6 +173,7 @@ export default function Services() {
             ]}
             price="Desde 125 € / mes"
             bgImage="/images/service-pool.png"
+            href="/servicios/mantenimiento-piscina"
           />
           <SimpleMonthlyCard
             title="Mantenimiento de Jardín"
@@ -178,6 +186,7 @@ export default function Services() {
             ]}
             price="Desde 130 € / mes"
             bgImage="/images/service-garden.webp"
+            href="/servicios/mantenimiento-jardin"
           />
         </div>
 
@@ -192,6 +201,7 @@ export default function Services() {
             description="Recupera tu piscina en una sola visita: limpieza a fondo y ajuste de parámetros para que vuelva a estar lista."
             price="Desde 60 €"
             gradient="linear-gradient(180deg, #082047 50%, #597ca7 100%)"
+            href="/servicios/limpieza-piscina"
           />
           <PuntualServiceCard
             image="/images/service-mow.webp"
@@ -199,6 +209,7 @@ export default function Services() {
             description="Ideal para jardines que necesitan una puesta a punto rápida: corte uniforme y perfilado de bordes."
             price="Desde 70 €"
             gradient="linear-gradient(180deg, #0d3828 50%, #bbf7d0 100%)"
+            href="/servicios/corte-cesped"
           />
           <PuntualServiceCard
             image="/images/service-desbroce.webp"
@@ -206,6 +217,7 @@ export default function Services() {
             description="Elimina hierba alta y maleza en parcelas o solares. Trabajo con desbrozadora profesional."
             price="Desde 0,30 € / m²"
             gradient="linear-gradient(180deg, #382a0d 50%, #83731d 100%)"
+            href="/servicios/desbroce"
           />
           <PuntualServiceCard
             image="/images/service-hedge.webp"
@@ -213,17 +225,26 @@ export default function Services() {
             description="Perfiles limpios y a la altura adecuada, con retirada de restos vegetales incluida."
             price="Desde 2 € / metro lineal"
             gradient="linear-gradient(180deg, #573434 50%, #e99292 100%)"
+            href="/servicios/setos"
           />
         </div>
 
         {/* CTA */}
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center mt-6 gap-3">
           <a
             href="#contacto"
             className="inline-block px-6 py-3 bg-blue-900 text-white rounded shadow border border-blue-300 font-semibold"
             style={{ boxShadow: "0 2px 8px rgba(26,35,126,0.25)" }}
           >
             Solicita tu presupuesto
+          </a>
+          <a
+            href={process.env.NEXT_PUBLIC_WA_LINK || `https://wa.me/${process.env.NEXT_PUBLIC_WA_NUMBER || '34625199394'}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-6 py-3 bg-green-600 text-white rounded shadow border border-green-300 font-semibold"
+          >
+            WhatsApp
           </a>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import React from "react";
 import { SITE, BUSINESS, LOCATIONS } from "../../../lib/seo";
 
 type Params = { slug: string };
@@ -18,7 +19,7 @@ export function generateMetadata({ params }: { params: Params }) {
   };
 }
 
-function BreadcrumbJsonLd(locationName: string) {
+function BreadcrumbJsonLd(locationName: string): React.ReactElement {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -58,18 +59,11 @@ export default function ZonaPage({ params }: { params: Params }) {
     <>
       {BreadcrumbJsonLd(location.name)}
       <section className="max-w-2xl mx-auto py-12">
-        <h1 className="text-3xl font-bold mb-4">
+        <h1 className="page-title mb-4">
           Mantenimiento de piscina y jardín en {location.name}
         </h1>
         <p className="mb-6">{BUSINESS.description}</p>
-        <a
-          href={`https://wa.me/${BUSINESS.whatsapp}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-green-600 text-white px-6 py-3 rounded font-semibold"
-        >
-          Solicita tu presupuesto por WhatsApp
-        </a>
+        <p className="text-sm text-neutral-600">Solicita tu presupuesto desde el formulario de contacto.</p>
       </section>
     </>
   );

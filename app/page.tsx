@@ -1,11 +1,14 @@
+import React from "react";
 import { SITE, BUSINESS } from "../lib/seo";
 import Hero from "./components/Hero";
 import Services from "./components/Services";
 import HowWeWork from "./components/HowWeWork";
 import ContactForm from "./components/ContactForm";
-import WhatsAppFloat from "./components/WhatsAppFloat";
+import ReviewsStars from "./components/ReviewsStars";
 
-function FaqJsonLd() {
+export const revalidate = 3600; // revalidar cada hora
+
+function FaqJsonLd(): React.ReactElement {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -44,7 +47,7 @@ function FaqJsonLd() {
   );
 }
 
-function BreadcrumbJsonLd() {
+function BreadcrumbJsonLd(): React.ReactElement {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -72,9 +75,9 @@ export default function Page() {
       <BreadcrumbJsonLd />
       <Hero />
       <Services />
+      <ReviewsStars />
       <HowWeWork />
       <ContactForm />
-      <WhatsAppFloat />
     </>
   );
 }

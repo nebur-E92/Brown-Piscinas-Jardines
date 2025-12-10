@@ -27,7 +27,12 @@ export default function Hero() {
           <a href="#contacto" className="rounded-full px-5 py-3 border text-base text-white border-white">
             Solicita tu presupuesto
           </a>
-          <a href={process.env.NEXT_PUBLIC_WA_LINK ?? 'https://wa.me/34625199394'} className="rounded-full px-5 py-3 border text-base text-white border-white">
+          <a
+            href={process.env.NEXT_PUBLIC_WA_LINK || `https://wa.me/${process.env.NEXT_PUBLIC_WA_NUMBER || '34625199394'}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full px-5 py-3 border text-base text-white border-white"
+          >
             WhatsApp
           </a>
         </div>
