@@ -86,35 +86,43 @@ export async function addQRLog(zone: string, headers: Headers, conv = false) {
 
 export async function getQRLogs() {
   if (USE_KV) {
-    const raw = await kv.lrange(KV_KEY_LOGS, 0, 1999);
-    return raw
-      .map((r) => {
-        try {
-          if (typeof r === 'string') return JSON.parse(r) as QRLog;
-          if (r && typeof r === 'object') return r as QRLog;
-          return null;
-        } catch {
-          return null;
-        }
-      })
-      .filter((x): x is QRLog => !!x);
+    try {
+      const raw = await kv.lrange(KV_KEY_LOGS, 0, 1999);
+      return raw
+        .map((r) => {
+          try {
+            if (typeof r === 'string') return JSON.parse(r) as QRLog;
+            if (r && typeof r === 'object') return r as QRLog;
+            return null;
+          } catch {
+            return null;
+          }
+        })
+        .filter((x): x is QRLog => !!x);
+    } catch (err) {
+      console.error('KV getQRLogs failed, falling back to fs:', err);
+    }
   }
   return await readLogsFs();
 }
 
 export async function getQRSummary() {
   if (USE_KV) {
-    const counts = (await kv.hgetall<Record<string, string>>(KV_KEY_COUNT)) || {};
-    const convs = (await kv.hgetall<Record<string, string>>(KV_KEY_CONV)) || {};
-    const byZone: Record<string, { count: number; conv: number }> = {};
-    const zones = new Set([...Object.keys(counts), ...Object.keys(convs)]);
-    zones.forEach((z) => {
-      byZone[z] = {
-        count: counts[z] ? Number(counts[z]) : 0,
-        conv: convs[z] ? Number(convs[z]) : 0,
-      };
-    });
-    return byZone;
+    try {
+      const counts = (await kv.hgetall<Record<string, string>>(KV_KEY_COUNT)) || {};
+      const convs = (await kv.hgetall<Record<string, string>>(KV_KEY_CONV)) || {};
+      const byZone: Record<string, { count: number; conv: number }> = {};
+      const zones = new Set([...Object.keys(counts), ...Object.keys(convs)]);
+      zones.forEach((z) => {
+        byZone[z] = {
+          count: counts[z] ? Number(counts[z]) : 0,
+          conv: convs[z] ? Number(convs[z]) : 0,
+        };
+      });
+      return byZone;
+    } catch (err) {
+      console.error('KV getQRSummary failed, falling back to fs:', err);
+    }
   }
 
   const logs = await readLogsFs();
@@ -159,10 +167,12 @@ export async function resetQRData() {
       await kv.del(KV_KEY_LOGS);
       await kv.del(KV_KEY_COUNT);
       await kv.del(KV_KEY_CONV);
+      logsCache = [];
       return;
     } catch (err) {
       console.error('KV resetQRData failed, falling back to fs:', err);
     }
   }
+  logsCache = [];
   await writeLogsFs([]);
 }
