@@ -7,7 +7,11 @@ export const metadata = {
 };
 
 function getDefaults(searchParams: Record<string, string | string[] | undefined>) {
-  const pick = (k: string): string => (Array.isArray(searchParams[k]) ? searchParams[k]?.[0] : searchParams[k]) || "";
+  const pick = (k: string): string => {
+    const v = searchParams[k];
+    if (Array.isArray(v)) return v[0] ?? "";
+    return v ?? "";
+  };
   
   // Construir mensaje automático con todos los detalles
   let mensaje = "";
