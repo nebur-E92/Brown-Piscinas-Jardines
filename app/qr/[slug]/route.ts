@@ -33,5 +33,14 @@ export async function GET(req: NextRequest, context: { params: { slug: string } 
   }
 
   const target = process.env.QR_REDIRECT_PATH || "/";
-  return NextResponse.redirect(new URL(target, req.url));
+  const response = NextResponse.redirect(new URL(target, req.url));
+  
+  // Set cookie to track QR source for conversion attribution
+  response.cookies.set('qr_source', zone, {
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    path: '/',
+    sameSite: 'lax',
+  });
+  
+  return response;
 }

@@ -15,11 +15,23 @@ export default function ContactForm({ defaults }: Props) {
     frecuencia: "",
     municipio: "",
     precio: "",
+    qr_source: "",
     privacidad: false,
   });
 
   useEffect(() => {
     if (defaults) setForm((f) => ({ ...f, ...defaults } as any));
+    
+    // Capture QR source from cookie for conversion tracking
+    if (typeof document !== 'undefined') {
+      const qrSource = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('qr_source='))
+        ?.split('=')[1];
+      if (qrSource) {
+        setForm((f) => ({ ...f, qr_source: qrSource }));
+      }
+    }
   }, [defaults]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -44,6 +56,7 @@ export default function ContactForm({ defaults }: Props) {
       <input type="hidden" name="frecuencia" value={form.frecuencia} />
       <input type="hidden" name="municipio" value={form.municipio} />
       <input type="hidden" name="precio" value={form.precio} />
+      <input type="hidden" name="qr_source" value={form.qr_source} />
 
       <input
         type="text"

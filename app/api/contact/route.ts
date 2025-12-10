@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-export const runtime = "edge";
+import { addQRConversion } from "../../../lib/qrStore";
 
 export async function POST(req: NextRequest) {
   const form = await req.formData();
@@ -34,6 +33,16 @@ export async function POST(req: NextRequest) {
       await fetch(webhook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     } catch (e) {
       // Ignorar error de reenvío pero continuar
+    }
+  }
+
+  // Track QR conversion if qr_source is present
+  const qrSource = payload.qr_source as string;
+  if (qrSource) {
+    try {
+      await addQRConversion(qrSource);
+    } catch (e) {
+      console.error('QR conversion tracking error:', e);
     }
   }
 

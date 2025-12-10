@@ -80,3 +80,18 @@ export async function getQRSummary() {
   }
   return byZone;
 }
+
+export async function addQRConversion(zone: string) {
+  const newLog: QRLog = { 
+    ts: new Date().toISOString(), 
+    zone, 
+    ua: 'conversion', 
+    device: 'unknown', 
+    conv: true 
+  };
+  
+  const logs = await readLogs();
+  logs.push(newLog);
+  const limited = logs.slice(-2000);
+  await writeLogs(limited);
+}
