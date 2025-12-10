@@ -66,12 +66,16 @@ export async function addQRLog(zone: string, headers: Headers, conv = false) {
   const newLog: QRLog = { ts: new Date().toISOString(), zone, ua, device: parseDevice(ua), ip, ref, conv };
 
   if (USE_KV) {
-    // Persist log list (max 2000) and counters in KV
-    await kv.lpush(KV_KEY_LOGS, JSON.stringify(newLog));
-    await kv.ltrim(KV_KEY_LOGS, 0, 1999);
-    await kv.hincrby(KV_KEY_COUNT, zone, 1);
-    if (conv) await kv.hincrby(KV_KEY_CONV, zone, 1);
-    return;
+    try {
+      // Persist log list (max 2000) and counters in KV
+      await kv.lpush(KV_KEY_LOGS, JSON.stringify(newLog));
+      await kv.ltrim(KV_KEY_LOGS, 0, 1999);
+      await kv.hincrby(KV_KEY_COUNT, zone, 1);
+      if (conv) await kv.hincrby(KV_KEY_CONV, zone, 1);
+      return;
+    } catch (err) {
+      console.error('KV addQRLog failed, falling back to fs:', err);
+    }
   }
 
   const logs = await readLogsFs();
@@ -133,10 +137,14 @@ export async function addQRConversion(zone: string) {
   };
 
   if (USE_KV) {
-    await kv.lpush(KV_KEY_LOGS, JSON.stringify(newLog));
-    await kv.ltrim(KV_KEY_LOGS, 0, 1999);
-    await kv.hincrby(KV_KEY_CONV, zone, 1);
-    return;
+    try {
+      await kv.lpush(KV_KEY_LOGS, JSON.stringify(newLog));
+      await kv.ltrim(KV_KEY_LOGS, 0, 1999);
+      await kv.hincrby(KV_KEY_CONV, zone, 1);
+      return;
+    } catch (err) {
+      console.error('KV addQRConversion failed, falling back to fs:', err);
+    }
   }
 
   const logs = await readLogsFs();
@@ -147,10 +155,14 @@ export async function addQRConversion(zone: string) {
 
 export async function resetQRData() {
   if (USE_KV) {
-    await kv.del(KV_KEY_LOGS);
-    await kv.del(KV_KEY_COUNT);
-    await kv.del(KV_KEY_CONV);
-    return;
+    try {
+      await kv.del(KV_KEY_LOGS);
+      await kv.del(KV_KEY_COUNT);
+      await kv.del(KV_KEY_CONV);
+      return;
+    } catch (err) {
+      console.error('KV resetQRData failed, falling back to fs:', err);
+    }
   }
   await writeLogsFs([]);
 }
