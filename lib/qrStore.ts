@@ -82,11 +82,13 @@ export async function addQRLog(zone: string, headers: Headers, conv = false) {
 
 export async function getQRLogs() {
   if (USE_KV) {
-    const raw = await kv.lrange<string>(KV_KEY_LOGS, 0, 1999);
+    const raw = await kv.lrange(KV_KEY_LOGS, 0, 1999);
     return raw
       .map((r) => {
         try {
-          return typeof r === 'string' ? (JSON.parse(r) as QRLog) : null;
+          if (typeof r === 'string') return JSON.parse(r) as QRLog;
+          if (r && typeof r === 'object') return r as QRLog;
+          return null;
         } catch {
           return null;
         }
