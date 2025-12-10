@@ -4,13 +4,21 @@ import { LOCATIONS } from "../../../lib/seo";
 
 const EXTRA_WHITELIST = ["flyer-enero", "flyer-verano", "web-home", "cartel-piscina", "cartel-jardin"];
 
+const normalizeSlug = (value: string) =>
+  value
+    .normalize('NFD') // remove accents
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\-]/gi, '')
+    .toLowerCase();
+
 function getAllowedSlugs(): string[] {
-  return [...LOCATIONS.map(l => l.slug), ...EXTRA_WHITELIST];
+  const base = [...LOCATIONS.map((l) => l.slug), ...EXTRA_WHITELIST];
+  return base.map(normalizeSlug);
 }
 
 export async function GET(req: NextRequest, context: { params: { slug: string } }) {
   const raw = context.params.slug || "unknown";
-  const zone = raw.replace(/[^a-z0-9\-]/gi, "").toLowerCase();
+  const zone = normalizeSlug(raw);
   const allowed = getAllowedSlugs();
   if (!allowed.includes(zone)) {
     // Skip logging invalid slug to avoid métricas basura
