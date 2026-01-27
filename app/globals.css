@@ -36,20 +36,6 @@ h2, h3, h4 {
   text-shadow: 1px 1px 4px #bbb;
 }
 
-/* Botones */
-button, .btn {
-  background-color: #000;
-  color: #fff;
-  border-radius: 6px;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transition: background 0.2s;
-}
-
-button:hover, .btn:hover {
-  background-color: #1f2937;
-}
-
 /* Tarjetas de servicios */
 .card {
   border-radius: 16px;

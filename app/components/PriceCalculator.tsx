@@ -437,7 +437,7 @@ export default function PriceCalculator() {
                   <button
                     type="button"
                     onClick={() => setInfoVisible(infoVisible === s.id ? null : s.id)}
-                    className="text-gray-600 hover:text-black text-sm underline"
+                    className="bg-black text-white hover:bg-gray-800 text-xs px-3 py-1 rounded"
                     title="Ver qué incluye"
                   >
                     ¿Qué incluye?
