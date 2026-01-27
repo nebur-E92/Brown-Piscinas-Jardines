@@ -12,12 +12,30 @@ type Servicio = {
   municipios?: Record<string, number>;
 };
 
+// Información de lo que incluye cada servicio
+const SERVICE_INFO: Record<string, string> = {
+  "mantenimiento-piscina-mensual": "Incluye: Control químico (pH, cloro), limpieza de superficie, limpieza de fondos, revisión de filtros, revisión de sistema de filtrado y depuradora, retirada de residuos.",
+  "mantenimiento-jardin-mensual": "Incluye: Corte de césped, recorte de setos, eliminación de malas hierbas, abonado según temporada, limpieza de hojas y restos vegetales, revisión de sistema de riego.",
+  "mantenimiento-combinado-mensual": "Incluye TODO lo del mantenimiento de piscina + TODO lo del mantenimiento de jardín. Ahorro al contratar ambos servicios juntos.",
+  "servicio-puntual-jardin": "Servicio único sin compromiso. Incluye: Corte de césped, recorte básico de setos, limpieza de hojas y restos vegetales.",
+  "servicio-puntual-piscina": "Servicio único sin compromiso. Incluye: Limpieza completa de superficie y fondos, ajuste químico del agua (pH, cloro), revisión básica del sistema de filtrado.",
+  "servicio-puntual-combinado": "Servicio único sin compromiso que incluye limpieza puntual de piscina + jardín (todo lo anterior combinado).",
+  "desbroce": "Limpieza de terrenos con vegetación salvaje, maleza alta, zarzas. Incluye corte con desbrozadora, retirada opcional de restos (consultar).",
+  "setos-hoja-pequena": "Recorte de setos ornamentales de hoja pequeña (aligustre, boj, mirto). Incluye: Recorte con forma, limpieza de restos cortados.",
+  "setos-coniferas": "Recorte de setos de coníferas (ciprés, tuya, tejo). Incluye: Recorte con forma, limpieza de restos cortados.",
+  "limpieza-piscina-estado": "Limpieza puntual según el estado del agua. Vacía (sin agua), Sucia (agua turbia/hojas), Muy sucia (agua verde/abandonada). Incluye productos químicos necesarios.",
+  "limpieza-baldosas": "Limpieza a presión de baldosas, terrazas, porches exteriores. Elimina suciedad, musgo, verdín.",
+  "desplazamiento": "Coste adicional para servicios fuera de Salamanca capital (más de 10 km). Se calcula por km adicional."
+};
+
 export default function PriceCalculator() {
+  const [infoVisible, setInfoVisible] = useState<string | null>(null);
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [cantidad, setCantidad] = useState<Record<string, string>>({});
   const [municipio, setMunicipio] = useState(LOCATIONS[0]?.slug || "salamanca");
   const [precio, setPrecio] = useState<number | null>(null);
+  const [desglose, setDesglose] = useState<Record<string, { nombre: string; precio: number }> | null>(null);
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalErrors, setGeneralErrors] = useState<string[]>([]);
@@ -88,12 +106,15 @@ export default function PriceCalculator() {
           setGeneralErrors(["No hemos podido calcular el precio. Vuelve a intentarlo o revisa los datos."]); 
         }
         setPrecio(null);
+        setDesglose(null);
       } else {
-        // API now returns { total }
+        // API now returns { total, desglose }
         setPrecio(typeof data.total === "number" ? data.total : null);
+        setDesglose(data.desglose || null);
       }
     } catch {
       setPrecio(null);
+      setDesglose(null);
       setGeneralErrors(["Ha ocurrido un problema de conexión. Inténtalo de nuevo en unos segundos."]); 
     } finally {
       setLoading(false);
@@ -153,10 +174,12 @@ export default function PriceCalculator() {
     if (s.id === "desbroce") {
       return (
         <div className="space-y-1">
-          <label className="block text-xs font-medium">Superficie (m²)</label>
+          <label className="block text-xs font-medium">Superficie del terreno (m²)</label>
           <input
             type="number"
-            placeholder="Ej: 300"
+            placeholder="Ejemplo: 300"
+            min="1"
+            step="1"
             className={`w-full p-2 border rounded text-sm ${fieldErrors[s.id] ? 'border-red-400 focus:ring-red-300' : ''}`}
             value={cantidad[s.id] || ""}
             onChange={(e) =>
@@ -166,20 +189,30 @@ export default function PriceCalculator() {
           {fieldErrors[s.id] && (
             <p className="mt-1 text-xs text-red-600">{fieldErrors[s.id]}</p>
           )}
-          <p className="text-xs text-neutral-500">
-            Tarifas: hasta 250m²: 0.55€/m² | 251-500m²: 0.45€/m² | 501-1000m²: 0.30€/m²
+          <p className="text-xs text-neutral-600 mt-1 bg-blue-50 p-2 rounded border border-blue-200">
+            💰 <strong>Tarifas por tramos:</strong><br/>
+            • Hasta 250 m²: <strong>0,55 €/m²</strong><br/>
+            • 251-500 m²: <strong>0,45 €/m²</strong><br/>
+            • 501-1000 m²: <strong>0,30 €/m²</strong><br/>
+            • Más de 1000 m²: <strong>Consultar</strong>
           </p>
         </div>
       );
     }
     
     if (s.id.includes("setos")) {
+      const precioBase = s.base.toFixed(2);
+      const precioMedio = s.tamanos?.["31-60"] ? (s.base + s.tamanos["31-60"]).toFixed(2) : precioBase;
+      const precioGrande = s.tamanos?.["60+"] ? (s.base + s.tamanos["60+"]).toFixed(2) : precioBase;
+      
       return (
         <div className="space-y-1">
-          <label className="block text-xs font-medium">Metros lineales (ml)</label>
+          <label className="block text-xs font-medium">Metros lineales (ml) de seto</label>
           <input
             type="number"
-            placeholder="Ej: 45"
+            placeholder="Ejemplo: 45"
+            min="1"
+            step="0.5"
             className={`w-full p-2 border rounded text-sm ${fieldErrors[s.id] ? 'border-red-400 focus:ring-red-300' : ''}`}
             value={cantidad[s.id] || ""}
             onChange={(e) =>
@@ -189,8 +222,11 @@ export default function PriceCalculator() {
           {fieldErrors[s.id] && (
             <p className="mt-1 text-xs text-red-600">{fieldErrors[s.id]}</p>
           )}
-          <p className="text-xs text-neutral-500">
-            Base: {s.base.toFixed(2)}€/ml (≤30ml) | 31-60ml: ajuste | 60+ml: ajuste
+          <p className="text-xs text-neutral-600 mt-1 bg-blue-50 p-2 rounded border border-blue-200">
+            💰 <strong>Tarifas por tramos:</strong><br/>
+            • Hasta 30 ml: <strong>{precioBase} €/ml</strong><br/>
+            • 31-60 ml: <strong>{precioMedio} €/ml</strong><br/>
+            • Más de 60 ml: <strong>{precioGrande} €/ml</strong>
           </p>
         </div>
       );
@@ -221,10 +257,16 @@ export default function PriceCalculator() {
 
     // Limpieza por estado
     if (s.id === "limpieza-piscina-estado" && s.frecuencia) {
+      const estadosLabels: Record<string, string> = {
+        "vacía": "Vacía (sin agua)",
+        "sucia": "Sucia (agua turbia, hojas)",
+        "muy-sucia": "Muy sucia (agua verde, abandonada)"
+      };
+      
       const estados = Object.keys(s.frecuencia);
       return (
         <div className="space-y-1">
-          <label className="block text-xs font-medium">Estado de la piscina</label>
+          <label className="block text-xs font-medium">Estado actual de la piscina</label>
           <select
             className={`w-full p-2 border rounded text-sm ${fieldErrors[s.id] ? 'border-red-400' : ''}`}
             value={cantidad[s.id] || ""}
@@ -232,10 +274,10 @@ export default function PriceCalculator() {
               setCantidad((prev) => ({ ...prev, [s.id]: e.target.value }))
             }
           >
-            <option value="">Selecciona</option>
+            <option value="">-- Selecciona el estado --</option>
             {estados.map((e) => (
               <option key={e} value={e}>
-                {e}
+                {estadosLabels[e] || e}
               </option>
             ))}
           </select>
@@ -243,7 +285,7 @@ export default function PriceCalculator() {
       );
     }
 
-    // Servicios con tamanos (pequeña/mediana/grande, etc.)
+    // Servicios con tamanos (pequeña/mediana/grande para piscinas y jardines)
     if (s.tamanos && Object.keys(s.tamanos).length > 0) {
       let opts = Object.keys(s.tamanos);
       const hasPequena = opts.some(o => o.startsWith('pequena'));
@@ -253,44 +295,48 @@ export default function PriceCalculator() {
         opts = ['pequena', ...opts];
       }
 
-      // Rango estimado m² por tipo (puedes ajustar después)
+      // Tamaños reales para piscinas (superficie de agua)
       const piscinaRanges: Record<string,string> = {
-        pequena: '≤25 m²',
-        mediana: '26–40 m²',
-        grande: '41+ m²'
+        pequena: 'hasta 25 m²',
+        mediana: '26-40 m²',
+        grande: 'más de 40 m²'
       };
+      
+      // Tamaños reales para jardines (superficie total)
       const jardinRanges: Record<string,string> = {
-        pequena: '≤150 m²',
-        mediana: '151–400 m²',
-        mediano: '151–400 m²',
-        grande: '401+ m²'
+        pequena: 'hasta 150 m²',
+        mediana: '151-400 m²',
+        mediano: '151-400 m²',
+        grande: 'más de 400 m²'
       };
 
       const labelFor = (key: string): string => {
-        // Combinados tipo piscina-jardin
+        // Servicios combinados piscina-jardín
         if (key.includes('-')) {
           const parts = key.split('-');
           if (parts.length === 2) {
             const [pisc, jard] = parts;
-            const piscLabel = piscinaRanges[pisc] ? `${pisc === 'pequena' ? 'Pequeña' : capitalize(pisc)} (${piscinaRanges[pisc]})` : capitalize(pisc);
-            const jardLabel = jardinRanges[jard] ? `${jard === 'pequena' ? 'Pequeña' : capitalize(jard)} (${jardinRanges[jard]})` : capitalize(jard);
-            return `${piscLabel} piscina + ${jardLabel} jardín`;
+            const piscLabel = piscinaRanges[pisc] ? `Piscina ${piscinaRanges[pisc]}` : capitalize(pisc);
+            const jardLabel = jardinRanges[jard] ? `Jardín ${jardinRanges[jard]}` : capitalize(jard);
+            return `${piscLabel} + ${jardLabel}`;
           }
         }
-        // Singular piscina/jardín
+        // Solo piscina
         if (piscinaRanges[key]) {
-          return `${key === 'pequena' ? 'Pequeña' : capitalize(key)} (${piscinaRanges[key]})`;
+          return `Piscina ${piscinaRanges[key]}`;
         }
+        // Solo jardín  
         if (jardinRanges[key]) {
-          return `${key === 'pequena' ? 'Pequeña' : capitalize(key)} (${jardinRanges[key]})`;
+          return `Jardín ${jardinRanges[key]}`;
         }
-        return capitalize(key === 'pequena' ? 'pequeña' : key);
+        return capitalize(key);
       };
 
       const capitalize = (t: string) => t.charAt(0).toUpperCase() + t.slice(1).replace('mediano','Mediano').replace('mediana','Mediana');
+      
       return (
         <div className="space-y-1">
-          <label className="block text-xs font-medium">Tamaño / Opción</label>
+          <label className="block text-xs font-medium">Selecciona el tamaño</label>
           <select
             className={`w-full p-2 border rounded text-sm ${fieldErrors[s.id] ? 'border-red-400' : ''}`}
             value={cantidad[s.id] || ""}
@@ -298,7 +344,7 @@ export default function PriceCalculator() {
               setCantidad((prev) => ({ ...prev, [s.id]: e.target.value }))
             }
           >
-            <option value="">Selecciona</option>
+            <option value="">-- Selecciona un tamaño --</option>
             {opts.map((opt) => {
               const display = labelFor(opt);
               return (
@@ -306,6 +352,9 @@ export default function PriceCalculator() {
               );
             })}
           </select>
+          <p className="text-xs text-neutral-500 mt-1">
+            💡 Mide tu piscina/jardín para seleccionar el tamaño correcto
+          </p>
         </div>
       );
     }
@@ -340,18 +389,39 @@ export default function PriceCalculator() {
             </label>
             <div className="space-y-1 max-h-72 overflow-y-auto border rounded p-3">
               {servicios.map((s) => (
-                <label
+                <div
                   key={s.id}
-                  className="flex items-start gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                  className="flex items-start gap-2 p-2 hover:bg-gray-50 rounded"
                 >
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(s.id)}
                     onChange={() => toggleServicio(s.id)}
-                    className="mt-1"
+                    className="mt-1 cursor-pointer"
+                    id={`service-${s.id}`}
                   />
-                  <span className="text-sm flex-1">{s.nombre}</span>
-                </label>
+                  <label htmlFor={`service-${s.id}`} className="text-sm flex-1 cursor-pointer">{s.nombre}</label>
+                  <button
+                    type="button"
+                    onClick={() => setInfoVisible(infoVisible === s.id ? null : s.id)}
+                    className="text-blue-600 hover:text-blue-800 font-bold text-lg leading-none"
+                    title="Ver qué incluye"
+                  >
+                    ℹ️
+                  </button>
+                  {infoVisible === s.id && SERVICE_INFO[s.id] && (
+                    <div className="absolute z-10 mt-8 ml-4 w-72 sm:w-80 max-w-[calc(100vw-2rem)] p-3 bg-white border-2 border-blue-300 rounded-lg shadow-lg text-xs text-gray-700">
+                      <button
+                        type="button"
+                        onClick={() => setInfoVisible(null)}
+                        className="absolute top-1 right-1 text-gray-500 hover:text-gray-700 font-bold"
+                      >
+                        ✕
+                      </button>
+                      <p className="pr-4">{SERVICE_INFO[s.id]}</p>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>
@@ -362,7 +432,22 @@ export default function PriceCalculator() {
 
             return (
               <div key={id} className="mb-3 p-3 border rounded bg-gray-50">
-                <p className="text-sm font-semibold mb-2">{s.nombre}</p>
+                <div className="flex items-start justify-between mb-2">
+                  <p className="text-sm font-semibold">{s.nombre}</p>
+                  <button
+                    type="button"
+                    onClick={() => setInfoVisible(infoVisible === s.id ? null : s.id)}
+                    className="text-blue-600 hover:text-blue-800 text-sm underline"
+                    title="Ver qué incluye"
+                  >
+                    ¿Qué incluye?
+                  </button>
+                </div>
+                {infoVisible === s.id && SERVICE_INFO[s.id] && (
+                  <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded text-xs text-gray-700">
+                    <p>{SERVICE_INFO[s.id]}</p>
+                  </div>
+                )}
                 {renderField(s)}
               </div>
             );
@@ -397,10 +482,28 @@ export default function PriceCalculator() {
 
           {precio !== null && (
             <div className="mb-4 p-4 bg-green-50 border-2 border-green-200 rounded">
-              <p className="text-xl font-bold text-green-800">
-                Precio orientativo: {precio.toFixed(2)} €
-              </p>
-              <p className="text-xs text-neutral-600 mt-1">
+              {desglose && Object.keys(desglose).length > 1 && (
+                <div className="mb-4 pb-4 border-b-2 border-green-300">
+                  <p className="text-sm font-semibold text-green-800 mb-3">💰 Desglose por servicio:</p>
+                  <div className="space-y-2">
+                    {Object.entries(desglose).map(([id, item]: [string, any]) => (
+                      <div key={id} className="flex justify-between items-center text-sm">
+                        <span className="text-gray-700">{item.nombre}</span>
+                        <span className="font-semibold text-green-700">{item.precio.toFixed(2)} €</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-between items-center">
+                <p className="text-xl font-bold text-green-800">
+                  {desglose && Object.keys(desglose).length > 1 ? 'Total:' : 'Precio orientativo:'}
+                </p>
+                <p className="text-2xl font-bold text-green-800">
+                  {precio.toFixed(2)} €
+                </p>
+              </div>
+              <p className="text-xs text-neutral-600 mt-2">
                 Estimación basada en tarifas reales. Sujeto a confirmación tras visita técnica.
               </p>
             </div>

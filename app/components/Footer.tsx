@@ -5,9 +5,9 @@ export default function Footer() {
   return (
     <footer className="bg-black text-white py-10">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="flex flex-row justify-between items-start gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
           {/* Columna 1: Logo */}
-          <div>
+          <div className="mx-auto md:mx-0">
             <Image
               src="/icons/logo-inverted.svg"
               alt="Brown logo"

@@ -200,7 +200,7 @@ export default function Services() {
             title="Limpieza puntual de piscina"
             description="Recupera tu piscina en una sola visita: limpieza a fondo y ajuste de parámetros para que vuelva a estar lista."
             price="Desde 60 €"
-            gradient="linear-gradient(180deg, #082047 50%, #597ca7 100%)"
+            gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
             href="/servicios/limpieza-piscina"
           />
           <PuntualServiceCard
@@ -208,7 +208,7 @@ export default function Services() {
             title="Corte puntual de césped"
             description="Ideal para jardines que necesitan una puesta a punto rápida: corte uniforme y perfilado de bordes."
             price="Desde 70 €"
-            gradient="linear-gradient(180deg, #0d3828 50%, #bbf7d0 100%)"
+            gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
             href="/servicios/corte-cesped"
           />
           <PuntualServiceCard
@@ -216,7 +216,7 @@ export default function Services() {
             title="Desbroce de terrenos"
             description="Elimina hierba alta y maleza en parcelas o solares. Trabajo con desbrozadora profesional."
             price="Desde 0,30 € / m²"
-            gradient="linear-gradient(180deg, #382a0d 50%, #83731d 100%)"
+            gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
             href="/servicios/desbroce"
           />
           <PuntualServiceCard
@@ -224,28 +224,9 @@ export default function Services() {
             title="Recorte de setos y arbustos"
             description="Perfiles limpios y a la altura adecuada, con retirada de restos vegetales incluida."
             price="Desde 2 € / metro lineal"
-            gradient="linear-gradient(180deg, #573434 50%, #e99292 100%)"
+            gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
             href="/servicios/setos"
           />
-        </div>
-
-        {/* CTA */}
-        <div className="flex justify-center mt-6 gap-3">
-          <a
-            href="#contacto"
-            className="inline-block px-6 py-3 bg-blue-900 text-white rounded shadow border border-blue-300 font-semibold"
-            style={{ boxShadow: "0 2px 8px rgba(26,35,126,0.25)" }}
-          >
-            Solicita tu presupuesto
-          </a>
-          <a
-            href={process.env.NEXT_PUBLIC_WA_LINK || `https://wa.me/${process.env.NEXT_PUBLIC_WA_NUMBER || '34625199394'}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block px-6 py-3 bg-green-600 text-white rounded shadow border border-green-300 font-semibold"
-          >
-            WhatsApp
-          </a>
         </div>
       </div>
     </section>

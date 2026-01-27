@@ -32,8 +32,9 @@ type CalculateRequest = {
 export function estimatePrice(
   pricing: PricingTable,
   req: CalculateRequest
-): number | null {
+): { total: number; desglose: Record<string, { nombre: string; precio: number }> } | { errores: string[] } | null {
   let total = 0;
+  const desglose: Record<string, { nombre: string; precio: number }> = {};
   const errors: string[] = [];
   // municipio validation (must be in LOCATIONS slug list)
   if (!LOCATIONS.some(l => l.slug === req.municipio)) {
@@ -63,14 +64,7 @@ export function estimatePrice(
     if (limit && valor > limit) errors.push(`valor_excede_max_${id}`);
   });
   if (errors.length) {
-    return {
-      servicios: req.servicios,
-      municipio: req.municipio,
-      frecuencia: (req as any).frecuencia,
-      total: 0,
-      desglose: {},
-      errores: errors
-    } as any;
+    return { errores: errors };
   }
   for (const item of req.servicios) {
     const servicio = pricing.servicios.find((s) => s.id === item.id);
@@ -129,8 +123,18 @@ export function estimatePrice(
       price += servicio.municipios[req.municipio.toLowerCase()];
     }
 
+    // Guardar en el desglose
+    const precioFinal = Number(price.toFixed(2));
+    desglose[item.id] = {
+      nombre: servicio.nombre,
+      precio: precioFinal
+    };
+
     total += price;
   }
-  // Mantener dos decimales
-  return Number(total.toFixed(2));
+  // Mantener dos decimales y devolver con desglose
+  return {
+    total: Number(total.toFixed(2)),
+    desglose
+  };
 }

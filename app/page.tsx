@@ -2,6 +2,7 @@ import React from "react";
 import { SITE, BUSINESS } from "../lib/seo";
 import Hero from "./components/Hero";
 import Services from "./components/Services";
+import CtaCalculator from "./components/CtaCalculator";
 import HowWeWork from "./components/HowWeWork";
 import ContactForm from "./components/ContactForm";
 import ReviewsStars from "./components/ReviewsStars";
@@ -75,6 +76,7 @@ export default function Page() {
       <BreadcrumbJsonLd />
       <Hero />
       <Services />
+      <CtaCalculator />
       <ReviewsStars />
       <HowWeWork />
       <ContactForm />
