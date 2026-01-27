@@ -1,20 +1,14 @@
 import { SITE } from "../lib/seo";
+import { MetadataRoute } from "next";
 
-export const runtime = "edge";
-
-export default function robots() {
-  return new Response(
-    [
-      "User-agent: *",
-      "Allow: /",
-      "Disallow: /api/",
-      `Sitemap: ${SITE.baseUrl}/sitemap.xml`,
-      `Host: ${SITE.baseUrl}`,
-    ].join("\n"),
-    {
-      headers: {
-        "Content-Type": "text/plain",
-      },
-    }
-  );
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      disallow: ["/api/", "/analitica-qr"],
+    },
+    sitemap: `${SITE.baseUrl}/sitemap.xml`,
+    host: SITE.baseUrl,
+  };
 }

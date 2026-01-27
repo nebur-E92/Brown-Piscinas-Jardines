@@ -1,35 +1,30 @@
 import { SITE, SERVICES, LOCATIONS } from "../lib/seo";
+import { MetadataRoute } from "next";
 
-export const runtime = "edge";
-
-export default function sitemap() {
-  const urls = [
-    SITE.baseUrl,
-    `${SITE.baseUrl}/servicios`,
-    `${SITE.baseUrl}/zonas`,
-    `${SITE.baseUrl}/calcular-precio`,
-    `${SITE.baseUrl}/opiniones`,
-    `${SITE.baseUrl}/trabajos`,
-    `${SITE.baseUrl}/contacto`,
-    `${SITE.baseUrl}/legal/aviso-legal`,
-    `${SITE.baseUrl}/legal/privacidad`,
-    `${SITE.baseUrl}/legal/cookies`,
-    ...SERVICES.map(s => `${SITE.baseUrl}/servicios/${s.slug}`),
-    ...LOCATIONS.map(l => `${SITE.baseUrl}/zonas/${l.slug}`),
+export default function sitemap(): MetadataRoute.Sitemap {
+  const routes = [
+    "",
+    "/servicios",
+    "/zonas",
+    "/calcular-precio",
+    "/opiniones",
+    "/trabajos",
+    "/sobre-nosotros",
+    "/contacto",
+    "/legal/aviso-legal",
+    "/legal/privacidad",
+    "/legal/cookies",
   ];
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls
-  .map(
-    url => `<url><loc>${url}</loc><lastmod>${new Date().toISOString()}</lastmod></url>`
-  )
-  .join("\n")}
-</urlset>`;
+  const serviceRoutes = SERVICES.map(s => `/servicios/${s.slug}`);
+  const locationRoutes = LOCATIONS.map(l => `/zonas/${l.slug}`);
 
-  return new Response(xml, {
-    headers: {
-      "Content-Type": "application/xml",
-    },
-  });
+  const allRoutes = [...routes, ...serviceRoutes, ...locationRoutes];
+
+  return allRoutes.map(route => ({
+    url: `${SITE.baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: route === "" ? "daily" : "weekly",
+    priority: route === "" ? 1.0 : route.includes("/servicios/") || route.includes("/calcular-precio") ? 0.8 : 0.6,
+  }));
 }
