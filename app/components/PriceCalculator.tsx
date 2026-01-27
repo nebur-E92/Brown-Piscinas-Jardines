@@ -189,7 +189,7 @@ export default function PriceCalculator() {
           {fieldErrors[s.id] && (
             <p className="mt-1 text-xs text-red-600">{fieldErrors[s.id]}</p>
           )}
-          <p className="text-xs text-neutral-600 mt-1 bg-blue-50 p-2 rounded border border-blue-200">
+          <p className="text-xs text-neutral-600 mt-1 bg-gray-50 p-2 rounded border border-gray-200">
             💰 <strong>Tarifas por tramos:</strong><br/>
             • Hasta 250 m²: <strong>0,55 €/m²</strong><br/>
             • 251-500 m²: <strong>0,45 €/m²</strong><br/>
@@ -222,7 +222,7 @@ export default function PriceCalculator() {
           {fieldErrors[s.id] && (
             <p className="mt-1 text-xs text-red-600">{fieldErrors[s.id]}</p>
           )}
-          <p className="text-xs text-neutral-600 mt-1 bg-blue-50 p-2 rounded border border-blue-200">
+          <p className="text-xs text-neutral-600 mt-1 bg-gray-50 p-2 rounded border border-gray-200">
             💰 <strong>Tarifas por tramos:</strong><br/>
             • Hasta 30 ml: <strong>{precioBase} €/ml</strong><br/>
             • 31-60 ml: <strong>{precioMedio} €/ml</strong><br/>
@@ -404,13 +404,13 @@ export default function PriceCalculator() {
                   <button
                     type="button"
                     onClick={() => setInfoVisible(infoVisible === s.id ? null : s.id)}
-                    className="text-blue-600 hover:text-blue-800 font-bold text-lg leading-none"
+                    className="text-gray-600 hover:text-black font-bold text-lg leading-none"
                     title="Ver qué incluye"
                   >
                     ℹ️
                   </button>
                   {infoVisible === s.id && SERVICE_INFO[s.id] && (
-                    <div className="absolute z-10 mt-8 ml-4 w-72 sm:w-80 max-w-[calc(100vw-2rem)] p-3 bg-white border-2 border-blue-300 rounded-lg shadow-lg text-xs text-gray-700">
+                    <div className="absolute z-10 mt-8 ml-4 w-72 sm:w-80 max-w-[calc(100vw-2rem)] p-3 bg-white border-2 border-gray-300 rounded-lg shadow-lg text-xs text-gray-700">
                       <button
                         type="button"
                         onClick={() => setInfoVisible(null)}
@@ -437,14 +437,14 @@ export default function PriceCalculator() {
                   <button
                     type="button"
                     onClick={() => setInfoVisible(infoVisible === s.id ? null : s.id)}
-                    className="text-blue-600 hover:text-blue-800 text-sm underline"
+                    className="text-gray-600 hover:text-black text-sm underline"
                     title="Ver qué incluye"
                   >
                     ¿Qué incluye?
                   </button>
                 </div>
                 {infoVisible === s.id && SERVICE_INFO[s.id] && (
-                  <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded text-xs text-gray-700">
+                  <div className="mb-3 p-3 bg-gray-50 border border-gray-200 rounded text-xs text-gray-700">
                     <p>{SERVICE_INFO[s.id]}</p>
                   </div>
                 )}
@@ -475,31 +475,31 @@ export default function PriceCalculator() {
             type="button"
             onClick={calcular}
             disabled={selectedIds.length === 0 || loading}
-            className="bg-green-600 text-white px-6 py-3 rounded w-full mb-4 disabled:opacity-50 font-semibold hover:bg-green-700 transition"
+            className="bg-black text-white px-6 py-3 rounded w-full mb-4 disabled:opacity-50 font-semibold hover:bg-gray-800 transition"
           >
             {loading ? "Calculando..." : "Calcular precio"}
           </button>
 
           {precio !== null && (
-            <div className="mb-4 p-4 bg-green-50 border-2 border-green-200 rounded">
+            <div className="mb-4 p-4 bg-gray-50 border-2 border-gray-300 rounded">
               {desglose && Object.keys(desglose).length > 1 && (
-                <div className="mb-4 pb-4 border-b-2 border-green-300">
-                  <p className="text-sm font-semibold text-green-800 mb-3">💰 Desglose por servicio:</p>
+                <div className="mb-4 pb-4 border-b-2 border-gray-400">
+                  <p className="text-sm font-semibold text-black mb-3">💰 Desglose por servicio:</p>
                   <div className="space-y-2">
                     {Object.entries(desglose).map(([id, item]: [string, any]) => (
                       <div key={id} className="flex justify-between items-center text-sm">
                         <span className="text-gray-700">{item.nombre}</span>
-                        <span className="font-semibold text-green-700">{item.precio.toFixed(2)} €</span>
+                        <span className="font-semibold text-black">{item.precio.toFixed(2)} €</span>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
               <div className="flex justify-between items-center">
-                <p className="text-xl font-bold text-green-800">
+                <p className="text-xl font-bold text-black">
                   {desglose && Object.keys(desglose).length > 1 ? 'Total:' : 'Precio orientativo:'}
                 </p>
-                <p className="text-2xl font-bold text-green-800">
+                <p className="text-2xl font-bold text-black">
                   {precio.toFixed(2)} €
                 </p>
               </div>

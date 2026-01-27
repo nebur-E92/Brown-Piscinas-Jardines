@@ -78,7 +78,7 @@ export default function OpinionesClient() {
           href={gbpUrl} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className="inline-block px-6 py-3 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition font-semibold"
+          className="inline-block px-6 py-3 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold"
         >
           Ver reseñas en Google
         </a>

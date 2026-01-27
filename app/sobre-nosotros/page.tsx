@@ -85,20 +85,20 @@ export default function SobreNosotrosPage() {
           <div>
             <h2 className="text-2xl font-bold mb-4">¿Por qué elegirnos?</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-blue-50 p-4 rounded">
-                <h3 className="font-bold text-blue-900 mb-2">Servicio claro y sin sorpresas</h3>
+              <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                <h3 className="font-bold text-black mb-2">Servicio claro y sin sorpresas</h3>
                 <p className="text-sm text-gray-700">Sabes desde el principio qué incluye cada servicio y qué no.</p>
               </div>
-              <div className="bg-green-50 p-4 rounded">
-                <h3 className="font-bold text-green-900 mb-2">Especialización real en exterior</h3>
+              <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                <h3 className="font-bold text-black mb-2">Especialización real en exterior</h3>
                 <p className="text-sm text-gray-700">No somos multiservicios genéricos: solo piscinas y jardines.</p>
               </div>
-              <div className="bg-yellow-50 p-4 rounded">
-                <h3 className="font-bold text-yellow-900 mb-2">Flexibilidad sin permanencias</h3>
+              <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                <h3 className="font-bold text-black mb-2">Flexibilidad sin permanencias</h3>
                 <p className="text-sm text-gray-700">Mantenimientos mensuales, trabajos puntuales o refuerzos estacionales.</p>
               </div>
-              <div className="bg-purple-50 p-4 rounded">
-                <h3 className="font-bold text-purple-900 mb-2">Atención directa y trato personal</h3>
+              <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                <h3 className="font-bold text-black mb-2">Atención directa y trato personal</h3>
                 <p className="text-sm text-gray-700">Sin call centers ni intermediarios.</p>
               </div>
             </div>
@@ -131,9 +131,9 @@ export default function SobreNosotrosPage() {
               ¿Tienes dudas o necesitas presupuesto? Nos encantaría ayudarte:
             </p>
             <div className="space-y-2">
-              <p><strong>Teléfono:</strong> <a href={`tel:${BUSINESS.phone}`} className="text-blue-600 hover:underline">{BUSINESS.phone}</a></p>
-              <p><strong>WhatsApp:</strong> <a href={`https://wa.me/${BUSINESS.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Chat directo</a></p>
-              <p><strong>Email:</strong> <a href={`mailto:${BUSINESS.email}`} className="text-blue-600 hover:underline">{BUSINESS.email}</a></p>
+              <p><strong>Teléfono:</strong> <a href={`tel:${BUSINESS.phone}`} className="text-black hover:underline font-semibold">{BUSINESS.phone}</a></p>
+              <p><strong>WhatsApp:</strong> <a href={`https://wa.me/${BUSINESS.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-black hover:underline font-semibold">Chat directo</a></p>
+              <p><strong>Email:</strong> <a href={`mailto:${BUSINESS.email}`} className="text-black hover:underline font-semibold">{BUSINESS.email}</a></p>
               <p><strong>Horario:</strong> Lunes a Sábado, 09:00 - 20:00</p>
             </div>
           </div>
