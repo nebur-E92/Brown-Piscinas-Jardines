@@ -39,6 +39,9 @@ export default function Footer() {
                 <a href="/legal/aviso-legal" className="underline">Aviso legal</a>
               </li>
               <li><CookieManageLink /></li>
+              <li>
+                <a href="/panel-login" className="underline">Acceso panel</a>
+              </li>
             </ul>
           </div>
           {/* Columna 3 */}
