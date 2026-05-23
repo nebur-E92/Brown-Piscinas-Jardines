@@ -2,7 +2,7 @@
 const nextConfig = {
   images: { unoptimized: true },
   reactStrictMode: true,
-  experimental: { typedRoutes: true },
+  experimental: {},
   async headers() {
     return [
       {
