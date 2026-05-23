@@ -1,0 +1,75 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "../../../../../lib/panel/auth";
+import { getDb } from "../../../../../lib/panel/db";
+import { Resend } from "resend";
+
+type Params = Promise<{ id: string }>;
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const ESTADOS = ["pendiente", "confirmada", "cancelada"];
+const TIPOS   = ["visita_tecnica","cesped","piscina","setos","desbroce","otro"];
+const FRANJAS = ["manana","tarde"];
+
+export async function PATCH(req: NextRequest, { params }: { params: Params }) {
+  if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
+
+  const { id } = await params;
+  const body = await req.json();
+  const sql = getDb();
+
+  // ── Edición completa de la reserva ────────────────────────────────────────
+  if (body.modo === "editar") {
+    const { fecha, franja, tipo, nombre, email, telefono, municipio, notas } = body;
+    if (!fecha || !FRANJAS.includes(franja) || !TIPOS.includes(tipo)) {
+      return NextResponse.json({ error: "Datos no válidos." }, { status: 400 });
+    }
+    await sql`
+      UPDATE reservas SET
+        fecha     = ${fecha}::date,
+        franja    = ${franja},
+        tipo      = ${tipo},
+        nombre    = COALESCE(${nombre ?? null}, nombre),
+        email     = COALESCE(${email  ?? null}, email),
+        telefono  = ${telefono  ?? null},
+        municipio = ${municipio ?? null},
+        notas     = ${notas     ?? null}
+      WHERE id = ${id}
+    `;
+    return NextResponse.json({ ok: true });
+  }
+
+  // ── Cambio de estado (confirmar / cancelar) ───────────────────────────────
+  const { estado } = body;
+  if (!ESTADOS.includes(estado)) return NextResponse.json({ error: "Estado no válido." }, { status: 400 });
+
+  const [reserva] = await sql<{ nombre: string; email: string; fecha: string; franja: string }[]>`
+    SELECT nombre, email, fecha::text, franja FROM reservas WHERE id = ${id}
+  `;
+
+  await sql`UPDATE reservas SET estado = ${estado} WHERE id = ${id}`;
+
+  if (reserva?.email && (estado === "confirmada" || estado === "cancelada")) {
+    const fechaLabel  = new Date(reserva.fecha + "T12:00:00").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
+    const franjaLabel = reserva.franja === "manana" ? "Mañana (9:00–14:00)" : "Tarde (15:00–19:00)";
+    try {
+      await resend.emails.send({
+        from: "Brown Piscinas <noreply@brownpiscinasyjardines.com>",
+        to:   reserva.email,
+        subject: estado === "confirmada" ? `✅ Cita confirmada — ${fechaLabel}` : `Cita cancelada — Brown Piscinas & Jardines`,
+        html: estado === "confirmada"
+          ? `<div style="font-family:sans-serif;max-width:560px"><h2 style="color:#111">✅ Tu cita está confirmada</h2><p>Hola <strong>${reserva.nombre}</strong>,</p><p>Tu cita ha sido confirmada para el <strong style="text-transform:capitalize">${fechaLabel}</strong>, ${franjaLabel}.</p><p>Si necesitas cambiarla escríbenos a <a href="mailto:brownpiscinasyjardines@gmail.com">brownpiscinasyjardines@gmail.com</a> o por <a href="https://wa.me/34625199394">WhatsApp</a>.</p></div>`
+          : `<div style="font-family:sans-serif;max-width:560px"><h2 style="color:#111">Tu cita ha sido cancelada</h2><p>Hola <strong>${reserva.nombre}</strong>,</p><p>Hemos tenido que cancelar tu cita del <strong>${fechaLabel}</strong>. Contáctanos para buscar otra fecha.</p><p><a href="https://wa.me/34625199394">WhatsApp: 625 199 394</a></p></div>`,
+      });
+    } catch (e) { console.error("Error email:", e); }
+  }
+
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(_req: NextRequest, { params }: { params: Params }) {
+  if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
+  const { id } = await params;
+  const sql = getDb();
+  await sql`DELETE FROM reservas WHERE id = ${id}`;
+  return NextResponse.json({ ok: true });
+}

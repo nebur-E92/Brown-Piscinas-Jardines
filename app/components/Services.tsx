@@ -1,0 +1,234 @@
+import Image from "next/image";
+
+type MonthlyServiceCardProps = {
+  image: string;
+  title: string;
+  description: string;
+  advantages: string[];
+  price: string;
+  href?: string;
+};
+
+type SimpleMonthlyCardProps = {
+  title: string;
+  description: string;
+  includes: string[];
+  price: string;
+  bgImage: string;
+  href?: string;
+};
+
+type PuntualServiceCardProps = {
+  image: string;
+  title: string;
+  description: string;
+  price: string;
+  gradient: string;
+  href?: string;
+};
+
+function MonthlyServiceCard({
+  image,
+  title,
+  description,
+  advantages,
+  price,
+  href,
+}: MonthlyServiceCardProps) {
+  return (
+  <a href={href || "#"} className="mx-auto max-w-7xl flex flex-col md:flex-row items-start bg-black text-white rounded-xl shadow-xl mb-12 border p-6 gap-6 sm:gap-10 lg:gap-20 no-underline">
+      <div className="flex-shrink-0 md:w-[340px]">
+        <div className="bg-white rounded-xl p-1">
+          <Image
+            src={image}
+            alt={title}
+            width={340}
+            height={255}
+            className="rounded-xl border border-white w-[340px] h-[255px] object-cover"
+            priority
+          />
+        </div>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-4">
+        <h4 className="text-2xl font-bold">{title}</h4>
+        <p className="font-semibold">{description}</p>
+        <div>
+          <span className="font-bold">Ventajas:</span>
+          <ul className="list-disc ml-6">
+            {advantages.map((adv, i) => (
+              <li key={i}>{adv}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="text-3xl sm:text-4xl font-bold mt-2">{price}</div>
+      </div>
+    </a>
+  );
+}
+
+function SimpleMonthlyCard({
+  title,
+  description,
+  includes,
+  price,
+  bgImage,
+  href,
+}: SimpleMonthlyCardProps) {
+  return (
+    <a href={href || "#"}
+      className="relative flex flex-col items-center justify-center rounded-2xl shadow-lg overflow-hidden w-full min-h-[220px] aspect-[4/5] sm:aspect-[16/9]"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+  <div className="absolute inset-0 bg-black/40 rounded-2xl" />
+  <div className="relative flex flex-col h-full justify-center items-center text-center pt-8 sm:pt-10 pb-8 sm:pb-10 px-6 text-white gap-4">
+        <div>
+          <h4 className="text-2xl font-bold">{title}</h4>
+          <p className="mt-1 font-semibold">{description}</p>
+        </div>
+        <div>
+          <span className="font-bold">Incluye:</span>
+          <ul className="list-disc mt-1 text-sm text-left inline-block">
+            {includes.map((inc, i) => (
+              <li key={i}>{inc}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="text-3xl font-bold mt-2">{price}</div>
+      </div>
+    </a>
+  );
+}
+
+function PuntualServiceCard({
+  image,
+  title,
+  description,
+  price,
+  gradient,
+  href,
+}: PuntualServiceCardProps) {
+  return (
+    <a href={href || "#"}
+      className="flex flex-col rounded-xl overflow-hidden shadow-lg"
+      style={{ background: gradient }}
+    >
+      <div className="w-full h-[200px] sm:h-[220px]">
+        <Image
+          src={image}
+          alt={title}
+          width={600}
+          height={300}
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="w-full p-6 sm:p-8 text-white">
+        <h4 className="text-lg font-bold">{title}</h4>
+        <p className="mt-1 mb-3 font-medium">{description}</p>
+        <div className="text-xl font-bold">{price}</div>
+      </div>
+    </a>
+  );
+}
+
+export default function Services() {
+  return (
+    <section id="servicios" className="py-12 sm:py-16 bg-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Títulos */}
+        <h2 className="text-center text-3xl sm:text-4xl font-urbanist mb-4">
+          SERVICIOS DE BROWN PISCINAS &amp; JARDINES
+        </h2>
+        <h3 className="text-center text-2xl font-urbanist font-light mb-10 sm:mb-12">
+          MANTENIMIENTOS MENSUALES
+        </h3>
+
+        {/* Tarjeta principal combinada */}
+        <MonthlyServiceCard
+          image="/images/service-combined.webp"
+          title="Mantenimiento Combinado Piscina + Jardín"
+          description="La solución más completa y económica: mantenimiento integral de tu piscina y jardín en una misma visita."
+          advantages={[
+            "Ahorro frente a contratar servicios por separado.",
+            "Informe único de estado de piscina y jardín.",
+            "Optimización de desplazamientos y tiempos.",
+          ]}
+          price="Consultar"
+          href="/servicios/mantenimiento-combinado"
+        />
+
+        {/* Tarjetas piscina y jardín */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <SimpleMonthlyCard
+            title="Mantenimiento de Piscina"
+            description="Disfruta de tu piscina siempre limpia y lista para el baño."
+            includes={[
+              "Limpieza de superficie y fondo.",
+              "Cepillado de paredes y línea de flotación.",
+              "Revisión de skimmers, prefiltro y bomba.",
+              "Control y ajuste de pH, cloro y otros parámetros.",
+            ]}
+            price="Desde 1,20 €/m² de lámina"
+            bgImage="/images/service-pool.png"
+            href="/servicios/mantenimiento-piscina"
+          />
+          <SimpleMonthlyCard
+            title="Mantenimiento de Jardín"
+            description="Un jardín cuidado todo el año, verde y saludable."
+            includes={[
+              "Corte de césped y perfilado de bordes.",
+              "Riego y revisión del sistema.",
+              "Eliminación de hierbas no deseadas.",
+              "Revisión general de plantas ornamentales.",
+            ]}
+            price="Desde 0,18 €/m²"
+            bgImage="/images/service-garden.webp"
+            href="/servicios/mantenimiento-jardin"
+          />
+        </div>
+
+        {/* Servicios puntuales */}
+        <h3 className="text-center text-3xl font-urbanist mb-8 sm:mb-12">
+          SERVICIOS PUNTUALES
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12">
+          <PuntualServiceCard
+            image="/images/service-poolclean.webp"
+            title="Limpieza puntual de piscina"
+            description="Recupera tu piscina en una sola visita: limpieza a fondo y ajuste de parámetros para que vuelva a estar lista."
+            price="Desde 55 €"
+            gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
+            href="/servicios/limpieza-piscina"
+          />
+          <PuntualServiceCard
+            image="/images/service-mow.webp"
+            title="Corte puntual de césped"
+            description="Ideal para jardines que necesitan una puesta a punto rápida: corte uniforme y perfilado de bordes."
+            price="Desde 45 €"
+            gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
+            href="/servicios/corte-cesped"
+          />
+          <PuntualServiceCard
+            image="/images/service-desbroce.webp"
+            title="Desbroce de terrenos"
+            description="Elimina hierba alta y maleza en parcelas o solares. Trabajo con desbrozadora profesional."
+            price="Desde 0,35 €/m²"
+            gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
+            href="/servicios/desbroce"
+          />
+          <PuntualServiceCard
+            image="/images/service-hedge.webp"
+            title="Recorte de setos y arbustos"
+            description="Perfiles limpios y a la altura adecuada, con retirada de restos vegetales incluida."
+            price="Desde 3,50 €/ml"
+            gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
+            href="/servicios/setos"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
