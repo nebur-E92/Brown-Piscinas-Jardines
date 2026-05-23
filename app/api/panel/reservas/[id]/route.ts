@@ -5,7 +5,6 @@ import { Resend } from "resend";
 
 type Params = Promise<{ id: string }>;
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const ESTADOS = ["pendiente", "confirmada", "cancelada"];
 const TIPOS   = ["visita_tecnica","cesped","piscina","setos","desbroce","otro"];
 const FRANJAS = ["manana","tarde"];
@@ -49,6 +48,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   await sql`UPDATE reservas SET estado = ${estado} WHERE id = ${id}`;
 
   if (reserva?.email && (estado === "confirmada" || estado === "cancelada")) {
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      console.warn("RESEND_API_KEY no configurado; se omite el email de estado de reserva.");
+      return NextResponse.json({ ok: true });
+    }
+
+    const resend = new Resend(resendApiKey);
     const fechaLabel  = new Date(reserva.fecha + "T12:00:00").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
     const franjaLabel = reserva.franja === "manana" ? "Mañana (9:00–14:00)" : "Tarde (15:00–19:00)";
     try {

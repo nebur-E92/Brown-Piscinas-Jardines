@@ -3,8 +3,6 @@ import { Resend } from "resend";
 import { addQRConversion } from "../../../lib/qrStore";
 import { getDb } from "../../../lib/panel/db";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: NextRequest) {
   const form = await req.formData();
   const p = Object.fromEntries(form.entries()) as Record<string, string>;
@@ -34,6 +32,13 @@ export async function POST(req: NextRequest) {
 
   // ── 2. Email de notificación vía Resend ───────────────────────────────────
   try {
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const notifyEmail = process.env.NOTIFY_EMAIL;
+    if (!resendApiKey || !notifyEmail) {
+      console.warn("RESEND_API_KEY o NOTIFY_EMAIL no configurados; se omite el envío de email.");
+    } else {
+      const resend = new Resend(resendApiKey);
+
     const lineas: string[] = [];
     if (p.nombre)    lineas.push(`<b>Nombre:</b> ${p.nombre}`);
     if (p.email)     lineas.push(`<b>Email:</b> ${p.email}`);
@@ -46,26 +51,27 @@ export async function POST(req: NextRequest) {
     if (p.precio)    lineas.push(`<b>Precio estimado:</b> ${p.precio}`);
     if (p.mensaje)   lineas.push(`<b>Mensaje:</b><br>${p.mensaje.replace(/\n/g, "<br>")}`);
 
-    await resend.emails.send({
-      from:    "Brown Piscinas <noreply@brownpiscinasyjardines.com>",
-      to:      process.env.NOTIFY_EMAIL!,
-      replyTo: p.email || undefined,
-      subject: `Nuevo contacto${p.nombre ? ` de ${p.nombre}` : ""}${p.municipio ? ` — ${p.municipio}` : ""}`,
-      html: `
-        <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
-          <h2 style="color:#111;border-bottom:2px solid #111;padding-bottom:8px">
-            🌱 Nuevo contacto — Brown Piscinas &amp; Jardines
-          </h2>
-          <table style="width:100%;border-collapse:collapse">
-            ${lineas.map(l => `<tr><td style="padding:6px 0;border-bottom:1px solid #eee">${l}</td></tr>`).join("")}
-          </table>
-          <p style="margin-top:24px;font-size:12px;color:#999">
-            Puedes ver todos los contactos en el
-            <a href="https://brownpiscinasyjardines.com/panel">panel de gestión</a>.
-          </p>
-        </div>
-      `,
-    });
+      await resend.emails.send({
+        from:    "Brown Piscinas <noreply@brownpiscinasyjardines.com>",
+        to:      notifyEmail,
+        replyTo: p.email || undefined,
+        subject: `Nuevo contacto${p.nombre ? ` de ${p.nombre}` : ""}${p.municipio ? ` — ${p.municipio}` : ""}`,
+        html: `
+          <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+            <h2 style="color:#111;border-bottom:2px solid #111;padding-bottom:8px">
+              🌱 Nuevo contacto — Brown Piscinas &amp; Jardines
+            </h2>
+            <table style="width:100%;border-collapse:collapse">
+              ${lineas.map(l => `<tr><td style="padding:6px 0;border-bottom:1px solid #eee">${l}</td></tr>`).join("")}
+            </table>
+            <p style="margin-top:24px;font-size:12px;color:#999">
+              Puedes ver todos los contactos en el
+              <a href="https://brownpiscinasyjardines.com/panel">panel de gestión</a>.
+            </p>
+          </div>
+        `,
+      });
+    }
   } catch (e) {
     console.error("Error enviando email con Resend:", e);
   }
