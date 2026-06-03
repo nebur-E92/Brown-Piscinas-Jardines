@@ -16,6 +16,7 @@ export default function NuevoClientePage() {
   const [municipio, setMunicipio] = useState(searchParams.get("municipio") ?? "");
   const [direccion, setDireccion] = useState("");
   const [notas,     setNotas]     = useState(searchParams.get("notas") ?? "");
+  const leadId = searchParams.get("lead_id") ?? "";
   const [error,     setError]     = useState<string | null>(null);
   const [loading,   setLoading]   = useState(false);
 
@@ -28,7 +29,7 @@ export default function NuevoClientePage() {
       const res = await fetch("/api/panel/clientes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, telefono, email, municipio, direccion, notas }),
+        body: JSON.stringify({ nombre, telefono, email, municipio, direccion, notas, lead_id: leadId }),
       });
       const data = await res.json();
 
@@ -53,6 +54,11 @@ export default function NuevoClientePage() {
       </Link>
 
       <h1 className="text-xl font-bold mb-6">Nuevo cliente</h1>
+      {leadId && (
+        <p className="mb-4 text-xs text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+          Datos precargados desde lead. Al crear el cliente, el lead quedará marcado como convertido.
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Field label="Nombre *">

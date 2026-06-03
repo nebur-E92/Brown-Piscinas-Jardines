@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { MAX_POR_FRANJA } from "../../../lib/panel/reservas";
 
 // ─── tipos ────────────────────────────────────────────────────────────────────
 
@@ -39,8 +40,6 @@ const MUNICIPIOS = [
 const MESES_ES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const DIAS_ES  = ["L","M","X","J","V","S","D"];
 
-const MAX_POR_FRANJA = 3; // máximo reservas por franja y día
-
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
 function toISO(d: Date): string {
@@ -66,6 +65,12 @@ function franjaDisponible(iso: string, franja: Franja, ocupacion: Ocupacion): bo
   const ocu = ocupacion[iso];
   if (!ocu) return true;
   return ocu[franja] < MAX_POR_FRANJA;
+}
+
+function huecosDia(iso: string, ocupacion: Ocupacion): number {
+  const ocu = ocupacion[iso];
+  if (!ocu) return MAX_POR_FRANJA * 2;
+  return Math.max(0, (MAX_POR_FRANJA * 2) - ocu.manana - ocu.tarde);
 }
 
 // ─── Calendario ───────────────────────────────────────────────────────────────
@@ -134,21 +139,26 @@ function Calendario({
           const disponible = esDisponible(iso, ocupacion);
           const esDom = d.getDay() === 0;
           const pasado = iso <= toISO(new Date());
+          const completo = !pasado && !esDom && !esFestivo(iso) && !disponible;
           const activo = iso === seleccionado;
+          const huecos = huecosDia(iso, ocupacion);
 
           return (
             <button
               key={i}
               disabled={!disponible}
               onClick={() => onSelect(iso)}
+              title={completo ? "Completo" : !disponible ? "No disponible" : `${huecos} huecos disponibles`}
               className={`
-                aspect-square flex items-center justify-center rounded-lg text-sm font-medium transition-all
+                aspect-square flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all
                 ${activo ? "bg-black text-white shadow-md" : ""}
                 ${!activo && disponible ? "hover:bg-neutral-100 text-neutral-800" : ""}
-                ${!disponible || esDom || pasado ? "text-neutral-300 cursor-not-allowed" : ""}
+                ${!activo && completo ? "bg-red-50 text-red-500 line-through cursor-not-allowed" : ""}
+                ${!activo && !completo && (!disponible || esDom || pasado) ? "text-neutral-300 cursor-not-allowed" : ""}
               `}
             >
-              {dia}
+              <span>{dia}</span>
+              {completo && <span className="mt-0.5 text-[9px] font-semibold no-underline">Completo</span>}
             </button>
           );
         })}

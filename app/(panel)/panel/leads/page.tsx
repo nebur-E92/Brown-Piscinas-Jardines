@@ -32,6 +32,24 @@ function formatFecha(iso: string) {
   return d.toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
 }
 
+function clienteHref(lead: Lead) {
+  const params = new URLSearchParams();
+  params.set("lead_id", lead.id);
+  if (lead.nombre) params.set("nombre", lead.nombre);
+  if (lead.email) params.set("email", lead.email);
+  if (lead.telefono) params.set("telefono", lead.telefono);
+  if (lead.municipio) params.set("municipio", lead.municipio);
+
+  const pistas = [
+    lead.servicio || lead.servicios ? `Servicio: ${lead.servicios || lead.servicio}` : "",
+    lead.precio ? `Estimación: ${lead.precio}` : "",
+    lead.mensaje ? `Mensaje: ${lead.mensaje}` : "",
+  ].filter(Boolean);
+  if (pistas.length > 0) params.set("notas", pistas.join("\n"));
+
+  return `/panel/clientes/nuevo?${params.toString()}`;
+}
+
 export default async function LeadsPage() {
   if (!(await getSession())) redirect("/panel-login");
 
@@ -115,6 +133,12 @@ export default async function LeadsPage() {
                       WhatsApp
                     </a>
                   )}
+                  <Link
+                    href={clienteHref(lead)}
+                    className="text-xs px-3 py-1.5 border border-black text-black rounded-lg hover:bg-black hover:text-white transition"
+                  >
+                    Crear cliente
+                  </Link>
                   <AccionesLead leadId={lead.id} estadoActual={lead.estado} />
                 </div>
               </div>

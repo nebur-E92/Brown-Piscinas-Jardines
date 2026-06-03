@@ -1,7 +1,5 @@
 import type postgres from "postgres";
-import { FRANJAS, type Franja } from "./reservas";
-
-export const MAX_POR_FRANJA = 3;
+import { FRANJAS, MAX_POR_FRANJA, type Franja } from "./reservas";
 
 export type OcupacionDia = Record<Franja, number>;
 export type Ocupacion = Record<string, OcupacionDia>;
@@ -63,4 +61,3 @@ export async function getOcupacion(sql: postgres.Sql, desde: string, hasta: stri
 
   return ocupacion;
 }
-

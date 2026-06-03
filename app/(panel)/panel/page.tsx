@@ -37,7 +37,22 @@ async function getData() {
     LIMIT 8
   `;
 
-  return { kpi, proximas };
+  const manana = await sql<Proxima[]>`
+    SELECT
+      v.id,
+      v.fecha::text,
+      v.tipo,
+      v.precio::text,
+      c.nombre AS cliente_nombre,
+      p.municipio AS propiedad_municipio
+    FROM visitas v
+    JOIN propiedades p ON p.id = v.propiedad_id
+    JOIN clientes c    ON c.id = p.cliente_id
+    WHERE v.estado = 'programada' AND v.fecha = current_date + 1
+    ORDER BY c.nombre
+  `;
+
+  return { kpi, proximas, manana };
 }
 
 function fmt(date: string) {
@@ -55,7 +70,7 @@ const TIPO_LABEL: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const { kpi, proximas } = await getData();
+  const { kpi, proximas, manana } = await getData();
 
   const hoy = new Date().toISOString().slice(0, 10);
   const visitasHoy = proximas.filter((v) => v.fecha === hoy);
@@ -106,6 +121,40 @@ export default async function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Visitas de mañana */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
+            Mañana
+          </h2>
+          <Link href="/panel/agenda" className="text-xs text-black underline">
+            Ver agenda
+          </Link>
+        </div>
+        {manana.length === 0 ? (
+          <div className="bg-white border rounded-xl shadow-sm px-4 py-3 text-sm text-neutral-400">
+            Sin visitas programadas para mañana.
+          </div>
+        ) : (
+          <div className="bg-white border rounded-xl shadow-sm divide-y">
+            {manana.map((v) => (
+              <div key={v.id} className="flex items-center justify-between px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium">{v.cliente_nombre}</p>
+                  <p className="text-xs text-neutral-500">
+                    {TIPO_LABEL[v.tipo] ?? v.tipo}
+                    {v.propiedad_municipio ? ` · ${v.propiedad_municipio}` : ""}
+                  </p>
+                </div>
+                {v.precio && (
+                  <p className="text-sm font-semibold">{v.precio} €</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Próximas visitas */}
       <div>

@@ -26,6 +26,16 @@ type Bloqueo = {
   notas: string | null;
 };
 
+type Reserva = {
+  id: string;
+  fecha: string;
+  franja: string;
+  tipo: string;
+  estado: string;
+  nombre: string;
+  municipio: string | null;
+};
+
 const TIPO_LABEL: Record<string, string> = {
   mantenimiento: "Mantenimiento",
   puntual:       "Puntual",
@@ -39,6 +49,12 @@ const ESTADO_BADGE: Record<string, string> = {
   programada: "bg-blue-50 text-blue-700",
   completada: "bg-green-50 text-green-700",
   cancelada:  "bg-neutral-100 text-neutral-400 line-through",
+};
+
+const RESERVA_BADGE: Record<string, string> = {
+  pendiente: "bg-yellow-50 text-yellow-700",
+  confirmada: "bg-green-50 text-green-700",
+  cancelada: "bg-neutral-100 text-neutral-400 line-through",
 };
 
 const DIAS_ES = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -58,6 +74,10 @@ function addDays(date: Date, n: number): Date {
   const d = new Date(date);
   d.setDate(d.getDate() + n);
   return d;
+}
+
+function addMonths(date: Date, n: number): Date {
+  return new Date(date.getFullYear(), date.getMonth() + n, 1);
 }
 
 function toISODate(d: Date): string {
@@ -93,46 +113,82 @@ async function getBloqueos(desde: string, hasta: string): Promise<Bloqueo[]> {
   `;
 }
 
+async function getReservas(desde: string, hasta: string): Promise<Reserva[]> {
+  const sql = getDb();
+  return sql<Reserva[]>`
+    SELECT id, fecha::text, franja, tipo, estado, nombre, municipio
+    FROM reservas
+    WHERE fecha BETWEEN ${desde}::date AND ${hasta}::date
+      AND estado != 'cancelada'
+    ORDER BY fecha, franja
+  `;
+}
+
 export default async function AgendaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ semana?: string }>;
+  searchParams: Promise<{ semana?: string; vista?: string; mes?: string }>;
 }) {
   const sp = await searchParams;
+  const vista = sp.vista === "mes" ? "mes" : "semana";
 
-  // Determina el lunes de la semana a mostrar
-  const base = sp.semana ? new Date(sp.semana + "T12:00:00") : new Date();
-  const lunes = getLunes(base);
+  const baseSemana = sp.semana ? new Date(sp.semana + "T12:00:00") : new Date();
+  const lunes = getLunes(baseSemana);
   const domingo = addDays(lunes, 6);
+  const baseMes = sp.mes ? new Date(sp.mes + "-01T12:00:00") : new Date();
+  const mesActual = new Date(baseMes.getFullYear(), baseMes.getMonth(), 1);
+  const mesFin = new Date(baseMes.getFullYear(), baseMes.getMonth() + 1, 0);
 
-  const desde = toISODate(lunes);
-  const hasta = toISODate(domingo);
+  const desde = vista === "mes" ? toISODate(mesActual) : toISODate(lunes);
+  const hasta = vista === "mes" ? toISODate(mesFin) : toISODate(domingo);
 
-  const [visitas, bloqueos] = await Promise.all([
+  const [visitas, bloqueos, reservas] = await Promise.all([
     getVisitas(desde, hasta),
     getBloqueos(desde, hasta),
+    getReservas(desde, hasta),
   ]);
 
   // Navega semana anterior/siguiente
   const semanaAnterior = toISODate(addDays(lunes, -7));
   const semanaSiguiente = toISODate(addDays(lunes, 7));
+  const mesAnterior = `${addMonths(mesActual, -1).getFullYear()}-${String(addMonths(mesActual, -1).getMonth() + 1).padStart(2, "0")}`;
+  const mesSiguiente = `${addMonths(mesActual, 1).getFullYear()}-${String(addMonths(mesActual, 1).getMonth() + 1).padStart(2, "0")}`;
+  const mesParam = `${mesActual.getFullYear()}-${String(mesActual.getMonth() + 1).padStart(2, "0")}`;
 
   // Agrupa por día
-  const dias: { fecha: string; label: string; dayLabel: string; visitas: Visita[]; bloqueos: Bloqueo[] }[] = [];
+  const diasSemana: { fecha: string; label: string; dayLabel: string; visitas: Visita[]; bloqueos: Bloqueo[]; reservas: Reserva[] }[] = [];
   for (let i = 0; i < 7; i++) {
     const d = addDays(lunes, i);
     const fISO = toISODate(d);
-    dias.push({
+    diasSemana.push({
       fecha:    fISO,
       label:    `${DIAS_ES[i]} ${d.getDate()}`,
       dayLabel: `${d.getDate()} de ${MESES_ES[d.getMonth()]}`,
       visitas:  visitas.filter((v) => v.fecha === fISO),
       bloqueos: bloqueos.filter((b) => b.fecha === fISO),
+      reservas: reservas.filter((r) => r.fecha === fISO),
     });
   }
 
+  const offsetMes = (mesActual.getDay() + 6) % 7;
+  const totalCeldas = Math.ceil((offsetMes + mesFin.getDate()) / 7) * 7;
+  const diasMes = Array.from({ length: totalCeldas }).map((_, i) => {
+    const dia = i - offsetMes + 1;
+    if (dia < 1 || dia > mesFin.getDate()) return null;
+    const d = new Date(mesActual.getFullYear(), mesActual.getMonth(), dia);
+    const fecha = toISODate(d);
+    return {
+      fecha,
+      dia,
+      visitas: visitas.filter((v) => v.fecha === fecha),
+      reservas: reservas.filter((r) => r.fecha === fecha),
+      bloqueos: bloqueos.filter((b) => b.fecha === fecha),
+    };
+  });
+
   const hoy = toISODate(new Date());
   const tituloSemana = `${lunes.getDate()} ${MESES_ES[lunes.getMonth()]} — ${domingo.getDate()} ${MESES_ES[domingo.getMonth()]} ${domingo.getFullYear()}`;
+  const tituloMes = `${MESES_ES[mesActual.getMonth()]} ${mesActual.getFullYear()}`;
 
   // Totales de la semana
   const totalProgramadas = visitas.filter((v) => v.estado === "programada").length;
@@ -147,14 +203,22 @@ export default async function AgendaPage({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-xl font-bold">Agenda</h1>
-          <p className="text-sm text-neutral-500">{tituloSemana}</p>
+          <p className="text-sm text-neutral-500">{vista === "mes" ? tituloMes : tituloSemana}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href={`/panel/agenda?semana=${semanaAnterior}`} className="p-2 border rounded-lg hover:bg-neutral-100 transition">
+          <div className="flex border rounded-lg overflow-hidden text-sm">
+            <Link href={`/panel/agenda?semana=${toISODate(lunes)}`} className={`px-3 py-1.5 ${vista === "semana" ? "bg-black text-white" : "hover:bg-neutral-100"}`}>
+              Semana
+            </Link>
+            <Link href={`/panel/agenda?vista=mes&mes=${mesParam}`} className={`px-3 py-1.5 border-l ${vista === "mes" ? "bg-black text-white" : "hover:bg-neutral-100"}`}>
+              Mes
+            </Link>
+          </div>
+          <Link href={vista === "mes" ? `/panel/agenda?vista=mes&mes=${mesAnterior}` : `/panel/agenda?semana=${semanaAnterior}`} className="p-2 border rounded-lg hover:bg-neutral-100 transition">
             <FiChevronLeft size={16} />
           </Link>
-          <Link href="/panel/agenda" className="px-3 py-1.5 border rounded-lg text-sm hover:bg-neutral-100 transition">Hoy</Link>
-          <Link href={`/panel/agenda?semana=${semanaSiguiente}`} className="p-2 border rounded-lg hover:bg-neutral-100 transition">
+          <Link href={vista === "mes" ? "/panel/agenda?vista=mes" : "/panel/agenda"} className="px-3 py-1.5 border rounded-lg text-sm hover:bg-neutral-100 transition">Hoy</Link>
+          <Link href={vista === "mes" ? `/panel/agenda?vista=mes&mes=${mesSiguiente}` : `/panel/agenda?semana=${semanaSiguiente}`} className="p-2 border rounded-lg hover:bg-neutral-100 transition">
             <FiChevronRight size={16} />
           </Link>
           <Link
@@ -168,14 +232,60 @@ export default async function AgendaPage({
 
       {/* KPIs semana */}
       <div className="flex gap-4 mb-6 text-sm">
-        <span className="text-neutral-500">Programadas: <strong>{totalProgramadas}</strong></span>
+        <span className="text-neutral-500">{vista === "mes" ? "Programadas del mes" : "Programadas"}: <strong>{totalProgramadas}</strong></span>
         <span className="text-neutral-500">Completadas: <strong>{totalCompletadas}</strong></span>
+        <span className="text-neutral-500">Reservas: <strong>{reservas.length}</strong></span>
         {facturado > 0 && <span className="text-neutral-500">Facturado: <strong>{facturado.toFixed(2)} €</strong></span>}
       </div>
 
-      {/* Grid de días */}
+      {vista === "mes" ? (
+        <div>
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {DIAS_ES.map((d) => (
+              <div key={d} className="text-center text-xs font-medium text-neutral-400 py-1">{d}</div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-2">
+            {diasMes.map((dia, i) => {
+              if (!dia) return <div key={i} className="min-h-[112px] rounded-lg bg-neutral-50/50" />;
+              const isHoy = dia.fecha === hoy;
+              const total = dia.visitas.length + dia.reservas.length + dia.bloqueos.length;
+              return (
+                <div key={dia.fecha} className={`min-h-[112px] rounded-lg border bg-white p-2 ${isHoy ? "border-black" : "border-neutral-200"}`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className={`text-xs font-semibold ${isHoy ? "bg-black text-white rounded-full w-5 h-5 flex items-center justify-center" : "text-neutral-600"}`}>
+                      {dia.dia}
+                    </span>
+                    {total > 0 && <span className="text-[10px] text-neutral-400">{total}</span>}
+                  </div>
+                  <div className="space-y-1">
+                    {dia.bloqueos.length > 0 && (
+                      <p className="truncate rounded bg-red-50 px-1.5 py-0.5 text-[10px] font-medium text-red-700">
+                        {dia.bloqueos.length} bloqueo{dia.bloqueos.length > 1 ? "s" : ""}
+                      </p>
+                    )}
+                    {dia.visitas.slice(0, 2).map((v) => (
+                      <Link key={v.id} href={`/panel/clientes/${v.cliente_id}`} className="block truncate rounded bg-blue-50 px-1.5 py-0.5 text-[10px] text-blue-700 hover:bg-blue-100">
+                        {v.cliente_nombre}
+                      </Link>
+                    ))}
+                    {dia.reservas.slice(0, 2).map((r) => (
+                      <Link key={r.id} href="/panel/reservas" className="block truncate rounded bg-yellow-50 px-1.5 py-0.5 text-[10px] text-yellow-700 hover:bg-yellow-100">
+                        Reserva · {r.nombre}
+                      </Link>
+                    ))}
+                    {dia.visitas.length + dia.reservas.length > 4 && (
+                      <p className="text-[10px] text-neutral-400">+{dia.visitas.length + dia.reservas.length - 4} más</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
       <div className="space-y-3">
-        {dias.map(({ fecha, label, visitas: dVisitas, bloqueos: dBloqueos }) => {
+        {diasSemana.map(({ fecha, label, visitas: dVisitas, bloqueos: dBloqueos, reservas: dReservas }) => {
           const isHoy = fecha === hoy;
           return (
             <div key={fecha} className={`rounded-xl border shadow-sm overflow-hidden ${isHoy ? "border-black" : "border-neutral-200 bg-white"}`}>
@@ -195,7 +305,9 @@ export default async function AgendaPage({
 
               {/* Visitas del día */}
               {dVisitas.length === 0 ? (
-                <div className="px-4 py-3 text-xs text-neutral-400">Sin visitas</div>
+                dReservas.length === 0 ? (
+                  <div className="px-4 py-3 text-xs text-neutral-400">Sin visitas ni reservas</div>
+                ) : null
               ) : (
                 <div className={`divide-y ${isHoy ? "bg-white" : ""}`}>
                   {dVisitas.map((v) => (
@@ -220,10 +332,31 @@ export default async function AgendaPage({
                   ))}
                 </div>
               )}
+              {dReservas.length > 0 && (
+                <div className={`divide-y border-t ${isHoy ? "bg-white" : ""}`}>
+                  {dReservas.map((r) => (
+                    <div key={r.id} className="flex items-center gap-3 px-4 py-3">
+                      <div className="flex-1 min-w-0">
+                        <Link href="/panel/reservas" className="text-sm font-medium hover:underline truncate block">
+                          Reserva · {r.nombre}
+                        </Link>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-xs text-neutral-500">{r.franja === "manana" ? "Mañana" : "Tarde"}</span>
+                          {r.municipio && <span className="text-xs text-neutral-400">· {r.municipio}</span>}
+                          <span className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium ${RESERVA_BADGE[r.estado] ?? RESERVA_BADGE.pendiente}`}>
+                            {r.estado}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
       </div>
+      )}
     </div>
   );
 }

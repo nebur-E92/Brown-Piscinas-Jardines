@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "../../../../lib/panel/auth";
 import { getDb } from "../../../../lib/panel/db";
+import { cleanLongText, cleanText } from "../../../../lib/panel/reservas";
 
 export async function GET() {
   if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
@@ -17,9 +18,15 @@ export async function POST(req: NextRequest) {
   if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
 
   const body = await req.json();
-  const { nombre, telefono, email, municipio, direccion, notas } = body;
+  const nombre = cleanText(body.nombre, 120);
+  const telefono = cleanText(body.telefono, 40);
+  const email = cleanText(body.email, 160).toLowerCase();
+  const municipio = cleanText(body.municipio, 120);
+  const direccion = cleanText(body.direccion, 200);
+  const notas = cleanLongText(body.notas, 1000);
+  const leadId = cleanText(body.lead_id, 80);
 
-  if (!nombre?.trim()) {
+  if (!nombre) {
     return NextResponse.json({ error: "El nombre es obligatorio." }, { status: 400 });
   }
 
@@ -27,15 +34,19 @@ export async function POST(req: NextRequest) {
   const [row] = await sql`
     INSERT INTO clientes (nombre, telefono, email, municipio, direccion, notas)
     VALUES (
-      ${nombre.trim()},
-      ${telefono?.trim() || null},
-      ${email?.trim()    || null},
-      ${municipio?.trim()|| null},
-      ${direccion?.trim()|| null},
-      ${notas?.trim()    || null}
+      ${nombre},
+      ${telefono || null},
+      ${email || null},
+      ${municipio || null},
+      ${direccion || null},
+      ${notas || null}
     )
     RETURNING id
   `;
+
+  if (leadId) {
+    await sql`UPDATE leads SET estado = 'convertido' WHERE id = ${leadId}`;
+  }
 
   return NextResponse.json({ id: row.id }, { status: 201 });
 }

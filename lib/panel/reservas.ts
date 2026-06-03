@@ -5,6 +5,7 @@ export const RESERVA_TIPOS = ["visita_tecnica", "cesped", "piscina", "setos", "d
 export type ReservaTipo = (typeof RESERVA_TIPOS)[number];
 
 export const RESERVA_ESTADOS = ["pendiente", "confirmada", "cancelada"] as const;
+export const MAX_POR_FRANJA = 3;
 
 export const FRANJA_LABEL: Record<Franja, string> = {
   manana: "Mañana (9:00–14:00)",
@@ -56,4 +57,3 @@ export function isValidISODate(value: unknown): value is string {
   const date = new Date(`${value}T12:00:00`);
   return !Number.isNaN(date.getTime()) && value === date.toISOString().slice(0, 10);
 }
-
