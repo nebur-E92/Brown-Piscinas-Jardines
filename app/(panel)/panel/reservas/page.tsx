@@ -31,6 +31,16 @@ function formatFecha(iso: string) {
   });
 }
 
+function clienteHref(r: Reserva) {
+  const params = new URLSearchParams();
+  params.set("nombre", r.nombre);
+  params.set("email", r.email);
+  if (r.telefono) params.set("telefono", r.telefono);
+  if (r.municipio) params.set("municipio", r.municipio);
+  if (r.notas) params.set("notas", `Reserva web: ${r.notas}`);
+  return `/panel/clientes/nuevo?${params.toString()}`;
+}
+
 export default async function ReservasPage() {
   if (!(await getSession())) redirect("/panel-login");
 
@@ -95,6 +105,14 @@ export default async function ReservasPage() {
                       className="text-xs px-3 py-1.5 border rounded-lg hover:bg-neutral-50 transition"
                     >
                       WhatsApp
+                    </a>
+                  )}
+                  {r.estado === "confirmada" && (
+                    <a
+                      href={clienteHref(r)}
+                      className="text-xs px-3 py-1.5 border rounded-lg hover:bg-neutral-50 transition"
+                    >
+                      Crear cliente
                     </a>
                   )}
                   <EditarReserva reserva={r} />

@@ -1,20 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
 import { LOCATIONS } from "../../../../../lib/seo";
 
 export default function NuevoClientePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [nombre,    setNombre]    = useState("");
-  const [telefono,  setTelefono]  = useState("");
-  const [email,     setEmail]     = useState("");
-  const [municipio, setMunicipio] = useState("");
+  const [nombre,    setNombre]    = useState(searchParams.get("nombre") ?? "");
+  const [telefono,  setTelefono]  = useState(searchParams.get("telefono") ?? "");
+  const [email,     setEmail]     = useState(searchParams.get("email") ?? "");
+  const [municipio, setMunicipio] = useState(searchParams.get("municipio") ?? "");
   const [direccion, setDireccion] = useState("");
-  const [notas,     setNotas]     = useState("");
+  const [notas,     setNotas]     = useState(searchParams.get("notas") ?? "");
   const [error,     setError]     = useState<string | null>(null);
   const [loading,   setLoading]   = useState(false);
 

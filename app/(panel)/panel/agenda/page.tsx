@@ -2,6 +2,7 @@ import { getDb } from "../../../../lib/panel/db";
 import Link from "next/link";
 import { FiPlus, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { AccionesVisitaAgenda } from "./_components/AccionesVisitaAgenda";
+import { BloqueosDia } from "./_components/BloqueosDia";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,14 @@ type Visita = {
   cliente_nombre: string;
   cliente_id: string;
   municipio: string | null;
+};
+
+type Bloqueo = {
+  id: string;
+  fecha: string;
+  franja: string | null;
+  motivo: string;
+  notas: string | null;
 };
 
 const TIPO_LABEL: Record<string, string> = {
@@ -74,6 +83,16 @@ async function getVisitas(desde: string, hasta: string): Promise<Visita[]> {
   `;
 }
 
+async function getBloqueos(desde: string, hasta: string): Promise<Bloqueo[]> {
+  const sql = getDb();
+  return sql<Bloqueo[]>`
+    SELECT id, fecha::text, franja, motivo, notas
+    FROM bloqueos
+    WHERE fecha BETWEEN ${desde}::date AND ${hasta}::date
+    ORDER BY fecha, franja NULLS FIRST
+  `;
+}
+
 export default async function AgendaPage({
   searchParams,
 }: {
@@ -89,14 +108,17 @@ export default async function AgendaPage({
   const desde = toISODate(lunes);
   const hasta = toISODate(domingo);
 
-  const visitas = await getVisitas(desde, hasta);
+  const [visitas, bloqueos] = await Promise.all([
+    getVisitas(desde, hasta),
+    getBloqueos(desde, hasta),
+  ]);
 
   // Navega semana anterior/siguiente
   const semanaAnterior = toISODate(addDays(lunes, -7));
   const semanaSiguiente = toISODate(addDays(lunes, 7));
 
   // Agrupa por día
-  const dias: { fecha: string; label: string; dayLabel: string; visitas: Visita[] }[] = [];
+  const dias: { fecha: string; label: string; dayLabel: string; visitas: Visita[]; bloqueos: Bloqueo[] }[] = [];
   for (let i = 0; i < 7; i++) {
     const d = addDays(lunes, i);
     const fISO = toISODate(d);
@@ -105,6 +127,7 @@ export default async function AgendaPage({
       label:    `${DIAS_ES[i]} ${d.getDate()}`,
       dayLabel: `${d.getDate()} de ${MESES_ES[d.getMonth()]}`,
       visitas:  visitas.filter((v) => v.fecha === fISO),
+      bloqueos: bloqueos.filter((b) => b.fecha === fISO),
     });
   }
 
@@ -152,19 +175,22 @@ export default async function AgendaPage({
 
       {/* Grid de días */}
       <div className="space-y-3">
-        {dias.map(({ fecha, label, visitas: dVisitas }) => {
+        {dias.map(({ fecha, label, visitas: dVisitas, bloqueos: dBloqueos }) => {
           const isHoy = fecha === hoy;
           return (
             <div key={fecha} className={`rounded-xl border shadow-sm overflow-hidden ${isHoy ? "border-black" : "border-neutral-200 bg-white"}`}>
               {/* Encabezado del día */}
-              <div className={`px-4 py-2 flex items-center justify-between ${isHoy ? "bg-black text-white" : "bg-neutral-50 border-b"}`}>
+              <div className={`px-4 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${isHoy ? "bg-black text-white" : "bg-neutral-50 border-b"}`}>
                 <p className={`text-sm font-semibold ${isHoy ? "text-white" : ""}`}>{label}</p>
-                <Link
-                  href={`/panel/agenda/nueva?fecha=${fecha}`}
-                  className={`text-xs px-2 py-0.5 rounded ${isHoy ? "bg-white text-black hover:bg-neutral-100" : "border hover:bg-neutral-100"} transition`}
-                >
-                  + Visita
-                </Link>
+                <div className="flex flex-wrap items-center gap-2">
+                  <BloqueosDia fecha={fecha} bloqueos={dBloqueos} invertido={isHoy} />
+                  <Link
+                    href={`/panel/agenda/nueva?fecha=${fecha}`}
+                    className={`text-xs px-2 py-0.5 rounded ${isHoy ? "bg-white text-black hover:bg-neutral-100" : "border hover:bg-neutral-100"} transition`}
+                  >
+                    + Visita
+                  </Link>
+                </div>
               </div>
 
               {/* Visitas del día */}

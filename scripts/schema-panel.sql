@@ -25,8 +25,15 @@ CREATE TABLE IF NOT EXISTS clientes (
 );
 
 -- ── Propiedades (cada cliente puede tener varias) ────────────────────────────
-CREATE TYPE IF NOT EXISTS tipo_propiedad AS ENUM ('jardin', 'piscina', 'combinado');
-CREATE TYPE IF NOT EXISTS tamano_prop    AS ENUM ('pequeno', 'mediano', 'grande');
+DO $$ BEGIN
+  CREATE TYPE tipo_propiedad AS ENUM ('jardin', 'piscina', 'combinado');
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE tamano_prop AS ENUM ('pequeno', 'mediano', 'grande');
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
 
 CREATE TABLE IF NOT EXISTS propiedades (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -46,8 +53,15 @@ CREATE TABLE IF NOT EXISTS propiedades (
 CREATE INDEX IF NOT EXISTS idx_propiedades_cliente ON propiedades(cliente_id);
 
 -- ── Visitas ───────────────────────────────────────────────────────────────────
-CREATE TYPE IF NOT EXISTS estado_visita AS ENUM ('programada', 'completada', 'cancelada');
-CREATE TYPE IF NOT EXISTS tipo_visita   AS ENUM ('mantenimiento', 'puntual', 'desbroce', 'setos', 'puesta_marcha', 'otro');
+DO $$ BEGIN
+  CREATE TYPE estado_visita AS ENUM ('programada', 'completada', 'cancelada');
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE tipo_visita AS ENUM ('mantenimiento', 'puntual', 'desbroce', 'setos', 'puesta_marcha', 'otro');
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
 
 CREATE TABLE IF NOT EXISTS visitas (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -64,3 +78,38 @@ CREATE TABLE IF NOT EXISTS visitas (
 CREATE INDEX IF NOT EXISTS idx_visitas_fecha       ON visitas(fecha);
 CREATE INDEX IF NOT EXISTS idx_visitas_propiedad   ON visitas(propiedad_id);
 CREATE INDEX IF NOT EXISTS idx_visitas_estado_fecha ON visitas(estado, fecha);
+
+-- ── Reservas públicas ────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS reservas (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  fecha      DATE NOT NULL,
+  franja     TEXT NOT NULL CHECK (franja = ANY (ARRAY['manana', 'tarde'])),
+  tipo       TEXT NOT NULL DEFAULT 'visita_tecnica',
+  servicio   TEXT,
+  nombre     TEXT NOT NULL,
+  email      TEXT NOT NULL,
+  telefono   TEXT,
+  municipio  TEXT,
+  notas      TEXT,
+  estado     TEXT NOT NULL DEFAULT 'pendiente' CHECK (estado = ANY (ARRAY['pendiente', 'confirmada', 'cancelada'])),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_reservas_fecha  ON reservas(fecha);
+CREATE INDEX IF NOT EXISTS idx_reservas_estado ON reservas(estado);
+
+ALTER TABLE reservas
+  ADD COLUMN IF NOT EXISTS mensaje_cliente TEXT,
+  ADD COLUMN IF NOT EXISTS mensaje_cliente_updated_at TIMESTAMPTZ;
+
+-- ── Bloqueos de agenda ───────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS bloqueos (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  fecha      DATE NOT NULL,
+  franja     TEXT CHECK (franja IS NULL OR franja = ANY (ARRAY['manana', 'tarde'])),
+  motivo     TEXT NOT NULL DEFAULT 'Bloqueado',
+  notas      TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_bloqueos_fecha ON bloqueos(fecha);
