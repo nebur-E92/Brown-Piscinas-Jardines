@@ -12,6 +12,7 @@ type DatosPersonales = {
   telefono: string;
   municipio: string;
   notas: string;
+  website: string;
   privacidad: boolean;
 };
 
@@ -177,7 +178,7 @@ export default function BookingFlow({
   const [franja, setFranja]       = useState<Franja | null>(null);
   const [ocupacion, setOcupacion] = useState<Ocupacion>({});
   const [datos, setDatos]         = useState<DatosPersonales>({
-    nombre: "", email: "", telefono: "", municipio: "", notas: "", privacidad: false,
+    nombre: "", email: "", telefono: "", municipio: "", notas: "", website: "", privacidad: false,
   });
   const [enviando, setEnviando]   = useState(false);
   const [error, setError]         = useState<string | null>(null);
@@ -224,6 +225,7 @@ export default function BookingFlow({
           nombre: datos.nombre, email: datos.email,
           telefono: datos.telefono, municipio: datos.municipio,
           notas: datos.notas,
+          website: datos.website,
           precio: precioInicial,
         }),
       });
@@ -383,6 +385,20 @@ export default function BookingFlow({
           <h2 className="text-xl font-bold mb-5">Tus datos</h2>
 
           <div className="space-y-3">
+            <div className="hidden" aria-hidden="true">
+              <label>
+                Website
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={datos.website}
+                  onChange={(e) => setDatos({ ...datos, website: e.target.value })}
+                />
+              </label>
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-neutral-600 mb-1.5">Nombre *</label>
