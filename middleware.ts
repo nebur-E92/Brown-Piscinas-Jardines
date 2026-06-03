@@ -18,9 +18,13 @@ async function isPanelAuthed(req: NextRequest): Promise<boolean> {
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
-  // ── Panel de gestión (/panel/*) ───────────────────────────────────────────
-  if (pathname.startsWith("/panel")) {
+  // ── Panel de gestión (/panel/* y /api/panel/*) ───────────────────────────
+  const isPanelApi = pathname.startsWith("/api/panel") && !pathname.startsWith("/api/panel/auth");
+  if (pathname.startsWith("/panel") || isPanelApi) {
     if (!(await isPanelAuthed(req))) {
+      if (isPanelApi) {
+        return NextResponse.json({ error: "No autorizado." }, { status: 401 });
+      }
       const loginUrl = new URL("/panel-login", req.url);
       loginUrl.searchParams.set("next", pathname);
       return NextResponse.redirect(loginUrl);
@@ -88,6 +92,7 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/panel/:path*",
+    "/api/panel/:path*",
     "/analitica-qr/:path*",
     "/api/qr/export",
     "/api/qr/reset",

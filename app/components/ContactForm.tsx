@@ -16,6 +16,7 @@ export default function ContactForm({ defaults }: Props) {
     municipio: "",
     precio: "",
     qr_source: "",
+    website: "",
     privacidad: false,
   });
 
@@ -64,6 +65,19 @@ export default function ContactForm({ defaults }: Props) {
           <input type="hidden" name="municipio"  value={form.municipio} />
           <input type="hidden" name="precio"     value={form.precio} />
           <input type="hidden" name="qr_source"  value={form.qr_source} />
+          <div className="hidden" aria-hidden="true">
+            <label>
+              Website
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={form.website}
+                onChange={handleChange}
+              />
+            </label>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input

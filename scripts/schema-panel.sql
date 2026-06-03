@@ -113,3 +113,24 @@ CREATE TABLE IF NOT EXISTS bloqueos (
 );
 
 CREATE INDEX IF NOT EXISTS idx_bloqueos_fecha ON bloqueos(fecha);
+
+-- ── Leads de contacto ────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS leads (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nombre      TEXT,
+  email       TEXT,
+  telefono    TEXT,
+  municipio   TEXT,
+  servicio    TEXT,
+  servicios   TEXT,
+  tamano      TEXT,
+  frecuencia  TEXT,
+  precio      TEXT,
+  mensaje     TEXT,
+  qr_source   TEXT,
+  estado      TEXT NOT NULL DEFAULT 'nuevo',
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at);
+CREATE INDEX IF NOT EXISTS idx_leads_estado ON leads(estado);

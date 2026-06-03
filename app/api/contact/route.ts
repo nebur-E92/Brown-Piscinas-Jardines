@@ -2,10 +2,47 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { addQRConversion } from "../../../lib/qrStore";
 import { getDb } from "../../../lib/panel/db";
+import { checkRateLimit } from "../../../lib/panel/rateLimit";
+import { cleanLongText, cleanText, escapeHtml, isValidEmail } from "../../../lib/panel/reservas";
+
+function getClientKey(req: NextRequest): string {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown"
+  );
+}
 
 export async function POST(req: NextRequest) {
+  const clientKey = getClientKey(req);
+  if (!checkRateLimit(`contact:${clientKey}`, 8, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: "Demasiados intentos. Inténtalo más tarde." }, { status: 429 });
+  }
+
   const form = await req.formData();
-  const p = Object.fromEntries(form.entries()) as Record<string, string>;
+  const raw = Object.fromEntries(form.entries()) as Record<string, string>;
+
+  if (cleanText(raw.website, 100)) {
+    return NextResponse.json({ error: "Solicitud no válida." }, { status: 400 });
+  }
+
+  const p = {
+    nombre: cleanText(raw.nombre, 120),
+    email: cleanText(raw.email, 160).toLowerCase(),
+    telefono: cleanText(raw.telefono, 40),
+    municipio: cleanText(raw.municipio, 120),
+    servicio: cleanText(raw.servicio, 120),
+    servicios: cleanText(raw.servicios, 300),
+    tamano: cleanText(raw.tamano, 80),
+    frecuencia: cleanText(raw.frecuencia, 80),
+    precio: cleanText(raw.precio, 40),
+    mensaje: cleanLongText(raw.mensaje, 1500),
+    qr_source: cleanText(raw.qr_source, 120),
+  };
+
+  if (!isValidEmail(p.email) || !p.mensaje) {
+    return NextResponse.json({ error: "Datos de contacto no válidos." }, { status: 400 });
+  }
 
   // ── 1. Guardar lead en Neon ───────────────────────────────────────────────
   try {
@@ -13,16 +50,16 @@ export async function POST(req: NextRequest) {
     await sql`
       INSERT INTO leads (nombre, email, telefono, municipio, servicio, servicios, tamano, frecuencia, precio, mensaje, qr_source)
       VALUES (
-        ${p.nombre    || null},
-        ${p.email     || null},
-        ${p.telefono  || null},
+        ${p.nombre || null},
+        ${p.email},
+        ${p.telefono || null},
         ${p.municipio || null},
-        ${p.servicio  || null},
+        ${p.servicio || null},
         ${p.servicios || null},
-        ${p.tamano    || null},
-        ${p.frecuencia|| null},
-        ${p.precio    || null},
-        ${p.mensaje   || null},
+        ${p.tamano || null},
+        ${p.frecuencia || null},
+        ${p.precio || null},
+        ${p.mensaje},
         ${p.qr_source || null}
       )
     `;
@@ -40,21 +77,21 @@ export async function POST(req: NextRequest) {
       const resend = new Resend(resendApiKey);
 
     const lineas: string[] = [];
-    if (p.nombre)    lineas.push(`<b>Nombre:</b> ${p.nombre}`);
-    if (p.email)     lineas.push(`<b>Email:</b> ${p.email}`);
-    if (p.telefono)  lineas.push(`<b>Teléfono:</b> ${p.telefono}`);
-    if (p.municipio) lineas.push(`<b>Municipio:</b> ${p.municipio}`);
-    if (p.servicio)  lineas.push(`<b>Servicio:</b> ${p.servicio}`);
-    if (p.servicios) lineas.push(`<b>Servicios calculados:</b> ${p.servicios}`);
-    if (p.tamano)    lineas.push(`<b>Tamaño:</b> ${p.tamano}`);
-    if (p.frecuencia)lineas.push(`<b>Frecuencia:</b> ${p.frecuencia}`);
-    if (p.precio)    lineas.push(`<b>Precio estimado:</b> ${p.precio}`);
-    if (p.mensaje)   lineas.push(`<b>Mensaje:</b><br>${p.mensaje.replace(/\n/g, "<br>")}`);
+    if (p.nombre) lineas.push(`<b>Nombre:</b> ${escapeHtml(p.nombre)}`);
+    lineas.push(`<b>Email:</b> ${escapeHtml(p.email)}`);
+    if (p.telefono) lineas.push(`<b>Teléfono:</b> ${escapeHtml(p.telefono)}`);
+    if (p.municipio) lineas.push(`<b>Municipio:</b> ${escapeHtml(p.municipio)}`);
+    if (p.servicio) lineas.push(`<b>Servicio:</b> ${escapeHtml(p.servicio)}`);
+    if (p.servicios) lineas.push(`<b>Servicios calculados:</b> ${escapeHtml(p.servicios)}`);
+    if (p.tamano) lineas.push(`<b>Tamaño:</b> ${escapeHtml(p.tamano)}`);
+    if (p.frecuencia) lineas.push(`<b>Frecuencia:</b> ${escapeHtml(p.frecuencia)}`);
+    if (p.precio) lineas.push(`<b>Precio estimado:</b> ${escapeHtml(p.precio)}`);
+    lineas.push(`<b>Mensaje:</b><br>${escapeHtml(p.mensaje).replace(/\n/g, "<br>")}`);
 
       await resend.emails.send({
         from:    "Brown Piscinas <noreply@brownpiscinasyjardines.com>",
         to:      notifyEmail,
-        replyTo: p.email || undefined,
+        replyTo: p.email,
         subject: `Nuevo contacto${p.nombre ? ` de ${p.nombre}` : ""}${p.municipio ? ` — ${p.municipio}` : ""}`,
         html: `
           <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
