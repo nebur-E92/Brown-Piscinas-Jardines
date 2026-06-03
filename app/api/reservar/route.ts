@@ -24,7 +24,7 @@ function getClientKey(req: NextRequest): string {
 
 export async function POST(req: NextRequest) {
   const clientKey = getClientKey(req);
-  if (!checkRateLimit(`reservar:${clientKey}`, 8, 60 * 60 * 1000)) {
+  if (!(await checkRateLimit(`reservar:${clientKey}`, 8, 60 * 60 * 1000))) {
     return NextResponse.json({ error: "Demasiados intentos. Inténtalo más tarde." }, { status: 429 });
   }
 

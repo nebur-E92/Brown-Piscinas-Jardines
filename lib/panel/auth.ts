@@ -5,9 +5,17 @@ import { NextRequest } from "next/server";
 export const COOKIE_NAME = "panel_session";
 export const MAX_AGE_SEC = 8 * 60 * 60; // 8 horas
 
-function getSecret(): Uint8Array {
+let missingSecretLogged = false;
+
+export function getPanelJwtSecret(): Uint8Array {
   const s = process.env.PANEL_JWT_SECRET;
-  if (!s) throw new Error("PANEL_JWT_SECRET no está definida.");
+  if (!s) {
+    if (!missingSecretLogged) {
+      console.error("PANEL_JWT_SECRET no está definida. El panel queda cerrado.");
+      missingSecretLogged = true;
+    }
+    throw new Error("PANEL_JWT_SECRET no está definida.");
+  }
   return new TextEncoder().encode(s);
 }
 
@@ -18,12 +26,12 @@ export async function createToken(payload: SessionPayload): Promise<string> {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("8h")
-    .sign(getSecret());
+    .sign(getPanelJwtSecret());
 }
 
 export async function verifyToken(token: string): Promise<SessionPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, getSecret());
+    const { payload } = await jwtVerify(token, getPanelJwtSecret());
     return { userId: payload.userId as string, email: payload.email as string };
   } catch {
     return null;

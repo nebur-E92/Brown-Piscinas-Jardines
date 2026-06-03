@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FiArrowLeft, FiPlus } from "react-icons/fi";
 import { NuevaPropiedadForm } from "./_components/NuevaPropiedadForm";
 import { AccionesVisita } from "./_components/AccionesVisita";
+import { AccionesCliente } from "./_components/AccionesCliente";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +83,7 @@ export default async function ClienteDetailPage({ params }: { params: Promise<{ 
         {cliente.notas && (
           <p className="mt-3 text-xs text-neutral-500 bg-neutral-50 rounded p-2 border">{cliente.notas}</p>
         )}
+        <AccionesCliente clienteId={id} canHardDelete={propiedades.length === 0 && visitas.length === 0} />
       </div>
 
       {/* Propiedades */}

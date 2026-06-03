@@ -2,13 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "../../../../../lib/panel/auth";
 import { getDb } from "../../../../../lib/panel/db";
 import { Resend } from "resend";
-import { cleanLongText, escapeHtml } from "../../../../../lib/panel/reservas";
+import {
+  cleanLongText,
+  cleanText,
+  escapeHtml,
+  isFranja,
+  isReservaTipo,
+  isValidEmail,
+  isValidISODate,
+} from "../../../../../lib/panel/reservas";
 
 type Params = Promise<{ id: string }>;
 
 const ESTADOS = ["pendiente", "confirmada", "cancelada"];
-const TIPOS   = ["visita_tecnica","cesped","piscina","setos","desbroce","otro"];
-const FRANJAS = ["manana","tarde"];
 
 export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
@@ -19,8 +25,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
 
   // ── Edición completa de la reserva ────────────────────────────────────────
   if (body.modo === "editar") {
-    const { fecha, franja, tipo, nombre, email, telefono, municipio, notas } = body;
-    if (!fecha || !FRANJAS.includes(franja) || !TIPOS.includes(tipo)) {
+    const fecha = body.fecha;
+    const franja = body.franja;
+    const tipo = body.tipo;
+    const nombre = cleanText(body.nombre, 120);
+    const email = cleanText(body.email, 160).toLowerCase();
+    const telefono = cleanText(body.telefono, 40);
+    const municipio = cleanText(body.municipio, 120);
+    const notas = cleanLongText(body.notas, 1000);
+
+    if (!isValidISODate(fecha) || !isFranja(franja) || !isReservaTipo(tipo) || !nombre || !isValidEmail(email)) {
       return NextResponse.json({ error: "Datos no válidos." }, { status: 400 });
     }
     await sql`
@@ -28,11 +42,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
         fecha     = ${fecha}::date,
         franja    = ${franja},
         tipo      = ${tipo},
-        nombre    = COALESCE(${nombre ?? null}, nombre),
-        email     = COALESCE(${email  ?? null}, email),
-        telefono  = ${telefono  ?? null},
-        municipio = ${municipio ?? null},
-        notas     = ${notas     ?? null}
+        nombre    = ${nombre},
+        email     = ${email},
+        telefono  = ${telefono  || null},
+        municipio = ${municipio || null},
+        notas     = ${notas     || null}
       WHERE id = ${id}
     `;
     return NextResponse.json({ ok: true });

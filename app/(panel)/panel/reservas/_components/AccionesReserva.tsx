@@ -19,6 +19,14 @@ export function AccionesReserva({ reservaId, estadoActual }: { reservaId: string
     setLoading(false);
   }
 
+  async function eliminar() {
+    if (!window.confirm("¿Eliminar definitivamente esta reserva?")) return;
+    setLoading(true);
+    await fetch(`/api/panel/reservas/${reservaId}`, { method: "DELETE" });
+    router.refresh();
+    setLoading(false);
+  }
+
   if (estadoActual === "pendiente") {
     return (
       <div className="flex flex-col gap-2 min-w-[220px]">
@@ -45,21 +53,37 @@ export function AccionesReserva({ reservaId, estadoActual }: { reservaId: string
           >
             Cancelar
           </button>
+          <button
+            onClick={eliminar}
+            disabled={loading}
+            className="px-3 py-1.5 text-xs font-medium border border-red-200 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50 transition"
+          >
+            Eliminar
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <select
-      value={estadoActual}
-      onChange={(e) => cambiar(e.target.value)}
-      disabled={loading}
-      className="text-xs border rounded-lg px-2 py-1.5 bg-white disabled:opacity-50"
-    >
-      {["pendiente", "confirmada", "cancelada"].map((e) => (
-        <option key={e} value={e}>{e}</option>
-      ))}
-    </select>
+    <div className="flex items-center gap-2">
+      <select
+        value={estadoActual}
+        onChange={(e) => cambiar(e.target.value)}
+        disabled={loading}
+        className="text-xs border rounded-lg px-2 py-1.5 bg-white disabled:opacity-50"
+      >
+        {["pendiente", "confirmada", "cancelada"].map((e) => (
+          <option key={e} value={e}>{e}</option>
+        ))}
+      </select>
+      <button
+        onClick={eliminar}
+        disabled={loading}
+        className="px-2.5 py-1.5 text-xs font-medium border border-red-200 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50 transition"
+      >
+        Eliminar
+      </button>
+    </div>
   );
 }

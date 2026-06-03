@@ -36,11 +36,40 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: Params }) {
+export async function DELETE(req: NextRequest, { params }: { params: Params }) {
   if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
 
   const { id } = await params;
   const sql = getDb();
+
+  const hard = req.nextUrl.searchParams.get("hard") === "1";
+
+  if (hard) {
+    const [deps] = await sql<{ propiedades_count: number; visitas_count: number }[]>`
+      SELECT
+        (SELECT COUNT(*)::int FROM propiedades WHERE cliente_id = ${id}) AS propiedades_count,
+        (
+          SELECT COUNT(*)::int
+          FROM visitas v
+          JOIN propiedades p ON p.id = v.propiedad_id
+          WHERE p.cliente_id = ${id}
+        ) AS visitas_count
+    `;
+
+    const propiedadesCount = deps?.propiedades_count ?? 0;
+    const visitasCount = deps?.visitas_count ?? 0;
+    if (propiedadesCount > 0 || visitasCount > 0) {
+      return NextResponse.json(
+        { error: "No se puede eliminar definitivamente: el cliente tiene propiedades o visitas asociadas." },
+        { status: 409 }
+      );
+    }
+
+    const deleted = await sql`DELETE FROM clientes WHERE id = ${id} RETURNING id`;
+    if (deleted.length === 0) return NextResponse.json({ error: "No encontrado." }, { status: 404 });
+    return NextResponse.json({ ok: true });
+  }
+
   await sql`UPDATE clientes SET activo = false, updated_at = now() WHERE id = ${id}`;
   return NextResponse.json({ ok: true });
 }

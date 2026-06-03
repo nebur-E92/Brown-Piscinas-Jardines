@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
-import { COOKIE_NAME } from "./lib/panel/auth";
+import { COOKIE_NAME, getPanelJwtSecret } from "./lib/panel/auth";
 
 // ── helper: verifica el JWT del panel ─────────────────────────────────────────
 async function isPanelAuthed(req: NextRequest): Promise<boolean> {
   const token = req.cookies.get(COOKIE_NAME)?.value;
   if (!token) return false;
-  const secret = new TextEncoder().encode(process.env.PANEL_JWT_SECRET ?? "");
   try {
-    await jwtVerify(token, secret);
+    await jwtVerify(token, getPanelJwtSecret());
     return true;
   } catch {
     return false;
