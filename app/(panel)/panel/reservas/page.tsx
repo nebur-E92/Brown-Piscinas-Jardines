@@ -3,6 +3,7 @@ import { getSession } from "../../../../lib/panel/auth";
 import { redirect } from "next/navigation";
 import { AccionesReserva } from "./_components/AccionesReserva";
 import { EditarReserva } from "./_components/EditarReserva";
+import { GestionarReserva } from "./_components/GestionarReserva";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,13 @@ type Reserva = {
   id: string; fecha: string; franja: string; tipo: string;
   nombre: string; email: string; telefono: string | null;
   municipio: string | null; notas: string | null;
-  estado: string; created_at: string;
+  estado: string; created_at: string; visita_id: string | null;
+};
+
+type ClienteConProps = {
+  id: string;
+  nombre: string;
+  propiedades: { id: string; tipo: string; municipio: string | null; direccion: string | null }[];
 };
 
 const TIPO_LABEL: Record<string, string> = {
@@ -31,26 +38,33 @@ function formatFecha(iso: string) {
   });
 }
 
-function clienteHref(r: Reserva) {
-  const params = new URLSearchParams();
-  params.set("nombre", r.nombre);
-  params.set("email", r.email);
-  if (r.telefono) params.set("telefono", r.telefono);
-  if (r.municipio) params.set("municipio", r.municipio);
-  if (r.notas) params.set("notas", `Reserva web: ${r.notas}`);
-  return `/panel/clientes/nuevo?${params.toString()}`;
+async function getClientes(): Promise<ClienteConProps[]> {
+  const sql = getDb();
+  const clientes = await sql<{ id: string; nombre: string }[]>`
+    SELECT id, nombre FROM clientes WHERE activo = true ORDER BY nombre
+  `;
+  const propiedades = await sql<{ id: string; cliente_id: string; tipo: string; municipio: string | null; direccion: string | null }[]>`
+    SELECT id, cliente_id, tipo, municipio, direccion FROM propiedades WHERE activa = true ORDER BY tipo
+  `;
+  return clientes.map((c) => ({
+    ...c,
+    propiedades: propiedades.filter((p) => p.cliente_id === c.id),
+  }));
 }
 
 export default async function ReservasPage() {
   if (!(await getSession())) redirect("/panel-login");
 
   const sql = getDb();
-  const reservas = await sql<Reserva[]>`
-    SELECT id, fecha::text, franja, tipo, nombre, email, telefono, municipio, notas, estado, created_at::text
+  const [reservas, clientes] = await Promise.all([
+    sql<Reserva[]>`
+    SELECT id, fecha::text, franja, tipo, nombre, email, telefono, municipio, notas, estado, created_at::text, visita_id::text
     FROM reservas
     ORDER BY fecha ASC, franja ASC
     LIMIT 300
-  `;
+  `,
+    getClientes(),
+  ]);
 
   const pendientes  = reservas.filter((r) => r.estado === "pendiente").length;
   const confirmadas = reservas.filter((r) => r.estado === "confirmada").length;
@@ -107,13 +121,12 @@ export default async function ReservasPage() {
                       WhatsApp
                     </a>
                   )}
-                  {r.estado === "confirmada" && (
-                    <a
-                      href={clienteHref(r)}
-                      className="text-xs px-3 py-1.5 border rounded-lg hover:bg-neutral-50 transition"
-                    >
-                      Crear cliente
-                    </a>
+                  {r.visita_id ? (
+                    <span className="text-xs px-3 py-1.5 rounded-lg bg-green-50 text-green-700">
+                      Gestionada
+                    </span>
+                  ) : (
+                    <GestionarReserva reserva={r} clientes={clientes} />
                   )}
                   <EditarReserva reserva={r} />
                   <AccionesReserva reservaId={r.id} estadoActual={r.estado} />

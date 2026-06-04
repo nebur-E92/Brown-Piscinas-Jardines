@@ -55,7 +55,7 @@ export function NuevaVisitaForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!propiedadId) { setError("Selecciona una propiedad."); return; }
+    if (!clienteId) { setError("Selecciona un cliente."); return; }
     setError(null);
     setLoading(true);
 
@@ -64,7 +64,8 @@ export function NuevaVisitaForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          propiedad_id: propiedadId,
+          cliente_id: propiedadId ? null : clienteId,
+          propiedad_id: propiedadId || null,
           tipo,
           fecha,
           precio: precio ? parseFloat(precio) : null,
@@ -108,25 +109,23 @@ export function NuevaVisitaForm({
       {/* Propiedad */}
       {clienteId && (
         <div>
-          <label className="block text-xs font-medium text-neutral-600 mb-1">Propiedad *</label>
-          {propiedades.length === 0 ? (
-            <p className="text-xs text-red-500">Este cliente no tiene propiedades. Añade una primero desde su ficha.</p>
-          ) : (
-            <select
-              required
-              value={propiedadId}
-              onChange={(e) => setPropiedadId(e.target.value)}
-              className={INPUT}
-            >
-              <option value="">— Selecciona —</option>
-              {propiedades.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {PTIPO[p.tipo] ?? p.tipo}
-                  {p.municipio ? ` · ${p.municipio}` : ""}
-                  {p.direccion ? ` (${p.direccion})` : ""}
-                </option>
-              ))}
-            </select>
+          <label className="block text-xs font-medium text-neutral-600 mb-1">Propiedad</label>
+          <select
+            value={propiedadId}
+            onChange={(e) => setPropiedadId(e.target.value)}
+            className={INPUT}
+          >
+            <option value="">Trabajo puntual sin propiedad</option>
+            {propiedades.map((p) => (
+              <option key={p.id} value={p.id}>
+                {PTIPO[p.tipo] ?? p.tipo}
+                {p.municipio ? ` · ${p.municipio}` : ""}
+                {p.direccion ? ` (${p.direccion})` : ""}
+              </option>
+            ))}
+          </select>
+          {propiedades.length === 0 && (
+            <p className="mt-1 text-xs text-neutral-400">Puedes crear una visita puntual sin añadir propiedad.</p>
           )}
         </div>
       )}

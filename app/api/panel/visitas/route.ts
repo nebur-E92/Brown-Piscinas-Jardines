@@ -14,11 +14,10 @@ export async function GET(req: NextRequest) {
   const rows = await sql`
     SELECT
       v.id, v.fecha::text, v.tipo, v.estado, v.precio::text, v.notas,
-      c.id AS cliente_id, c.nombre AS cliente_nombre,
-      p.tipo AS prop_tipo, p.municipio
-    FROM visitas v
-    JOIN propiedades p ON p.id = v.propiedad_id
-    JOIN clientes c    ON c.id = p.cliente_id
+      v.eff_cliente_id AS cliente_id, v.cliente_nombre,
+      p.tipo AS prop_tipo, v.eff_municipio AS municipio
+    FROM visitas_con_cliente v
+    LEFT JOIN propiedades p ON p.id = v.propiedad_id
     WHERE
       (${desde}::date IS NULL OR v.fecha >= ${desde}::date)
       AND (${hasta}::date IS NULL OR v.fecha <= ${hasta}::date)
@@ -32,10 +31,10 @@ export async function POST(req: NextRequest) {
   if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
 
   const body = await req.json();
-  const { propiedad_id, tipo, fecha, precio, notas } = body;
+  const { cliente_id, propiedad_id, tipo, fecha, precio, notas } = body;
 
-  if (!propiedad_id || !fecha) {
-    return NextResponse.json({ error: "propiedad_id y fecha son obligatorios." }, { status: 400 });
+  if (!fecha || Boolean(cliente_id) === Boolean(propiedad_id)) {
+    return NextResponse.json({ error: "Indica cliente o propiedad, pero no ambos." }, { status: 400 });
   }
 
   const tiposValidos = ["mantenimiento", "puntual", "desbroce", "setos", "puesta_marcha", "otro"];
@@ -43,9 +42,10 @@ export async function POST(req: NextRequest) {
 
   const sql = getDb();
   const [row] = await sql`
-    INSERT INTO visitas (propiedad_id, tipo, fecha, precio, notas)
+    INSERT INTO visitas (cliente_id, propiedad_id, tipo, fecha, precio, notas)
     VALUES (
-      ${propiedad_id},
+      ${cliente_id || null},
+      ${propiedad_id || null},
       ${tipoFinal}::tipo_visita,
       ${fecha}::date,
       ${precio != null ? parseFloat(precio) : null},

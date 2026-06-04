@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 type Cliente = { id: string; nombre: string; telefono: string | null; email: string | null; municipio: string | null; direccion: string | null; notas: string | null };
 type Propiedad = { id: string; tipo: string; tamano_jardin: string | null; tamano_piscina: string | null; municipio: string | null; direccion: string | null; precio_acordado: string | null; notas: string | null };
-type Visita = { id: string; fecha: string; tipo: string; estado: string; precio: string | null; notas: string | null; propiedad_id: string };
+type Visita = { id: string; fecha: string; tipo: string; estado: string; precio: string | null; notas: string | null; propiedad_id: string | null };
 
 const TIPO_PROP: Record<string, string> = { jardin: "Jardín", piscina: "Piscina", combinado: "Combinado" };
 const TAMANO: Record<string, string>    = { pequeno: "Pequeño", mediano: "Mediano", grande: "Grande" };
@@ -37,11 +37,10 @@ async function getData(id: string) {
   `;
 
   const visitas = await sql<Visita[]>`
-    SELECT v.id, v.fecha::text, v.tipo, v.estado, v.precio::text, v.notas, v.propiedad_id
-    FROM visitas v
-    JOIN propiedades p ON p.id = v.propiedad_id
-    WHERE p.cliente_id = ${id}
-    ORDER BY v.fecha DESC
+    SELECT id, fecha::text, tipo, estado, precio::text, notas, propiedad_id
+    FROM visitas_con_cliente
+    WHERE eff_cliente_id = ${id}
+    ORDER BY fecha DESC
     LIMIT 30
   `;
 
@@ -134,6 +133,7 @@ export default async function ClienteDetailPage({ params }: { params: Promise<{ 
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium">{fmtDate(v.fecha)}</span>
                     <span className="text-xs text-neutral-500">{TIPO_V[v.tipo] ?? v.tipo}</span>
+                    {!v.propiedad_id && <span className="text-xs text-neutral-400">Puntual</span>}
                     <span className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium ${ESTADO_BADGE[v.estado]}`}>
                       {v.estado}
                     </span>

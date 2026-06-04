@@ -92,12 +92,10 @@ async function getVisitas(desde: string, hasta: string): Promise<Visita[]> {
   return sql<Visita[]>`
     SELECT
       v.id, v.fecha::text, v.tipo, v.estado, v.precio::text, v.notas,
-      c.id AS cliente_id,
-      c.nombre AS cliente_nombre,
-      p.municipio
-    FROM visitas v
-    JOIN propiedades p ON p.id = v.propiedad_id
-    JOIN clientes c    ON c.id = p.cliente_id
+      v.eff_cliente_id AS cliente_id,
+      v.cliente_nombre,
+      v.eff_municipio AS municipio
+    FROM visitas_con_cliente v
     WHERE v.fecha BETWEEN ${desde}::date AND ${hasta}::date
     ORDER BY v.fecha, v.estado
   `;
@@ -120,6 +118,7 @@ async function getReservas(desde: string, hasta: string): Promise<Reserva[]> {
     FROM reservas
     WHERE fecha BETWEEN ${desde}::date AND ${hasta}::date
       AND estado != 'cancelada'
+      AND visita_id IS NULL
     ORDER BY fecha, franja
   `;
 }

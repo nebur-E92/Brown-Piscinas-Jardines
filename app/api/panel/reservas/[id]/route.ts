@@ -15,6 +15,7 @@ import {
 type Params = Promise<{ id: string }>;
 
 const ESTADOS = ["pendiente", "confirmada", "cancelada"];
+const TIPOS_VISITA = ["mantenimiento", "puntual", "desbroce", "setos", "puesta_marcha", "otro"];
 
 export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
@@ -22,6 +23,101 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   const { id } = await params;
   const body = await req.json();
   const sql = getDb();
+
+  // ── Gestionar reserva: enlazar cliente + crear visita sin duplicar agenda ──
+  if (body.modo === "gestionar") {
+    const crearCliente = body.crear_cliente === true;
+    const clienteIdInput = cleanText(body.cliente_id, 80);
+    const propiedadId = cleanText(body.propiedad_id, 80);
+    const tipoVisita = TIPOS_VISITA.includes(body.tipo_visita) ? body.tipo_visita : "puntual";
+    const precio = body.precio != null && body.precio !== "" ? Number(body.precio) : null;
+    const notas = cleanLongText(body.notas, 1000);
+
+    if (!crearCliente && !clienteIdInput) {
+      return NextResponse.json({ error: "Selecciona un cliente." }, { status: 400 });
+    }
+    if (precio != null && Number.isNaN(precio)) {
+      return NextResponse.json({ error: "Precio no válido." }, { status: 400 });
+    }
+
+    const result = await sql.begin(async (tx) => {
+      const [reserva] = await tx<{
+        fecha: string;
+        nombre: string;
+        email: string;
+        telefono: string | null;
+        municipio: string | null;
+        notas: string | null;
+        visita_id: string | null;
+      }[]>`
+        SELECT fecha::text, nombre, email, telefono, municipio, notas, visita_id
+        FROM reservas
+        WHERE id = ${id}
+        FOR UPDATE
+      `;
+      if (!reserva) return { error: "Reserva no encontrada.", status: 404 as const };
+      if (reserva.visita_id) return { error: "Esta reserva ya está gestionada.", status: 409 as const };
+
+      let clienteId = clienteIdInput;
+      if (crearCliente) {
+        const cliente = body.cliente ?? {};
+        const nombre = cleanText(cliente.nombre ?? reserva.nombre, 120);
+        const email = cleanText(cliente.email ?? reserva.email, 160).toLowerCase();
+        const telefono = cleanText(cliente.telefono ?? reserva.telefono, 40);
+        const municipio = cleanText(cliente.municipio ?? reserva.municipio, 120);
+        const notasCliente = cleanLongText(cliente.notas ?? `Reserva web: ${reserva.notas ?? ""}`, 1000);
+        if (!nombre) return { error: "El nombre del cliente es obligatorio.", status: 400 as const };
+
+        const [nuevo] = await tx<{ id: string }[]>`
+          INSERT INTO clientes (nombre, email, telefono, municipio, notas)
+          VALUES (${nombre}, ${email || null}, ${telefono || null}, ${municipio || null}, ${notasCliente || null})
+          RETURNING id
+        `;
+        clienteId = nuevo.id;
+      } else {
+        const [cliente] = await tx<{ id: string }[]>`
+          SELECT id FROM clientes WHERE id = ${clienteId} AND activo = true
+        `;
+        if (!cliente) return { error: "Cliente no encontrado.", status: 404 as const };
+      }
+
+      if (propiedadId) {
+        const [propiedad] = await tx<{ id: string }[]>`
+          SELECT id FROM propiedades WHERE id = ${propiedadId} AND cliente_id = ${clienteId} AND activa = true
+        `;
+        if (!propiedad) return { error: "La propiedad no pertenece al cliente seleccionado.", status: 400 as const };
+      }
+
+      const [visita] = await tx<{ id: string }[]>`
+        INSERT INTO visitas (cliente_id, propiedad_id, tipo, fecha, precio, notas)
+        VALUES (
+          ${propiedadId ? null : clienteId},
+          ${propiedadId || null},
+          ${tipoVisita}::tipo_visita,
+          ${reserva.fecha}::date,
+          ${precio},
+          ${notas || reserva.notas || null}
+        )
+        RETURNING id
+      `;
+
+      await tx`
+        UPDATE reservas SET
+          cliente_id = ${clienteId},
+          visita_id = ${visita.id},
+          gestionada_at = now()
+        WHERE id = ${id}
+      `;
+
+      return { ok: true, cliente_id: clienteId, visita_id: visita.id };
+    });
+
+    if ("error" in result) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
+    }
+
+    return NextResponse.json(result);
+  }
 
   // ── Edición completa de la reserva ────────────────────────────────────────
   if (body.modo === "editar") {

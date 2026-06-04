@@ -27,7 +27,7 @@ async function getClientes(): Promise<Row[]> {
       min(v.fecha) FILTER (WHERE v.estado = 'programada' AND v.fecha >= current_date)::text AS proxima_visita
     FROM clientes c
     LEFT JOIN propiedades p ON p.cliente_id = c.id AND p.activa = true
-    LEFT JOIN visitas v     ON v.propiedad_id = p.id
+    LEFT JOIN visitas_con_cliente v ON v.eff_cliente_id = c.id
     WHERE c.activo = true
     GROUP BY c.id
     ORDER BY c.nombre

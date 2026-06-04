@@ -79,6 +79,33 @@ CREATE INDEX IF NOT EXISTS idx_visitas_fecha       ON visitas(fecha);
 CREATE INDEX IF NOT EXISTS idx_visitas_propiedad   ON visitas(propiedad_id);
 CREATE INDEX IF NOT EXISTS idx_visitas_estado_fecha ON visitas(estado, fecha);
 
+ALTER TABLE visitas
+  ADD COLUMN IF NOT EXISTS cliente_id UUID REFERENCES clientes(id) ON DELETE RESTRICT;
+
+ALTER TABLE visitas ALTER COLUMN propiedad_id DROP NOT NULL;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'visitas_ancla_xor'
+  ) THEN
+    ALTER TABLE visitas
+      ADD CONSTRAINT visitas_ancla_xor
+      CHECK ((cliente_id IS NOT NULL) <> (propiedad_id IS NOT NULL));
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_visitas_cliente ON visitas(cliente_id);
+
+CREATE OR REPLACE VIEW visitas_con_cliente AS
+SELECT
+  v.*,
+  COALESCE(v.cliente_id, p.cliente_id) AS eff_cliente_id,
+  c.nombre AS cliente_nombre,
+  COALESCE(p.municipio, c.municipio) AS eff_municipio
+FROM visitas v
+LEFT JOIN propiedades p ON p.id = v.propiedad_id
+LEFT JOIN clientes c ON c.id = COALESCE(v.cliente_id, p.cliente_id);
+
 -- ── Reservas públicas ────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS reservas (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -101,6 +128,14 @@ CREATE INDEX IF NOT EXISTS idx_reservas_estado ON reservas(estado);
 ALTER TABLE reservas
   ADD COLUMN IF NOT EXISTS mensaje_cliente TEXT,
   ADD COLUMN IF NOT EXISTS mensaje_cliente_updated_at TIMESTAMPTZ;
+
+ALTER TABLE reservas
+  ADD COLUMN IF NOT EXISTS cliente_id UUID REFERENCES clientes(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS visita_id UUID REFERENCES visitas(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS gestionada_at TIMESTAMPTZ;
+
+CREATE INDEX IF NOT EXISTS idx_reservas_visita ON reservas(visita_id);
+CREATE INDEX IF NOT EXISTS idx_reservas_cliente ON reservas(cliente_id);
 
 -- ── Bloqueos de agenda ───────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS bloqueos (

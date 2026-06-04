@@ -50,9 +50,8 @@ export async function DELETE(req: NextRequest, { params }: { params: Params }) {
         (SELECT COUNT(*)::int FROM propiedades WHERE cliente_id = ${id}) AS propiedades_count,
         (
           SELECT COUNT(*)::int
-          FROM visitas v
-          JOIN propiedades p ON p.id = v.propiedad_id
-          WHERE p.cliente_id = ${id}
+          FROM visitas_con_cliente v
+          WHERE v.eff_cliente_id = ${id}
         ) AS visitas_count
     `;
 

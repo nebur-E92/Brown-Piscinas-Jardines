@@ -27,11 +27,9 @@ async function getData() {
       v.fecha::text,
       v.tipo,
       v.precio::text,
-      c.nombre AS cliente_nombre,
-      p.municipio AS propiedad_municipio
-    FROM visitas v
-    JOIN propiedades p ON p.id = v.propiedad_id
-    JOIN clientes c    ON c.id = p.cliente_id
+      v.cliente_nombre,
+      v.eff_municipio AS propiedad_municipio
+    FROM visitas_con_cliente v
     WHERE v.estado = 'programada' AND v.fecha >= current_date
     ORDER BY v.fecha
     LIMIT 8
@@ -43,13 +41,11 @@ async function getData() {
       v.fecha::text,
       v.tipo,
       v.precio::text,
-      c.nombre AS cliente_nombre,
-      p.municipio AS propiedad_municipio
-    FROM visitas v
-    JOIN propiedades p ON p.id = v.propiedad_id
-    JOIN clientes c    ON c.id = p.cliente_id
+      v.cliente_nombre,
+      v.eff_municipio AS propiedad_municipio
+    FROM visitas_con_cliente v
     WHERE v.estado = 'programada' AND v.fecha = current_date + 1
-    ORDER BY c.nombre
+    ORDER BY v.cliente_nombre
   `;
 
   return { kpi, proximas, manana };
