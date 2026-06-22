@@ -1,5 +1,5 @@
-// Tarifas v3.0 — IVA incluido
-// Fuente: Tarifas-Brown-v3.0.docx.md (prevalece sobre cualquier otra fuente)
+// Tarifas v4.0 — IVA incluido
+// Fuente: actualización v4.0 aprobada por Rubén (x2 sobre v3.0)
 
 export type Frecuencia = "puntual" | "quincenal" | "semanal";
 export type Altura     = "ninguna" | "2m" | "3m";
@@ -12,29 +12,29 @@ export const TARIFAS = {
     semanal:   0.78,  // −22 %
   } satisfies Record<Frecuencia, number>,
 
-  cesped: { base: 0.18, minimo: 45 },   // €/m²
+  cesped: { base: 0.36, minimo: 90 },   // €/m²
 
   setos: {
-    alibustre:     { base: 3.50, minimo: 55 },  // €/ml
-    coniferas:     { base: 4.50, minimo: 55 },  // €/ml
-    suplemento_2m: 0.60,  // €/ml — NO afectado por factor frecuencia
-    suplemento_3m: 1.25,  // €/ml — NO afectado por factor frecuencia
+    alibustre:     { base: 7.00, minimo: 110 },  // €/ml
+    coniferas:     { base: 9.00, minimo: 110 },  // €/ml
+    suplemento_2m: 1.20,  // €/ml — NO afectado por factor frecuencia
+    suplemento_3m: 2.50,  // €/ml — NO afectado por factor frecuencia
   },
 
-  piscina: { base: 1.20, minimo: 55 },  // €/m² de lámina (largo × ancho)
+  piscina: { base: 2.40, minimo: 110 },  // €/m² de lámina (largo × ancho)
 
   desbroce: {
     tramos: [
-      { hasta: 500,  precio: 0.55 },
-      { hasta: 2000, precio: 0.35 },
+      { hasta: 500,  precio: 1.10 },
+      { hasta: 2000, precio: 0.70 },
     ],
     maximo: 2000,  // > 2.000 m² → presupuesto personalizado
   },
 
   puesta_marcha: {
-    pequena: 150,
-    mediana: 225,
-    grande:  300,
+    pequena: 300,
+    mediana: 450,
+    grande:  600,
   } satisfies Record<TallaPM, number>,
 };
 

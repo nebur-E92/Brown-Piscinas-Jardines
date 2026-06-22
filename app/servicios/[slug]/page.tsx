@@ -393,25 +393,25 @@ export default function ServicePage({ params }: { params: Params }) {
 
         <h2 className="text-xl font-semibold mb-2">Rango de precio orientativo</h2>
         {isPiscina && (
-          <p className="text-neutral-700 mb-6">El mantenimiento mensual para una piscina pequeña parte de 125 € al mes según nuestras tarifas oficiales. El precio final dependerá del tamaño y estado de la piscina y se confirma tras una inspección gratuita.</p>
+          <p className="text-neutral-700 mb-6">El mantenimiento mensual para una piscina pequeña parte de 250 € al mes según nuestras tarifas oficiales. El precio final dependerá del tamaño y estado de la piscina y se confirma tras una inspección gratuita.</p>
         )}
         {isJardin && (
-          <p className="text-neutral-700 mb-6">El servicio de mantenimiento de jardín parte de 130 € al mes para jardines pequeños. El precio final depende del tamaño y estado del jardín y se fija tras inspección.</p>
+          <p className="text-neutral-700 mb-6">El servicio de mantenimiento de jardín parte de 260 € al mes para jardines pequeños. El precio final depende del tamaño y estado del jardín y se fija tras inspección.</p>
         )}
         {isCombinado && (
-          <p className="text-neutral-700 mb-6">La combinación parte de 250 € al mes para viviendas con jardín pequeño y piscina pequeña. El precio varía según el tamaño de cada zona y se define tras evaluación.</p>
+          <p className="text-neutral-700 mb-6">La combinación parte de 500 € al mes para viviendas con jardín pequeño y piscina pequeña. El precio varía según el tamaño de cada zona y se define tras evaluación.</p>
         )}
         {isCorteCespeed && (
-          <p className="text-neutral-700 mb-6">Desde 70 € por visita para jardines pequeños. El precio depende del tamaño y estado del césped.</p>
+          <p className="text-neutral-700 mb-6">Desde 90 € por visita para jardines pequeños. El precio depende del tamaño y estado del césped.</p>
         )}
         {isDesbroce && (
-          <p className="text-neutral-700 mb-6">El coste se calcula por metro cuadrado y varía según la superficie; nuestros precios parten de 0,30 €/m² para grandes superficies. Las parcelas de menor tamaño tienen un coste unitario superior.</p>
+          <p className="text-neutral-700 mb-6">El coste se calcula por metro cuadrado y varía según la superficie; nuestros precios parten de 0,70 €/m² para grandes superficies. Las parcelas de menor tamaño tienen un coste unitario superior.</p>
         )}
         {isSetos && (
-          <p className="text-neutral-700 mb-6">El precio se calcula por metro lineal y varía según la especie, altura y densidad del seto; nuestros servicios parten de aproximadamente 2 €/ml, con suplementos por altura y retirada de residuos voluminosos.</p>
+          <p className="text-neutral-700 mb-6">El precio se calcula por metro lineal y varía según la especie, altura y densidad del seto; nuestros servicios parten de 5,46 €/ml, con suplementos por altura y retirada de residuos voluminosos.</p>
         )}
         {isLimpiezaPiscina && (
-          <p className="text-neutral-700 mb-6">Desde 60 € por piscina pequeña y visita. El precio se ajusta según el tamaño y la suciedad acumulada y siempre se confirma tras una inspección.</p>
+          <p className="text-neutral-700 mb-6">Desde 110 € por piscina pequeña y visita. El precio se ajusta según el tamaño y la suciedad acumulada y siempre se confirma tras una inspección.</p>
         )}
 
         <h2 className="text-xl font-semibold mb-2">Cómo trabajamos</h2>

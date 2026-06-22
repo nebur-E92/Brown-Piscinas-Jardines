@@ -31,16 +31,16 @@ export const BUSINESS = {
   sameAs: [] as string[], // Añade RRSS si tienes
 };
 
-// Precios v3.0 — IVA incluido
+// Precios v4.0 — IVA incluido
 export const SERVICES = [
-  { slug: "mantenimiento-piscina",    name: "Mantenimiento de piscina",                     fromPrice: "Desde 1,20 €/m² de lámina" },
-  { slug: "mantenimiento-jardin",     name: "Mantenimiento de jardín",                       fromPrice: "Desde 0,18 €/m²" },
+  { slug: "mantenimiento-piscina",    name: "Mantenimiento de piscina",                     fromPrice: "Desde 2,40 €/m² de lámina" },
+  { slug: "mantenimiento-jardin",     name: "Mantenimiento de jardín",                       fromPrice: "Desde 0,36 €/m²" },
   { slug: "mantenimiento-combinado",  name: "Mantenimiento combinado piscina + jardín",      fromPrice: "Consultar" },
-  { slug: "limpieza-puntual-piscina", name: "Limpieza puntual de piscina",                   fromPrice: "Desde 55 €" },
-  { slug: "corte-cesped",             name: "Corte de césped",                               fromPrice: "Desde 45 €" },
-  { slug: "desbroce",                 name: "Desbroce de terrenos",                          fromPrice: "Desde 0,35 €/m²" },
-  { slug: "setos",                    name: "Recorte de setos",                              fromPrice: "Desde 3,50 €/ml" },
-  { slug: "puesta-marcha",            name: "Puesta en marcha / Cierre de temporada",       fromPrice: "Desde 150 €" },
+  { slug: "limpieza-puntual-piscina", name: "Limpieza puntual de piscina",                   fromPrice: "Desde 110 €" },
+  { slug: "corte-cesped",             name: "Corte de césped",                               fromPrice: "Desde 90 €" },
+  { slug: "desbroce",                 name: "Desbroce de terrenos",                          fromPrice: "Desde 0,70 €/m²" },
+  { slug: "setos",                    name: "Recorte de setos",                              fromPrice: "Desde 5,46 €/ml" },
+  { slug: "puesta-marcha",            name: "Puesta en marcha / Cierre de temporada",       fromPrice: "Desde 300 €" },
 ];
 
 export const LOCATIONS = [

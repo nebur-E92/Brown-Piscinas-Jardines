@@ -29,10 +29,10 @@ type ResultadoCalculo = { total: number; desglose: Record<string, Linea> };
 // ─── constantes ───────────────────────────────────────────────────────────────
 
 const TARJETAS: { id: ServicioId; nombre: string; icono: string; desde: string }[] = [
-  { id: "cesped",   nombre: "Césped",   icono: "🌿", desde: "0,18 €/m²" },
-  { id: "setos",    nombre: "Setos",    icono: "✂️", desde: "3,50 €/ml" },
-  { id: "piscina",  nombre: "Piscina",  icono: "💧", desde: "1,20 €/m²" },
-  { id: "desbroce", nombre: "Desbroce", icono: "🏗️", desde: "0,35 €/m²" },
+  { id: "cesped",   nombre: "Césped",   icono: "🌿", desde: "0,36 €/m²" },
+  { id: "setos",    nombre: "Setos",    icono: "✂️", desde: "5,46 €/ml" },
+  { id: "piscina",  nombre: "Piscina",  icono: "💧", desde: "1,88 €/m²" },
+  { id: "desbroce", nombre: "Desbroce", icono: "🏗️", desde: "0,70 €/m²" },
 ];
 
 const ESTADO_INICIAL: Estado = {
@@ -50,8 +50,8 @@ const FREC_LABELS: Record<Frecuencia, { label: string; desc: string }> = {
 
 const ALTURA_LABELS: Record<Altura, string> = {
   ninguna: "Hasta 2 m",
-  "2m":    "> 2 m  (+0,60 €/ml)",
-  "3m":    "> 3 m  (+1,25 €/ml)",
+  "2m":    "> 2 m  (+1,20 €/ml)",
+  "3m":    "> 3 m  (+2,50 €/ml)",
 };
 
 const TALLA_LABELS: Record<TallaPM, string> = {
@@ -259,7 +259,7 @@ export default function PriceCalculator() {
                     value={estado.cesped.medida}
                     onChange={(v) => update("cesped", { medida: v })}
                     error={errores["cesped"]}
-                    hint="Mínimo por visita: 45 €"
+                    hint="Mínimo por visita: 90 €"
                   />
                   <FrecuenciaSelector
                     value={estado.cesped.frecuencia}
@@ -282,7 +282,7 @@ export default function PriceCalculator() {
                   <div>
                     <label className="block text-xs font-medium text-neutral-600 mb-1.5">Tipo de seto</label>
                     <div className="grid grid-cols-2 gap-2">
-                      {([["alibustre", "Hoja pequeña", "3,50 €/ml"], ["coniferas", "Conífera", "4,50 €/ml"]] as [TipoSeto, string, string][]).map(([val, label, precio]) => (
+                      {([["alibustre", "Hoja pequeña", "7,00 €/ml"], ["coniferas", "Conífera", "9,00 €/ml"]] as [TipoSeto, string, string][]).map(([val, label, precio]) => (
                         <button
                           key={val} type="button"
                           onClick={() => update("setos", { tipo: val })}
@@ -304,7 +304,7 @@ export default function PriceCalculator() {
                     value={estado.setos.medida}
                     onChange={(v) => update("setos", { medida: v })}
                     error={errores["setos"]}
-                    hint="Mínimo por visita: 55 €"
+                    hint="Mínimo por visita: 110 €"
                   />
                   <div>
                     <label className="block text-xs font-medium text-neutral-600 mb-1.5">Altura del seto</label>
@@ -339,7 +339,7 @@ export default function PriceCalculator() {
                   <div>
                     <label className="block text-xs font-medium text-neutral-600 mb-1.5">Tipo de servicio</label>
                     <div className="grid grid-cols-2 gap-2">
-                      {([["mantenimiento", "Mantenimiento", "1,20 €/m²"], ["puesta-marcha", "Puesta en marcha / Cierre", "precio fijo"]] as [TipoPiscina, string, string][]).map(([val, label, precio]) => (
+                      {([["mantenimiento", "Mantenimiento", "2,40 €/m²"], ["puesta-marcha", "Puesta en marcha / Cierre", "precio fijo"]] as [TipoPiscina, string, string][]).map(([val, label, precio]) => (
                         <button
                           key={val} type="button"
                           onClick={() => update("piscina", { tipo: val })}
@@ -364,7 +364,7 @@ export default function PriceCalculator() {
                         value={estado.piscina.medida}
                         onChange={(v) => update("piscina", { medida: v })}
                         error={errores["piscina"]}
-                        hint="Largo × ancho · Mínimo: 55 €"
+                        hint="Largo × ancho · Mínimo: 110 €"
                       />
                       <FrecuenciaSelector
                         value={estado.piscina.frecuencia}
@@ -404,7 +404,7 @@ export default function PriceCalculator() {
                     value={estado.desbroce.medida}
                     onChange={(v) => update("desbroce", { medida: v })}
                     error={errores["desbroce"]}
-                    hint="≤ 500 m²: 0,55 €/m²  ·  501–2.000 m²: 0,35 €/m²"
+                    hint="≤ 500 m²: 1,10 €/m²  ·  501–2.000 m²: 0,70 €/m²"
                   />
                 </div>
               </div>

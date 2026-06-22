@@ -171,7 +171,7 @@ export default function Services() {
               "Revisión de skimmers, prefiltro y bomba.",
               "Control y ajuste de pH, cloro y otros parámetros.",
             ]}
-            price="Desde 1,20 €/m² de lámina"
+            price="Desde 2,40 €/m² de lámina"
             bgImage="/images/service-pool.png"
             href="/servicios/mantenimiento-piscina"
           />
@@ -184,7 +184,7 @@ export default function Services() {
               "Eliminación de hierbas no deseadas.",
               "Revisión general de plantas ornamentales.",
             ]}
-            price="Desde 0,18 €/m²"
+            price="Desde 0,36 €/m²"
             bgImage="/images/service-garden.webp"
             href="/servicios/mantenimiento-jardin"
           />
@@ -199,7 +199,7 @@ export default function Services() {
             image="/images/service-poolclean.webp"
             title="Limpieza puntual de piscina"
             description="Recupera tu piscina en una sola visita: limpieza a fondo y ajuste de parámetros para que vuelva a estar lista."
-            price="Desde 55 €"
+            price="Desde 110 €"
             gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
             href="/servicios/limpieza-piscina"
           />
@@ -207,7 +207,7 @@ export default function Services() {
             image="/images/service-mow.webp"
             title="Corte puntual de césped"
             description="Ideal para jardines que necesitan una puesta a punto rápida: corte uniforme y perfilado de bordes."
-            price="Desde 45 €"
+            price="Desde 90 €"
             gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
             href="/servicios/corte-cesped"
           />
@@ -215,7 +215,7 @@ export default function Services() {
             image="/images/service-desbroce.webp"
             title="Desbroce de terrenos"
             description="Elimina hierba alta y maleza en parcelas o solares. Trabajo con desbrozadora profesional."
-            price="Desde 0,35 €/m²"
+            price="Desde 0,70 €/m²"
             gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
             href="/servicios/desbroce"
           />
@@ -223,7 +223,7 @@ export default function Services() {
             image="/images/service-hedge.webp"
             title="Recorte de setos y arbustos"
             description="Perfiles limpios y a la altura adecuada, con retirada de restos vegetales incluida."
-            price="Desde 3,50 €/ml"
+            price="Desde 5,46 €/ml"
             gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
             href="/servicios/setos"
           />

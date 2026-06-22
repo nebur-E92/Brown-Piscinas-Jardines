@@ -9,7 +9,7 @@ export default function TarifasPage() {
   return (
     <article className="max-w-3xl mx-auto px-4 py-12">
       <h1 className="text-2xl font-bold mb-1">Tarifas</h1>
-      <p className="text-sm text-neutral-400 mb-2">Versión 3.0 · IVA incluido</p>
+      <p className="text-sm text-neutral-400 mb-2">Versión 4.0 · IVA incluido</p>
       <p className="text-sm text-neutral-600 mb-8">
         El precio final se calcula multiplicando la unidad de medida (m², ml o m² de lámina) por la tarifa base y por el factor de frecuencia pactado. Se aplican mínimos por visita en todos los servicios.{" "}
         <strong>Productos químicos no incluidos</strong> — se facturan aparte según consumo real.
@@ -38,7 +38,7 @@ export default function TarifasPage() {
       {/* 1. Césped */}
       <section className="mb-10">
         <h2 className="text-lg font-bold mb-1 border-b pb-2">1. Césped</h2>
-        <p className="text-xs text-neutral-500 mb-3">Solo para césped en estado de mantenimiento normal · Unidad: €/m² · Mínimo por visita: <strong>45 €</strong></p>
+        <p className="text-xs text-neutral-500 mb-3">Solo para césped en estado de mantenimiento normal · Unidad: €/m² · Mínimo por visita: <strong>90 €</strong></p>
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="bg-neutral-50 border-b">
@@ -51,22 +51,22 @@ export default function TarifasPage() {
           <tbody>
             <tr className="border-b">
               <td className="py-2">Precio base / m²</td>
-              <td className="py-2 text-center font-medium">0,18 €</td>
-              <td className="py-2 text-center font-medium">0,16 €</td>
-              <td className="py-2 text-center font-medium">0,14 €</td>
+              <td className="py-2 text-center font-medium">0,36 €</td>
+              <td className="py-2 text-center font-medium">0,32 €</td>
+              <td className="py-2 text-center font-medium">0,28 €</td>
             </tr>
           </tbody>
         </table>
         <ul className="text-xs text-neutral-500 mt-2 space-y-1 list-disc pl-4">
           <li>Incluye corte, perfilado de bordes, soplado y retirada de restos hasta 150 L.</li>
-          <li>Restos superiores a 150 L → suplemento fijo de 30 €.</li>
+          <li>Restos superiores a 150 L → suplemento fijo de 60 €.</li>
         </ul>
       </section>
 
       {/* 2. Setos */}
       <section className="mb-10">
         <h2 className="text-lg font-bold mb-1 border-b pb-2">2. Setos y arbustos</h2>
-        <p className="text-xs text-neutral-500 mb-3">Solo para setos en estado de mantenimiento normal · Unidad: €/ml · Mínimo por visita: <strong>55 €</strong></p>
+        <p className="text-xs text-neutral-500 mb-3">Solo para setos en estado de mantenimiento normal · Unidad: €/ml · Mínimo por visita: <strong>110 €</strong></p>
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="bg-neutral-50 border-b">
@@ -79,24 +79,24 @@ export default function TarifasPage() {
           <tbody>
             <tr className="border-b">
               <td className="py-2">Hoja pequeña (alibustre, boj…)</td>
-              <td className="py-2 text-center font-medium">3,50 €/ml</td>
-              <td className="py-2 text-center font-medium">3,08 €/ml</td>
-              <td className="py-2 text-center font-medium">2,73 €/ml</td>
+              <td className="py-2 text-center font-medium">7,00 €/ml</td>
+              <td className="py-2 text-center font-medium">6,16 €/ml</td>
+              <td className="py-2 text-center font-medium">5,46 €/ml</td>
             </tr>
             <tr className="border-b">
               <td className="py-2">Conífera (ciprés, tuya, leylandi…)</td>
-              <td className="py-2 text-center font-medium">4,50 €/ml</td>
-              <td className="py-2 text-center font-medium">3,96 €/ml</td>
-              <td className="py-2 text-center font-medium">3,51 €/ml</td>
+              <td className="py-2 text-center font-medium">9,00 €/ml</td>
+              <td className="py-2 text-center font-medium">7,92 €/ml</td>
+              <td className="py-2 text-center font-medium">7,02 €/ml</td>
             </tr>
             <tr className="border-b">
               <td className="py-2 text-neutral-500">Suplemento altura &gt; 2 m</td>
-              <td className="py-2 text-center text-neutral-600">+0,60 €/ml</td>
+              <td className="py-2 text-center text-neutral-600">+1,20 €/ml</td>
               <td className="py-2 text-center text-neutral-400" colSpan={2}>sin factor de frecuencia</td>
             </tr>
             <tr>
               <td className="py-2 text-neutral-500">Suplemento altura &gt; 3 m</td>
-              <td className="py-2 text-center text-neutral-600">+1,25 €/ml</td>
+              <td className="py-2 text-center text-neutral-600">+2,50 €/ml</td>
               <td className="py-2 text-center text-neutral-400" colSpan={2}>sin factor de frecuencia</td>
             </tr>
           </tbody>
@@ -106,7 +106,7 @@ export default function TarifasPage() {
       {/* 3. Piscina */}
       <section className="mb-10">
         <h2 className="text-lg font-bold mb-1 border-b pb-2">3. Piscina</h2>
-        <p className="text-xs text-neutral-500 mb-3">Solo para piscinas en estado de mantenimiento normal · Unidad: €/m² de lámina (largo × ancho) · Mínimo por visita: <strong>55 €</strong></p>
+        <p className="text-xs text-neutral-500 mb-3">Solo para piscinas en estado de mantenimiento normal · Unidad: €/m² de lámina (largo × ancho) · Mínimo por visita: <strong>110 €</strong></p>
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="bg-neutral-50 border-b">
@@ -119,9 +119,9 @@ export default function TarifasPage() {
           <tbody>
             <tr className="border-b">
               <td className="py-2">Precio base / m² de lámina</td>
-              <td className="py-2 text-center font-medium">1,20 €</td>
-              <td className="py-2 text-center font-medium">1,06 €</td>
-              <td className="py-2 text-center font-medium">0,94 €</td>
+              <td className="py-2 text-center font-medium">2,40 €</td>
+              <td className="py-2 text-center font-medium">2,12 €</td>
+              <td className="py-2 text-center font-medium">1,88 €</td>
             </tr>
           </tbody>
         </table>
@@ -140,7 +140,7 @@ export default function TarifasPage() {
             </tr>
           </thead>
           <tbody>
-            {[["Pequeña", "150 €"], ["Mediana", "225 €"], ["Grande", "300 €"]].map(([t, p]) => (
+            {[["Pequeña", "300 €"], ["Mediana", "450 €"], ["Grande", "600 €"]].map(([t, p]) => (
               <tr key={t} className="border-b">
                 <td className="py-2">{t}</td>
                 <td className="py-2 text-center font-medium">{p}</td>
@@ -163,8 +163,8 @@ export default function TarifasPage() {
           </thead>
           <tbody>
             {[
-              ["Hasta 500 m²", "0,55 €"],
-              ["501 – 2.000 m²", "0,35 €"],
+              ["Hasta 500 m²", "1,10 €"],
+              ["501 – 2.000 m²", "0,70 €"],
               ["Más de 2.000 m²", "Presupuesto personalizado"],
             ].map(([s, p]) => (
               <tr key={s} className="border-b">
@@ -192,7 +192,7 @@ export default function TarifasPage() {
             </tr>
             <tr className="border-b">
               <td className="py-2 font-medium">A partir del km 11 (ida + vuelta)</td>
-              <td className="py-2 text-center font-medium">0,30 €/km</td>
+              <td className="py-2 text-center font-medium">0,60 €/km</td>
             </tr>
             <tr>
               <td className="py-2 font-medium">Fuera de provincia</td>

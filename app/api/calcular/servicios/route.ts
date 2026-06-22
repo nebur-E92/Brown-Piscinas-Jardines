@@ -8,7 +8,7 @@ export async function GET() {
         id: "cesped",
         nombre: "Césped",
         descripcion:
-          "Corte, perfilado de bordes, soplado y retirada de restos hasta 150 L. Restos > 150 L: suplemento de 30 €.",
+          "Corte, perfilado de bordes, soplado y retirada de restos hasta 150 L. Restos > 150 L: suplemento de 60 €.",
         unidad: "m²",
         frecuencia: true,
         altura: false,
@@ -52,7 +52,7 @@ export async function GET() {
         id: "desbroce",
         nombre: "Desbroce de terrenos",
         descripcion:
-          "Corte de vegetación con desbrozadora. Hasta 500 m²: 0,55 €/m² · 501–2.000 m²: 0,35 €/m² · > 2.000 m²: presupuesto personalizado. No requiere frecuencia.",
+          "Corte de vegetación con desbrozadora. Hasta 500 m²: 1,10 €/m² · 501–2.000 m²: 0,70 €/m² · > 2.000 m²: presupuesto personalizado. No requiere frecuencia.",
         unidad: "m²",
         frecuencia: false,
         altura: false,
@@ -61,7 +61,7 @@ export async function GET() {
         id: "puesta-marcha",
         nombre: "Puesta en marcha / Cierre de temporada",
         descripcion:
-          "Preparación de bomba y filtros, instalación o retirada de cobertor y limpieza de piscina. Pequeña 150 €, mediana 225 €, grande 300 €.",
+          "Preparación de bomba y filtros, instalación o retirada de cobertor y limpieza de piscina. Pequeña 300 €, mediana 450 €, grande 600 €.",
         unidad: "talla",
         frecuencia: false,
         altura: false,
