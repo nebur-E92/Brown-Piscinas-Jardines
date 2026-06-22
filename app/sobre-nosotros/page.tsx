@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SITE, BUSINESS } from "../../lib/seo";
+import { getWhatsAppHref } from "../../lib/contact";
 
 export const metadata: Metadata = {
   title: "Sobre Nosotros | BROWN Piscinas & Jardines",
@@ -37,6 +38,8 @@ function AboutJsonLd() {
 }
 
 export default function SobreNosotrosPage() {
+  const whatsappHref = getWhatsAppHref();
+
   return (
     <>
       <section className="max-w-3xl mx-auto py-12">
@@ -98,8 +101,8 @@ export default function SobreNosotrosPage() {
                 <p className="text-sm text-gray-700">Mantenimientos mensuales, trabajos puntuales o refuerzos estacionales.</p>
               </div>
               <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                <h3 className="font-bold text-black mb-2">Atención directa y trato personal</h3>
-                <p className="text-sm text-gray-700">Sin call centers ni intermediarios.</p>
+                <h3 className="font-bold text-black mb-2">Proceso ordenado</h3>
+                <p className="text-sm text-gray-700">La calculadora y la reserva nos permiten valorar cada solicitud con datos claros.</p>
               </div>
             </div>
           </div>
@@ -126,15 +129,16 @@ export default function SobreNosotrosPage() {
           </div>
 
           <div className="bg-gray-100 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-3">Contacta con Nosotros</h2>
+            <h2 className="text-2xl font-bold mb-3">Solicita presupuesto</h2>
             <p className="text-gray-700 mb-4">
-              ¿Tienes dudas o necesitas presupuesto? Nos encantaría ayudarte:
+              Para darte una respuesta útil, empieza por la calculadora o reserva una visita en las franjas disponibles.
             </p>
             <div className="space-y-2">
-              <p><strong>Teléfono:</strong> <a href={`tel:${BUSINESS.phone}`} className="text-black hover:underline font-semibold">{BUSINESS.phone}</a></p>
-              <p><strong>WhatsApp:</strong> <a href={`https://wa.me/${BUSINESS.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-black hover:underline font-semibold">Chat directo</a></p>
+              <p><strong>Calculadora:</strong> <a href="/calcular-precio" className="text-black hover:underline font-semibold">Calcular precio orientativo</a></p>
+              <p><strong>Reserva:</strong> <a href="/reservar" className="text-black hover:underline font-semibold">Elegir una franja disponible</a></p>
+              {whatsappHref && <p><strong>WhatsApp:</strong> <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="text-black hover:underline font-semibold">Asistente para recoger datos</a></p>}
               <p><strong>Email:</strong> <a href={`mailto:${BUSINESS.email}`} className="text-black hover:underline font-semibold">{BUSINESS.email}</a></p>
-              <p><strong>Horario:</strong> Lunes a Sábado, 09:00 - 20:00</p>
+              <p><strong>Reservas:</strong> Lunes, miércoles y viernes por la mañana</p>
             </div>
           </div>
         </article>

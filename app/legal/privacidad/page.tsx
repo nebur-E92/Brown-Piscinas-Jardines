@@ -18,7 +18,6 @@ export default function PrivacidadPage() {
           <tr className="border-b"><td className="py-1.5 font-medium">NIF</td><td>{BUSINESS.taxId}</td></tr>
           <tr className="border-b"><td className="py-1.5 font-medium">Domicilio</td><td>{BUSINESS.address.street}, {BUSINESS.address.postalCode} {BUSINESS.address.locality} ({BUSINESS.address.region})</td></tr>
           <tr className="border-b"><td className="py-1.5 font-medium">Email</td><td><a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></td></tr>
-          <tr><td className="py-1.5 font-medium">Teléfono</td><td>{BUSINESS.phone}</td></tr>
         </tbody>
       </table>
 

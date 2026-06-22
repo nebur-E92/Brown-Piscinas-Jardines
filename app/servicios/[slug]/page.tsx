@@ -152,12 +152,12 @@ function FaqJsonLd(serviceName: string, serviceSlug: string): React.ReactElement
     {
       "@type": "Question",
       name: `¿Con qué frecuencia debo contratar ${serviceName}?`,
-      acceptedAnswer: { "@type": "Answer", text: "Depende del tamaño y estado. En nuestras páginas encontrarás recomendaciones específicas o consulta con nosotros vía WhatsApp." }
+      acceptedAnswer: { "@type": "Answer", text: "Depende del tamaño y estado. En nuestras páginas encontrarás recomendaciones específicas y una calculadora para orientar la solicitud." }
     },
     {
       "@type": "Question",
       name: `¿Cómo contratar ${serviceName}?`,
-      acceptedAnswer: { "@type": "Answer", text: "Puedes usar el calculador de precios, enviar un formulario o contactarnos directamente por WhatsApp o teléfono." }
+      acceptedAnswer: { "@type": "Answer", text: "Puedes usar el calculador de precios o reservar una visita en las franjas disponibles. El asistente de WhatsApp solo recoge datos básicos y te dirige al flujo adecuado." }
     }
   ];
 

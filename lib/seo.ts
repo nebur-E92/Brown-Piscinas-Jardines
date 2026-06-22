@@ -10,8 +10,6 @@ export const BUSINESS = {
   taxId: "07971517Q",
   tagline: "Expertos en mantenimiento de piscinas y jardines en Salamanca",
   description: "Mantenimiento profesional de piscinas y jardines en Salamanca y alrededores. Empresa de jardinería: corte de césped, poda de setos, desbroce. Limpieza y mantenimiento de piscinas. Servicios mensuales y puntuales con garantía.",
-  phone: "+34 625 199 394",
-  whatsapp: "34625199394",
   email: "brownpiscinasyjardines@gmail.com",
   logo: "/brand/logo-brown.png",
   image: "/brand/og-brown.jpg", // 1200x630 recomendado

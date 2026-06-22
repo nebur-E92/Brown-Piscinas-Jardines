@@ -167,8 +167,7 @@ export async function POST(req: NextRequest) {
             </table>
             <p style="color:#444;font-size:14px">
               Si necesitas cambiar algo, escríbenos a
-              <a href="mailto:brownpiscinasyjardines@gmail.com">brownpiscinasyjardines@gmail.com</a>
-              o por <a href="https://wa.me/34625199394">WhatsApp</a>.
+              <a href="mailto:brownpiscinasyjardines@gmail.com">brownpiscinasyjardines@gmail.com</a>.
             </p>
             <p style="color:#999;font-size:12px;margin-top:24px">
               Brown Piscinas &amp; Jardines · Salamanca

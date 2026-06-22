@@ -75,7 +75,6 @@ function LocalBusinessJsonLd() {
     name: BUSINESS.legalName,
     image: BUSINESS.image,
     url: SITE.baseUrl,
-    telephone: BUSINESS.phone,
     email: BUSINESS.email,
     priceRange: BUSINESS.priceRange,
     logo: BUSINESS.logo,

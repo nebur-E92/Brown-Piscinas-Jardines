@@ -1,13 +1,13 @@
 const PASOS = [
   {
     numero: "01",
-    titulo: "Contacto rápido",
-    descripcion: "Escríbenos por WhatsApp, email o desde el formulario. Respondemos en menos de 24 h.",
+    titulo: "Calcula y deja tus datos",
+    descripcion: "Empieza por la calculadora o el formulario. Pedimos solo servicio, medidas aproximadas y ubicación para orientar la solicitud.",
   },
   {
     numero: "02",
-    titulo: "Visita técnica gratuita",
-    descripcion: "Acudimos a valorar la instalación y confirmar el presupuesto. Sin sorpresas ni costes ocultos.",
+    titulo: "Revisión y confirmación",
+    descripcion: "Revisamos la información y, si encaja, confirmamos la visita en las franjas disponibles: lunes, miércoles y viernes por la mañana.",
   },
   {
     numero: "03",

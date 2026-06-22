@@ -57,6 +57,11 @@ export default function ContactoPage({ searchParams }: { searchParams: Record<st
     <section className="py-12">
       <div className="max-w-2xl mx-auto">
         <h1 className="page-title">Contacto</h1>
+        <div className="mb-6 rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
+          <p className="font-semibold text-neutral-900">Para una respuesta más precisa, empieza por la calculadora.</p>
+          <p className="mt-1">Recogemos el tipo de servicio, medidas aproximadas y ubicación antes de confirmar cualquier visita.</p>
+          <a href="/calcular-precio" className="mt-3 inline-block font-semibold underline">Calcular precio orientativo</a>
+        </div>
         {searchParams?.enviado === '1' && (
           <div className="mb-4 rounded border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-800">
             Mensaje enviado correctamente. Te responderemos lo antes posible.

@@ -245,7 +245,7 @@ export default function BookingFlow({
       if (!res.ok) throw new Error();
       setPaso(5);
     } catch {
-      setError("No se pudo enviar. Inténtalo de nuevo o escríbenos por WhatsApp.");
+      setError("No se pudo enviar. Inténtalo de nuevo o usa la calculadora para dejarnos la solicitud.");
     } finally {
       setEnviando(false);
     }

@@ -46,10 +46,10 @@ export default function Footer() {
           </div>
           {/* Columna 3 */}
           <div>
-            <h4 className="font-bold mb-2">Contacto</h4>
+            <h4 className="font-bold mb-2">Solicitudes</h4>
             <ul>
-              <li>Tel: 625 199 394</li>
-              <li>Email: brownpiscinasyjardines@gmail.com</li>
+              <li><a href="/calcular-precio" className="underline">Calculadora de precio</a></li>
+              <li><a href="/reservar" className="underline">Reservar visita</a></li>
               <li>Ubicación: Salamanca y alrededores</li>
             </ul>
           </div>

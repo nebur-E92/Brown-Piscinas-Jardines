@@ -1,6 +1,9 @@
 import Image from 'next/image';
+import { getWhatsAppHref } from '../../lib/contact';
 
 export default function Hero() {
+  const whatsappHref = getWhatsAppHref();
+
   return (
   <section id="hero" className="relative w-full bg-white min-h-[400px] sm:min-h-[500px] lg:min-h-[600px] flex items-center justify-center">
       {/* Imagen de fondo */}
@@ -30,14 +33,16 @@ export default function Hero() {
           >
             Calcular precio
           </a>
-          <a
-            href={process.env.NEXT_PUBLIC_WA_LINK || `https://wa.me/${process.env.NEXT_PUBLIC_WA_NUMBER || '34625199394'}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full px-6 py-3 text-base border border-white/70 text-white hover:bg-white/10 transition"
-          >
-            WhatsApp
-          </a>
+          {whatsappHref && (
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full px-6 py-3 text-base border border-white/70 text-white hover:bg-white/10 transition"
+            >
+              Asistente WhatsApp
+            </a>
+          )}
         </div>
       </div>
     </section>

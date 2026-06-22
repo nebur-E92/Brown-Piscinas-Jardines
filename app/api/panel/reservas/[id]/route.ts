@@ -188,8 +188,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
         to:   reserva.email,
         subject: estado === "confirmada" ? `✅ Cita confirmada — ${fechaLabel}` : `Cita cancelada — Brown Piscinas & Jardines`,
         html: estado === "confirmada"
-          ? `<div style="font-family:sans-serif;max-width:560px"><h2 style="color:#111">✅ Tu cita está confirmada</h2><p>Hola <strong>${safeNombre}</strong>,</p><p>Tu cita ha sido confirmada para el <strong style="text-transform:capitalize">${safeFecha}</strong>, ${safeFranja}.</p>${mensajeHtml}<p>Si necesitas cambiarla escríbenos a <a href="mailto:brownpiscinasyjardines@gmail.com">brownpiscinasyjardines@gmail.com</a> o por <a href="https://wa.me/34625199394">WhatsApp</a>.</p></div>`
-          : `<div style="font-family:sans-serif;max-width:560px"><h2 style="color:#111">Tu cita ha sido cancelada</h2><p>Hola <strong>${safeNombre}</strong>,</p><p>Hemos tenido que cancelar tu cita del <strong>${safeFecha}</strong>.</p>${mensajeHtml}<p>Contáctanos para buscar otra fecha.</p><p><a href="https://wa.me/34625199394">WhatsApp: 625 199 394</a></p></div>`,
+          ? `<div style="font-family:sans-serif;max-width:560px"><h2 style="color:#111">✅ Tu cita está confirmada</h2><p>Hola <strong>${safeNombre}</strong>,</p><p>Tu cita ha sido confirmada para el <strong style="text-transform:capitalize">${safeFecha}</strong>, ${safeFranja}.</p>${mensajeHtml}<p>Si necesitas cambiarla escríbenos a <a href="mailto:brownpiscinasyjardines@gmail.com">brownpiscinasyjardines@gmail.com</a>.</p></div>`
+          : `<div style="font-family:sans-serif;max-width:560px"><h2 style="color:#111">Tu cita ha sido cancelada</h2><p>Hola <strong>${safeNombre}</strong>,</p><p>Hemos tenido que cancelar tu cita del <strong>${safeFecha}</strong>.</p>${mensajeHtml}<p>Para buscar otra fecha, entra de nuevo en <a href="https://brownpiscinasyjardines.com/reservar">brownpiscinasyjardines.com/reservar</a> o escríbenos a <a href="mailto:brownpiscinasyjardines@gmail.com">brownpiscinasyjardines@gmail.com</a>.</p></div>`,
       });
     } catch (e) { console.error("Error email:", e); }
   }
