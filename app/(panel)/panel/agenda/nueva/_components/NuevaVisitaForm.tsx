@@ -131,7 +131,7 @@ export function NuevaVisitaForm({
       )}
 
       {/* Fecha y tipo */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className="block text-xs font-medium text-neutral-600 mb-1">Fecha *</label>
           <input
@@ -184,7 +184,7 @@ export function NuevaVisitaForm({
         </p>
       )}
 
-      <div className="flex gap-3 pt-1">
+      <div className="flex flex-col gap-3 pt-1 sm:flex-row">
         <button
           type="button"
           onClick={() => router.back()}

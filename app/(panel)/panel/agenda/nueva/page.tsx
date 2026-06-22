@@ -37,7 +37,7 @@ export default async function NuevaVisitaPage({
   const clientes = await getClientes();
 
   return (
-    <div className="p-6 md:p-8 max-w-lg">
+    <div className="w-full max-w-lg p-4 sm:p-6 md:p-8">
       <Link href="/panel/agenda" className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-black mb-6">
         <FiArrowLeft size={14} /> Agenda
       </Link>

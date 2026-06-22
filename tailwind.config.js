@@ -3,7 +3,6 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        fredericka: ['"Fredericka the Great"', 'cursive'],
         urbanist: ['Urbanist', 'sans-serif'],
       },
     },

@@ -70,8 +70,8 @@ export default async function ReservasPage() {
   const confirmadas = reservas.filter((r) => r.estado === "confirmada").length;
 
   return (
-    <div className="p-6 md:p-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full p-4 sm:p-6 md:p-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold">Reservas</h1>
           <p className="text-sm text-neutral-500 mt-0.5">
@@ -111,7 +111,7 @@ export default async function ReservasPage() {
                     <p className="text-xs text-neutral-500 mt-1 italic line-clamp-1">"{r.notas}"</p>
                   )}
                 </div>
-                <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                <div className="flex shrink-0 flex-wrap items-center justify-start gap-2 sm:justify-end">
                   {r.telefono && (
                     <a
                       href={`https://wa.me/34${r.telefono.replace(/\D/g,"")}`}

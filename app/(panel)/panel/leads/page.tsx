@@ -65,8 +65,8 @@ export default async function LeadsPage() {
   const convertidos = leads.filter(l => l.estado === "convertido").length;
 
   return (
-    <div className="p-6 md:p-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full p-4 sm:p-6 md:p-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold">Leads / Contactos</h1>
           <p className="text-sm text-neutral-500 mt-0.5">
@@ -114,7 +114,7 @@ export default async function LeadsPage() {
                 </div>
 
                 {/* Acciones */}
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
                   {lead.email && (
                     <a
                       href={`mailto:${lead.email}`}

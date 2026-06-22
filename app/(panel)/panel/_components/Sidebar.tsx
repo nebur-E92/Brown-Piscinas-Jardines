@@ -23,22 +23,29 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-52 shrink-0 bg-neutral-900 text-white flex flex-col min-h-screen">
+    <aside className="sticky top-0 z-40 flex w-full shrink-0 flex-col bg-neutral-900 text-white md:min-h-screen md:w-52">
       {/* Marca */}
-      <div className="px-5 py-5 border-b border-neutral-700">
+      <div className="flex items-center justify-between gap-3 border-b border-neutral-700 px-4 py-3 md:block md:px-5 md:py-5">
         <p className="font-bold tracking-widest text-sm uppercase">BROWN</p>
-        <p className="text-[11px] text-neutral-400 mt-0.5">Piscinas & Jardines</p>
+        <p className="hidden text-[11px] text-neutral-400 md:mt-0.5 md:block">Piscinas & Jardines</p>
+        <button
+          onClick={logout}
+          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-neutral-300 hover:bg-neutral-800 hover:text-white md:hidden"
+        >
+          <FiLogOut size={14} />
+          Salir
+        </button>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex gap-1 overflow-x-auto px-3 py-2 md:block md:flex-1 md:space-y-1 md:overflow-visible md:py-4">
         {NAV.map(({ href, label, icon: Icon, exact }) => {
           const active = exact ? pathname === href : pathname.startsWith(href);
           return (
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
                 active
                   ? "bg-white text-black font-semibold"
                   : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
@@ -52,7 +59,7 @@ export function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 py-4 border-t border-neutral-700">
+      <div className="hidden border-t border-neutral-700 px-3 py-4 md:block">
         <button
           onClick={logout}
           className="flex items-center gap-2.5 px-3 py-2 text-sm text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg w-full transition-colors"

@@ -72,14 +72,14 @@ export default async function DashboardPage() {
   const visitasHoy = proximas.filter((v) => v.fecha === hoy);
 
   return (
-    <div className="p-6 md:p-8 max-w-4xl">
+    <div className="w-full max-w-4xl p-4 sm:p-6 md:p-8">
       <h1 className="text-xl font-bold mb-1">Inicio</h1>
       <p className="text-sm text-neutral-500 mb-6">
         {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
       </p>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
           { label: "Clientes activos",     value: kpi.clientes,      unit: "" },
           { label: "Visitas este mes",      value: kpi.visitas_mes,   unit: "" },
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
           </h2>
           <div className="bg-white border rounded-xl shadow-sm divide-y">
             {visitasHoy.map((v) => (
-              <div key={v.id} className="flex items-center justify-between px-4 py-3">
+              <div key={v.id} className="flex items-start justify-between gap-3 px-4 py-3">
                 <div>
                   <p className="text-sm font-medium">{v.cliente_nombre}</p>
                   <p className="text-xs text-neutral-500">
@@ -135,7 +135,7 @@ export default async function DashboardPage() {
         ) : (
           <div className="bg-white border rounded-xl shadow-sm divide-y">
             {manana.map((v) => (
-              <div key={v.id} className="flex items-center justify-between px-4 py-3">
+              <div key={v.id} className="flex items-start justify-between gap-3 px-4 py-3">
                 <div>
                   <p className="text-sm font-medium">{v.cliente_nombre}</p>
                   <p className="text-xs text-neutral-500">
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
         ) : (
           <div className="bg-white border rounded-xl shadow-sm divide-y">
             {proximas.map((v) => (
-              <div key={v.id} className="flex items-center justify-between px-4 py-3">
+              <div key={v.id} className="flex items-start justify-between gap-3 px-4 py-3">
                 <div>
                   <p className="text-sm font-medium">{v.cliente_nombre}</p>
                   <p className="text-xs text-neutral-500">

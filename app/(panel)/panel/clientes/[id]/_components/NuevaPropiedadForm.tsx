@@ -70,7 +70,7 @@ export function NuevaPropiedadForm({ clienteId }: { clienteId: string }) {
 
   return (
     <div className="bg-white border rounded-xl shadow-sm p-5">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between gap-3 mb-4">
         <h3 className="text-sm font-semibold">Nueva propiedad</h3>
         <button onClick={() => setOpen(false)} className="text-neutral-400 hover:text-black">
           <FiX size={16} />
@@ -111,7 +111,7 @@ export function NuevaPropiedadForm({ clienteId }: { clienteId: string }) {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className="block text-xs font-medium text-neutral-600 mb-1">Municipio</label>
             <input value={municipio} onChange={(e) => setMunicipio(e.target.value)} placeholder="Salamanca" className={INPUT} />
@@ -134,7 +134,7 @@ export function NuevaPropiedadForm({ clienteId }: { clienteId: string }) {
 
         {error && <p className="text-xs text-red-600">{error}</p>}
 
-        <div className="flex gap-2 pt-1">
+        <div className="flex flex-col gap-2 pt-1 sm:flex-row">
           <button type="button" onClick={() => setOpen(false)} className="flex-1 border border-neutral-300 py-2 rounded-lg text-sm hover:bg-neutral-50">Cancelar</button>
           <button type="submit" disabled={loading} className="flex-1 bg-black text-white py-2 rounded-lg text-sm font-semibold disabled:opacity-50">
             {loading ? "Guardando…" : "Guardar"}

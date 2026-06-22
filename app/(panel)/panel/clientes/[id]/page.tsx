@@ -55,14 +55,14 @@ export default async function ClienteDetailPage({ params }: { params: Promise<{ 
   const { cliente, propiedades, visitas } = data;
 
   return (
-    <div className="p-6 md:p-8 max-w-3xl">
+    <div className="w-full max-w-3xl p-4 sm:p-6 md:p-8">
       <Link href="/panel/clientes" className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-black mb-6">
         <FiArrowLeft size={14} /> Clientes
       </Link>
 
       {/* Cabecera */}
       <div className="bg-white border rounded-xl shadow-sm p-5 mb-6">
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="text-xl font-bold">{cliente.nombre}</h1>
             <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-neutral-500">
@@ -94,7 +94,7 @@ export default async function ClienteDetailPage({ params }: { params: Promise<{ 
         <div className="space-y-3">
           {propiedades.map((p) => (
             <div key={p.id} className="bg-white border rounded-xl shadow-sm p-4">
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="font-medium text-sm">{TIPO_PROP[p.tipo] ?? p.tipo}</p>
                   <div className="flex flex-wrap gap-x-3 text-xs text-neutral-500 mt-0.5">
@@ -128,9 +128,9 @@ export default async function ClienteDetailPage({ params }: { params: Promise<{ 
         ) : (
           <div className="bg-white border rounded-xl shadow-sm divide-y">
             {visitas.map((v) => (
-              <div key={v.id} className="flex items-center gap-3 px-4 py-3">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+              <div key={v.id} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-medium">{fmtDate(v.fecha)}</span>
                     <span className="text-xs text-neutral-500">{TIPO_V[v.tipo] ?? v.tipo}</span>
                     {!v.propiedad_id && <span className="text-xs text-neutral-400">Puntual</span>}
@@ -140,7 +140,7 @@ export default async function ClienteDetailPage({ params }: { params: Promise<{ 
                   </div>
                   {v.notas && <p className="text-xs text-neutral-400 mt-0.5 truncate">{v.notas}</p>}
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
+                <div className="flex shrink-0 items-center gap-3">
                   {v.precio && <span className="text-sm font-semibold">{v.precio} €</span>}
                   {v.estado === "programada" && (
                     <AccionesVisita visitaId={v.id} />

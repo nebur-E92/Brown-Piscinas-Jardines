@@ -7,9 +7,9 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   if (!session) redirect("/panel-login");
 
   return (
-    <div className="flex min-h-screen bg-neutral-50 font-sans">
+    <div className="flex min-h-screen flex-col bg-neutral-50 font-sans md:flex-row">
       <Sidebar />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="min-w-0 flex-1 overflow-x-hidden">{children}</main>
     </div>
   );
 }

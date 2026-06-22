@@ -48,7 +48,7 @@ export default function NuevoClientePage() {
   }
 
   return (
-    <div className="p-6 md:p-8 max-w-lg">
+    <div className="w-full max-w-lg p-4 sm:p-6 md:p-8">
       <Link href="/panel/clientes" className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-black mb-6">
         <FiArrowLeft size={14} /> Clientes
       </Link>
@@ -71,7 +71,7 @@ export default function NuevoClientePage() {
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Teléfono">
             <input
               type="tel"
@@ -130,7 +130,7 @@ export default function NuevoClientePage() {
           </p>
         )}
 
-        <div className="flex gap-3 pt-2">
+        <div className="flex flex-col gap-3 pt-2 sm:flex-row">
           <Link
             href="/panel/clientes"
             className="flex-1 text-center border border-neutral-300 py-2.5 rounded-lg text-sm hover:bg-neutral-50 transition"

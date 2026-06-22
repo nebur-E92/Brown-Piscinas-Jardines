@@ -197,14 +197,14 @@ export default async function AgendaPage({
     .reduce((s, v) => s + parseFloat(v.precio!), 0);
 
   return (
-    <div className="p-6 md:p-8">
+    <div className="w-full p-4 sm:p-6 md:p-8">
       {/* Cabecera */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-xl font-bold">Agenda</h1>
           <p className="text-sm text-neutral-500">{vista === "mes" ? tituloMes : tituloSemana}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex border rounded-lg overflow-hidden text-sm">
             <Link href={`/panel/agenda?semana=${toISODate(lunes)}`} className={`px-3 py-1.5 ${vista === "semana" ? "bg-black text-white" : "hover:bg-neutral-100"}`}>
               Semana
@@ -222,7 +222,7 @@ export default async function AgendaPage({
           </Link>
           <Link
             href="/panel/agenda/nueva"
-            className="flex items-center gap-1.5 bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-neutral-800 transition ml-2"
+            className="flex items-center gap-1.5 bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-neutral-800 transition sm:ml-2"
           >
             <FiPlus size={14} /> Nueva visita
           </Link>
@@ -230,7 +230,7 @@ export default async function AgendaPage({
       </div>
 
       {/* KPIs semana */}
-      <div className="flex gap-4 mb-6 text-sm">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 mb-6 text-sm">
         <span className="text-neutral-500">{vista === "mes" ? "Programadas del mes" : "Programadas"}: <strong>{totalProgramadas}</strong></span>
         <span className="text-neutral-500">Completadas: <strong>{totalCompletadas}</strong></span>
         <span className="text-neutral-500">Reservas: <strong>{reservas.length}</strong></span>
@@ -238,13 +238,13 @@ export default async function AgendaPage({
       </div>
 
       {vista === "mes" ? (
-        <div>
-          <div className="grid grid-cols-7 gap-1 mb-2">
+        <div className="overflow-x-auto pb-2">
+          <div className="grid min-w-[640px] grid-cols-7 gap-1 mb-2">
             {DIAS_ES.map((d) => (
               <div key={d} className="text-center text-xs font-medium text-neutral-400 py-1">{d}</div>
             ))}
           </div>
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid min-w-[640px] grid-cols-7 gap-2">
             {diasMes.map((dia, i) => {
               if (!dia) return <div key={i} className="min-h-[112px] rounded-lg bg-neutral-50/50" />;
               const isHoy = dia.fecha === hoy;
@@ -310,7 +310,7 @@ export default async function AgendaPage({
               ) : (
                 <div className={`divide-y ${isHoy ? "bg-white" : ""}`}>
                   {dVisitas.map((v) => (
-                    <div key={v.id} className="flex items-center gap-3 px-4 py-3">
+                    <div key={v.id} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
                       <div className="flex-1 min-w-0">
                         <Link href={`/panel/clientes/${v.cliente_id}`} className="text-sm font-medium hover:underline truncate block">
                           {v.cliente_nombre}
@@ -323,7 +323,7 @@ export default async function AgendaPage({
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex shrink-0 items-center gap-2">
                         {v.precio && <span className="text-sm font-semibold">{v.precio} €</span>}
                         {v.estado === "programada" && <AccionesVisitaAgenda visitaId={v.id} />}
                       </div>
@@ -334,7 +334,7 @@ export default async function AgendaPage({
               {dReservas.length > 0 && (
                 <div className={`divide-y border-t ${isHoy ? "bg-white" : ""}`}>
                   {dReservas.map((r) => (
-                    <div key={r.id} className="flex items-center gap-3 px-4 py-3">
+                    <div key={r.id} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
                       <div className="flex-1 min-w-0">
                         <Link href="/panel/reservas" className="text-sm font-medium hover:underline truncate block">
                           Reserva · {r.nombre}

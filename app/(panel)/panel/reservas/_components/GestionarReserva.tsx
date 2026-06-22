@@ -111,7 +111,7 @@ export function GestionarReserva({ reserva, clientes }: { reserva: Reserva; clie
 
       {abierto && (
         <div className="mt-3 p-4 bg-neutral-50 rounded-xl border border-neutral-200 space-y-3">
-          <div className="flex gap-2 text-xs">
+          <div className="flex flex-wrap gap-2 text-xs">
             <button
               onClick={() => setModo("existente")}
               className={`px-3 py-1.5 rounded-lg border ${modo === "existente" ? "bg-black text-white border-black" : "bg-white"}`}
@@ -159,7 +159,7 @@ export function GestionarReserva({ reserva, clientes }: { reserva: Reserva; clie
               )}
             </>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label className="block text-xs font-medium text-neutral-600 mb-1">Nombre</label>
                 <input value={nuevo.nombre} onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} className={INPUT} />
@@ -179,7 +179,7 @@ export function GestionarReserva({ reserva, clientes }: { reserva: Reserva; clie
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-neutral-600 mb-1">Tipo de visita</label>
               <select value={tipoVisita} onChange={(e) => setTipoVisita(e.target.value)} className={INPUT}>
@@ -199,7 +199,7 @@ export function GestionarReserva({ reserva, clientes }: { reserva: Reserva; clie
 
           {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
 
-          <div className="flex justify-end gap-2">
+          <div className="flex flex-col justify-end gap-2 sm:flex-row">
             <button onClick={() => setAbierto(false)} className="text-xs px-4 py-2 border rounded-lg hover:bg-white transition">
               Cancelar
             </button>

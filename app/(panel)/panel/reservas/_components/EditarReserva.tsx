@@ -66,7 +66,7 @@ export function EditarReserva({ reserva }: Props) {
 
       {abierto && (
         <div className="mt-3 p-4 bg-neutral-50 rounded-xl border border-neutral-200 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-neutral-600 mb-1">Fecha</label>
               <input
@@ -100,7 +100,7 @@ export function EditarReserva({ reserva }: Props) {
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-neutral-600 mb-1">Nombre</label>
               <input
@@ -119,7 +119,7 @@ export function EditarReserva({ reserva }: Props) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-neutral-600 mb-1">Email</label>
               <input
@@ -151,7 +151,7 @@ export function EditarReserva({ reserva }: Props) {
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-1">
+          <div className="flex flex-col justify-end gap-2 pt-1 sm:flex-row">
             <button
               onClick={() => setAbierto(false)}
               className="text-xs px-4 py-2 border rounded-lg hover:bg-white transition"
