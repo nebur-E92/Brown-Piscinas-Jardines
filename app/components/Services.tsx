@@ -140,59 +140,67 @@ export default function Services() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Títulos */}
         <h2 className="text-center text-3xl sm:text-4xl font-urbanist mb-4">
-          SERVICIOS DE BROWN PISCINAS &amp; JARDINES
+          SERVICIOS DISPONIBLES
         </h2>
+        <div className="mx-auto mb-10 max-w-3xl rounded-xl border border-neutral-200 bg-neutral-50 p-5 text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">
+            Agenda periódica completa
+          </p>
+          <p className="mt-2 text-sm text-neutral-700">
+            No abrimos nuevas plazas de mantenimiento periódico. Puedes solicitar lista de espera o contratar servicios puntuales según disponibilidad.
+          </p>
+        </div>
         <h3 className="text-center text-2xl font-urbanist font-light mb-10 sm:mb-12">
-          MANTENIMIENTOS MENSUALES
+          MANTENIMIENTOS PERIÓDICOS
         </h3>
 
         {/* Tarjeta principal combinada */}
         <MonthlyServiceCard
           image="/images/service-combined.webp"
           title="Mantenimiento Combinado Piscina + Jardín"
-          description="La solución más completa y económica: mantenimiento integral de tu piscina y jardín en una misma visita."
+          description="Servicio periódico actualmente con cupo completo. Recogemos solicitudes para futuras plazas."
           advantages={[
-            "Ahorro frente a contratar servicios por separado.",
-            "Informe único de estado de piscina y jardín.",
-            "Optimización de desplazamientos y tiempos.",
+            "Lista de espera para nuevas altas.",
+            "Prioridad para propiedades con piscina y jardín.",
+            "Aviso cuando se libere agenda en tu zona.",
           ]}
-          price="Consultar"
-          href="/servicios/mantenimiento-combinado"
+          price="Lista de espera"
+          href="/reservar?tipo=visita_tecnica"
         />
 
         {/* Tarjetas piscina y jardín */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           <SimpleMonthlyCard
             title="Mantenimiento de Piscina"
-            description="Disfruta de tu piscina siempre limpia y lista para el baño."
+            description="Cupo periódico completo. Puedes solicitar lista de espera."
             includes={[
               "Limpieza de superficie y fondo.",
               "Cepillado de paredes y línea de flotación.",
               "Revisión de skimmers, prefiltro y bomba.",
               "Control y ajuste de pH, cloro y otros parámetros.",
             ]}
-            price="Desde 2,40 €/m² de lámina"
+            price="Lista de espera"
             bgImage="/images/service-pool.png"
-            href="/servicios/mantenimiento-piscina"
+            href="/reservar?tipo=visita_tecnica"
           />
           <SimpleMonthlyCard
             title="Mantenimiento de Jardín"
-            description="Un jardín cuidado todo el año, verde y saludable."
+            description="Cupo periódico completo. Atendemos trabajos puntuales y lista de espera."
             includes={[
               "Corte de césped y perfilado de bordes.",
               "Riego y revisión del sistema.",
               "Eliminación de hierbas no deseadas.",
               "Revisión general de plantas ornamentales.",
             ]}
-            price="Desde 0,36 €/m²"
+            price="Lista de espera"
             bgImage="/images/service-garden.webp"
-            href="/servicios/mantenimiento-jardin"
+            href="/reservar?tipo=visita_tecnica"
           />
         </div>
 
         {/* Servicios puntuales */}
         <h3 className="text-center text-3xl font-urbanist mb-8 sm:mb-12">
-          SERVICIOS PUNTUALES
+          SERVICIOS PUNTUALES DISPONIBLES
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12">
           <PuntualServiceCard
@@ -223,7 +231,7 @@ export default function Services() {
             image="/images/service-hedge.webp"
             title="Recorte de setos y arbustos"
             description="Perfiles limpios y a la altura adecuada, con retirada de restos vegetales incluida."
-            price="Desde 5,46 €/ml"
+            price="Desde 7,00 €/ml"
             gradient="linear-gradient(180deg, #000000 0%, #1a1a1a 100%)"
             href="/servicios/setos"
           />

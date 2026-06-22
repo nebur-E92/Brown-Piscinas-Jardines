@@ -21,17 +21,17 @@ export default function Hero() {
       {/* Texto centrado */}
       <div className="relative z-10 text-center px-2 lg:px-0">
   <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight text-white drop-shadow-lg max-w-5xl mx-auto">
-          Mantenimiento de piscina y jardín en Salamanca
+          Servicios puntuales de piscina y jardín en Salamanca
         </h2>
         <p className="mt-4 text-base sm:text-lg text-white drop-shadow max-w-2xl mx-auto">
-          Mantenimiento profesional con tarifas claras y compromiso de calidad.
+          La agenda de mantenimientos periódicos está completa. Atendemos servicios puntuales y solicitudes para lista de espera.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <a
             href="/calcular-precio"
             className="rounded-full px-6 py-3 text-base font-semibold bg-white text-black hover:bg-neutral-100 transition"
           >
-            Calcular precio
+            Calcular servicio puntual
           </a>
           {whatsappHref && (
             <a

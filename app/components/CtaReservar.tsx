@@ -7,20 +7,20 @@ export default function CtaReservar() {
     <section id="contacto" className="py-24 border-t border-neutral-800">
       <div className="max-w-xl mx-auto px-4 text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500 mb-3">
-          Sin compromiso
+          Servicios puntuales
         </p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-          ¿Empezamos?
+          Agenda periódica completa
         </h2>
         <p className="text-neutral-400 mb-10 max-w-sm mx-auto">
-          Elige un día en nuestro calendario. Confirmamos en menos de 24 h y acudimos a valorar sin coste.
+          No abrimos nuevas plazas de mantenimiento periódico. Puedes reservar un servicio puntual o dejar una solicitud para lista de espera.
         </p>
 
         <a
           href="/reservar"
           className="inline-flex items-center gap-2 bg-white text-black font-semibold px-8 py-4 rounded-full hover:bg-neutral-100 transition-all active:scale-[0.98] text-base"
         >
-          Reservar visita gratuita
+          Reservar servicio puntual
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>

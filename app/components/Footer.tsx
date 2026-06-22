@@ -49,7 +49,7 @@ export default function Footer() {
             <h4 className="font-bold mb-2">Solicitudes</h4>
             <ul>
               <li><a href="/calcular-precio" className="underline">Calculadora de precio</a></li>
-              <li><a href="/reservar" className="underline">Reservar visita</a></li>
+              <li><a href="/reservar" className="underline">Reservar servicio puntual</a></li>
               <li>Ubicación: Salamanca y alrededores</li>
             </ul>
           </div>

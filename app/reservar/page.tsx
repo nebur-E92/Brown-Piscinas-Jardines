@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import BookingFlow from "./_components/BookingFlow";
 
 export const metadata = {
-  title: "Reservar cita — BROWN Piscinas & Jardines",
-  description: "Reserva tu visita técnica gratuita o programa un servicio de mantenimiento de piscina o jardín en Salamanca.",
+  title: "Reservar servicio puntual — BROWN Piscinas & Jardines",
+  description: "Reserva servicios puntuales de piscina y jardín o solicita lista de espera para mantenimiento periódico en Salamanca.",
 };
 
 export default async function ReservarPage({
@@ -23,9 +23,9 @@ export default async function ReservarPage({
     <section className="min-h-screen py-12 px-4">
       <div className="max-w-lg mx-auto">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold mb-2">Reserva tu cita</h1>
+          <h1 className="text-3xl font-bold mb-2">Reserva un servicio puntual</h1>
           <p className="text-neutral-500 text-sm">
-            Elige día y franja horaria. Confirmaremos en menos de 24 h.
+            Agenda disponible lunes, miércoles y viernes por la mañana. Para mantenimiento periódico, dejamos tu solicitud en lista de espera.
           </p>
         </div>
         <Suspense fallback={null}>

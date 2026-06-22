@@ -8,8 +8,8 @@ export const SITE = {
 export const BUSINESS = {
   legalName: "Rubén Herrero García",
   taxId: "07971517Q",
-  tagline: "Expertos en mantenimiento de piscinas y jardines en Salamanca",
-  description: "Mantenimiento profesional de piscinas y jardines en Salamanca y alrededores. Empresa de jardinería: corte de césped, poda de setos, desbroce. Limpieza y mantenimiento de piscinas. Servicios mensuales y puntuales con garantía.",
+  tagline: "Servicios puntuales de piscinas y jardines en Salamanca",
+  description: "Servicios puntuales de piscinas y jardines en Salamanca y alrededores. Agenda periódica completa, lista de espera para mantenimiento y trabajos puntuales de césped, setos, desbroce y piscina.",
   email: "brownpiscinasyjardines@gmail.com",
   logo: "/brand/logo-brown.png",
   image: "/brand/og-brown.jpg", // 1200x630 recomendado
@@ -31,13 +31,13 @@ export const BUSINESS = {
 
 // Precios v4.0 — IVA incluido
 export const SERVICES = [
-  { slug: "mantenimiento-piscina",    name: "Mantenimiento de piscina",                     fromPrice: "Desde 2,40 €/m² de lámina" },
-  { slug: "mantenimiento-jardin",     name: "Mantenimiento de jardín",                       fromPrice: "Desde 0,36 €/m²" },
-  { slug: "mantenimiento-combinado",  name: "Mantenimiento combinado piscina + jardín",      fromPrice: "Consultar" },
+  { slug: "mantenimiento-piscina",    name: "Mantenimiento de piscina",                     fromPrice: "Lista de espera" },
+  { slug: "mantenimiento-jardin",     name: "Mantenimiento de jardín",                       fromPrice: "Lista de espera" },
+  { slug: "mantenimiento-combinado",  name: "Mantenimiento combinado piscina + jardín",      fromPrice: "Lista de espera" },
   { slug: "limpieza-puntual-piscina", name: "Limpieza puntual de piscina",                   fromPrice: "Desde 110 €" },
   { slug: "corte-cesped",             name: "Corte de césped",                               fromPrice: "Desde 90 €" },
   { slug: "desbroce",                 name: "Desbroce de terrenos",                          fromPrice: "Desde 0,70 €/m²" },
-  { slug: "setos",                    name: "Recorte de setos",                              fromPrice: "Desde 5,46 €/ml" },
+  { slug: "setos",                    name: "Recorte de setos",                              fromPrice: "Desde 7,00 €/ml" },
   { slug: "puesta-marcha",            name: "Puesta en marcha / Cierre de temporada",       fromPrice: "Desde 300 €" },
 ];
 

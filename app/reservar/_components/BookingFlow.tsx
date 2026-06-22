@@ -22,12 +22,11 @@ type Ocupacion = Record<string, { manana: number; tarde: number }>;
 // ─── constantes ───────────────────────────────────────────────────────────────
 
 const TIPOS = [
-  { id: "visita_tecnica", label: "Visita técnica gratuita", desc: "Acudimos a valorar y presupuestar sin compromiso", icono: "🔍" },
-  { id: "cesped",         label: "Mantenimiento de césped",  desc: "Corte, perfilado y retirada de restos",           icono: "🌿" },
-  { id: "piscina",        label: "Mantenimiento de piscina", desc: "Análisis, ajuste de pH y limpieza completa",      icono: "💧" },
-  { id: "setos",          label: "Recorte de setos",         desc: "Hoja pequeña o conífera, con o sin suplemento",   icono: "✂️" },
-  { id: "desbroce",       label: "Desbroce de terreno",      desc: "Parcelas y solares en cualquier estado",          icono: "🏗️" },
-  { id: "otro",           label: "Otro servicio",            desc: "Cuéntanos qué necesitas en las notas",            icono: "📋" },
+  { id: "cesped",         label: "Corte puntual de césped",            desc: "Corte, perfilado y retirada de restos",              icono: "🌿" },
+  { id: "piscina",        label: "Limpieza puntual de piscina",        desc: "Limpieza, análisis y ajuste de parámetros",          icono: "💧" },
+  { id: "setos",          label: "Recorte puntual de setos",           desc: "Hoja pequeña o conífera, con o sin suplemento",      icono: "✂️" },
+  { id: "desbroce",       label: "Desbroce puntual de terreno",        desc: "Parcelas y solares en cualquier estado",             icono: "🏗️" },
+  { id: "visita_tecnica", label: "Lista de espera mantenimiento",      desc: "Agenda periódica completa; avísanos para futuras plazas", icono: "📋" },
 ];
 
 const MUNICIPIOS = [
@@ -294,7 +293,7 @@ export default function BookingFlow({
       {paso === 1 && (
         <div>
           <h2 className="text-xl font-bold mb-1">¿Qué necesitas?</h2>
-          <p className="text-sm text-neutral-500 mb-6">Selecciona el tipo de servicio para reservar tu cita.</p>
+          <p className="text-sm text-neutral-500 mb-6">Selecciona un servicio puntual o la lista de espera de mantenimiento periódico.</p>
           <div className="space-y-2">
             {TIPOS.map(({ id, label, desc, icono }) => (
               <button
@@ -458,7 +457,7 @@ export default function BookingFlow({
             <div>
               <label className="block text-xs font-medium text-neutral-600 mb-1.5">Notas (opcional)</label>
               <textarea
-                placeholder="Describe brevemente tu jardín, piscina o cualquier detalle útil..."
+                placeholder="Indica medidas aproximadas, estado actual o si buscas lista de espera..."
                 rows={3}
                 value={datos.notas}
                 onChange={(e) => setDatos({ ...datos, notas: e.target.value })}
@@ -489,7 +488,7 @@ export default function BookingFlow({
             disabled={!datos.nombre || !datos.email || !datos.privacidad || enviando}
             className="mt-6 w-full bg-black text-white font-semibold py-3.5 rounded-full disabled:opacity-40 hover:bg-neutral-800 transition-all active:scale-[0.99]"
           >
-            {enviando ? "Enviando…" : "Confirmar reserva"}
+            {enviando ? "Enviando…" : "Enviar solicitud"}
           </button>
         </div>
       )}
@@ -502,9 +501,9 @@ export default function BookingFlow({
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold mb-2">¡Reserva recibida!</h2>
+          <h2 className="text-2xl font-bold mb-2">Solicitud recibida</h2>
           <p className="text-neutral-500 mb-6 max-w-sm mx-auto">
-            Te enviamos confirmación a <strong>{datos.email}</strong>. Nos pondremos en contacto contigo en menos de 24 h para confirmar la cita.
+            Te enviamos confirmación a <strong>{datos.email}</strong>. Nos pondremos en contacto contigo en menos de 24 h para revisar disponibilidad.
           </p>
           <div className="bg-neutral-50 rounded-xl p-5 text-sm text-left max-w-xs mx-auto space-y-2 mb-6">
             <div className="flex justify-between"><span className="text-neutral-500">Servicio</span><span className="font-medium">{tipoLabel}</span></div>

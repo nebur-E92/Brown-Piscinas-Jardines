@@ -109,7 +109,7 @@ function LocalBusinessJsonLd() {
     makesOffer: [
       {
         "@type": "Service",
-        name: "Mantenimiento de piscinas",
+        name: "Servicios puntuales de piscinas",
         areaServed: BUSINESS.address.locality,
         provider: { "@id": `${SITE.baseUrl}#localbusiness` },
       },

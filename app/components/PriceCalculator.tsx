@@ -30,8 +30,8 @@ type ResultadoCalculo = { total: number; desglose: Record<string, Linea> };
 
 const TARJETAS: { id: ServicioId; nombre: string; icono: string; desde: string }[] = [
   { id: "cesped",   nombre: "Césped",   icono: "🌿", desde: "0,36 €/m²" },
-  { id: "setos",    nombre: "Setos",    icono: "✂️", desde: "5,46 €/ml" },
-  { id: "piscina",  nombre: "Piscina",  icono: "💧", desde: "1,88 €/m²" },
+  { id: "setos",    nombre: "Setos",    icono: "✂️", desde: "7,00 €/ml" },
+  { id: "piscina",  nombre: "Piscina",  icono: "💧", desde: "2,40 €/m²" },
   { id: "desbroce", nombre: "Desbroce", icono: "🏗️", desde: "0,70 €/m²" },
 ];
 
@@ -43,7 +43,7 @@ const ESTADO_INICIAL: Estado = {
 };
 
 const FREC_LABELS: Record<Frecuencia, { label: string; desc: string }> = {
-  puntual:   { label: "Puntual",   desc: "Una visita" },
+  puntual:   { label: "Servicio puntual", desc: "Una intervención" },
   quincenal: { label: "Quincenal", desc: "2/mes · −12 %" },
   semanal:   { label: "Semanal",   desc: "4/mes · −22 %" },
 };
@@ -63,11 +63,13 @@ const TALLA_LABELS: Record<TallaPM, string> = {
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
 function FrecuenciaSelector({ value, onChange }: { value: Frecuencia; onChange: (f: Frecuencia) => void }) {
+  const opcionesVisibles: Frecuencia[] = ["puntual"];
+
   return (
     <div>
-      <label className="block text-xs font-medium text-neutral-600 mb-1.5">Frecuencia</label>
-      <div className="grid grid-cols-3 gap-1.5">
-        {(["puntual", "quincenal", "semanal"] as Frecuencia[]).map((f) => (
+      <label className="block text-xs font-medium text-neutral-600 mb-1.5">Modalidad disponible</label>
+      <div className="grid grid-cols-1 gap-1.5">
+        {opcionesVisibles.map((f) => (
           <button
             key={f} type="button" onClick={() => onChange(f)}
             className={`py-2 px-1 rounded-lg text-xs font-medium border transition-all text-center ${
@@ -83,6 +85,9 @@ function FrecuenciaSelector({ value, onChange }: { value: Frecuencia; onChange: 
           </button>
         ))}
       </div>
+      <p className="mt-1 text-xs text-neutral-400">
+        Los mantenimientos periódicos no aceptan nuevas altas actualmente.
+      </p>
     </div>
   );
 }
@@ -339,7 +344,7 @@ export default function PriceCalculator() {
                   <div>
                     <label className="block text-xs font-medium text-neutral-600 mb-1.5">Tipo de servicio</label>
                     <div className="grid grid-cols-2 gap-2">
-                      {([["mantenimiento", "Mantenimiento", "2,40 €/m²"], ["puesta-marcha", "Puesta en marcha / Cierre", "precio fijo"]] as [TipoPiscina, string, string][]).map(([val, label, precio]) => (
+                      {([["mantenimiento", "Limpieza puntual", "2,40 €/m²"], ["puesta-marcha", "Puesta en marcha / Cierre", "precio fijo"]] as [TipoPiscina, string, string][]).map(([val, label, precio]) => (
                         <button
                           key={val} type="button"
                           onClick={() => update("piscina", { tipo: val })}
@@ -479,12 +484,12 @@ export default function PriceCalculator() {
           href={`/reservar?servicios=${seleccionados.join(",")}&precio=${resultado.total.toFixed(2)}`}
           className="flex items-center justify-center gap-2 w-full bg-black text-white font-semibold py-3.5 rounded-xl hover:bg-neutral-800 transition-all active:scale-[0.99] text-center"
         >
-          Reservar visita técnica →
+          Reservar servicio puntual →
         </a>
       )}
 
       <p className="text-center text-xs text-neutral-400 mt-4">
-        IVA incluido · Estimación orientativa sujeta a visita técnica
+        IVA incluido · Estimación orientativa sujeta a disponibilidad
       </p>
     </div>
   );

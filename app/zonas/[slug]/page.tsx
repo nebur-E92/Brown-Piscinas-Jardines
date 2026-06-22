@@ -11,7 +11,7 @@ export function generateMetadata({ params }: { params: Params }) {
   const location = LOCATIONS.find(l => l.slug === params.slug);
   if (!location) return {};
   return {
-    title: `Mantenimiento de piscina y jardín en ${location.name}`,
+    title: `Servicios de piscina y jardín en ${location.name}`,
     description: `Servicios de piscina y jardín en ${location.name}. ${BUSINESS.description}`,
     alternates: {
       canonical: `${SITE.baseUrl}/zonas/${location.slug}`,
@@ -60,7 +60,7 @@ export default function ZonaPage({ params }: { params: Params }) {
       {BreadcrumbJsonLd(location.name)}
       <section className="max-w-2xl mx-auto py-12">
         <h1 className="page-title mb-4">
-          Mantenimiento de piscina y jardín en {location.name}
+          Servicios de piscina y jardín en {location.name}
         </h1>
         <p className="mb-6">{BUSINESS.description}</p>
         <p className="text-sm text-neutral-600">Solicita tu presupuesto desde el formulario de contacto.</p>

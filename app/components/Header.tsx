@@ -46,9 +46,9 @@ export default function Header() {
             )}
           </div>
           
-          <a href="/calcular-precio" className="hover:opacity-80 whitespace-nowrap">Calcular precio</a>
+          <a href="/calcular-precio" className="hover:opacity-80 whitespace-nowrap">Calcular puntual</a>
           <a href="/opiniones" className="hover:opacity-80 whitespace-nowrap">Opiniones</a>
-          <a href="/reservar" className="bg-black text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-neutral-800 transition whitespace-nowrap">Reservar cita</a>
+          <a href="/reservar" className="bg-black text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-neutral-800 transition whitespace-nowrap">Reservar puntual</a>
         </nav>
         {/* Mobile trigger */}
         <button
@@ -97,9 +97,9 @@ export default function Header() {
               )}
             </div>
             
-            <a onClick={() => setOpen(false)} href="/calcular-precio" className="block py-2">Calcular precio</a>
+            <a onClick={() => setOpen(false)} href="/calcular-precio" className="block py-2">Calcular puntual</a>
             <a onClick={() => setOpen(false)} href="/opiniones" className="block py-2">Opiniones</a>
-            <a onClick={() => setOpen(false)} href="/reservar" className="block py-2 font-semibold">Reservar cita</a>
+            <a onClick={() => setOpen(false)} href="/reservar" className="block py-2 font-semibold">Reservar puntual</a>
           </nav>
         </div>
       )}

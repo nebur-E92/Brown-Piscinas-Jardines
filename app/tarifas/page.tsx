@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Tarifas — BROWN Piscinas & Jardines",
-  description: "Tarifas de mantenimiento de piscinas y jardines en Salamanca. Precios por m², ml y factores de frecuencia. IVA incluido.",
+  description: "Tarifas de servicios puntuales de piscinas y jardines en Salamanca. Nuevas altas de mantenimiento periódico en lista de espera. IVA incluido.",
 };
 
 export default function TarifasPage() {
@@ -14,6 +14,9 @@ export default function TarifasPage() {
         El precio final se calcula multiplicando la unidad de medida (m², ml o m² de lámina) por la tarifa base y por el factor de frecuencia pactado. Se aplican mínimos por visita en todos los servicios.{" "}
         <strong>Productos químicos no incluidos</strong> — se facturan aparte según consumo real.
       </p>
+      <div className="mb-8 rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
+        <strong>Agenda periódica completa:</strong> las nuevas altas semanales o quincenales están en lista de espera. Las tarifas siguen publicadas como referencia; la contratación abierta actualmente es para servicios puntuales según disponibilidad.
+      </div>
 
       {/* Factores de frecuencia */}
       <section className="mb-10">

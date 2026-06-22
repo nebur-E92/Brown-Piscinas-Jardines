@@ -1,8 +1,8 @@
 import PriceCalculator from "../components/PriceCalculator";
 
 export const metadata = {
-  title: "Calcular precio",
-  description: "Calcula un precio orientativo en segundos y solicita visita.",
+  title: "Calcular servicio puntual",
+  description: "Calcula un precio orientativo para servicios puntuales de piscina y jardín.",
 };
 
 export default function CalcularPrecioPage() {

@@ -15,11 +15,11 @@ export const FRANJA_LABEL: Record<Franja, string> = {
 const DIAS_RESERVA_PERMITIDOS = new Set([1, 3, 5]); // lunes, miercoles, viernes
 
 export const TIPO_LABEL: Record<ReservaTipo, string> = {
-  visita_tecnica: "Visita técnica gratuita",
-  cesped: "Mantenimiento de césped",
-  piscina: "Mantenimiento de piscina",
-  setos: "Recorte de setos",
-  desbroce: "Desbroce de terreno",
+  visita_tecnica: "Lista de espera mantenimiento",
+  cesped: "Corte puntual de césped",
+  piscina: "Limpieza puntual de piscina",
+  setos: "Recorte puntual de setos",
+  desbroce: "Desbroce puntual de terreno",
   otro: "Otro servicio",
 };
 
