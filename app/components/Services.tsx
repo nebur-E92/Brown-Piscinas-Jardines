@@ -60,7 +60,7 @@ function MonthlyServiceCard({
             ))}
           </ul>
         </div>
-        <div className="text-3xl sm:text-4xl font-bold mt-2">{price}</div>
+        <div className="text-2xl sm:text-4xl font-bold mt-2 leading-tight break-words">{price}</div>
       </div>
     </a>
   );
@@ -76,28 +76,28 @@ function SimpleMonthlyCard({
 }: SimpleMonthlyCardProps) {
   return (
     <a href={href || "#"}
-      className="relative flex flex-col items-center justify-center rounded-2xl shadow-lg overflow-hidden w-full min-h-[220px] aspect-[4/5] sm:aspect-[16/9]"
+      className="relative flex flex-col items-center justify-center rounded-2xl shadow-lg overflow-hidden w-full min-h-[360px] sm:min-h-[260px] sm:aspect-[16/9]"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-  <div className="absolute inset-0 bg-black/40 rounded-2xl" />
-  <div className="relative flex flex-col h-full justify-center items-center text-center pt-8 sm:pt-10 pb-8 sm:pb-10 px-6 text-white gap-4">
+  <div className="absolute inset-0 bg-black/45 rounded-2xl" />
+  <div className="relative flex flex-col min-h-[360px] sm:min-h-full justify-center items-center text-center py-8 sm:py-10 px-5 sm:px-6 text-white gap-3 sm:gap-4">
         <div>
-          <h4 className="text-2xl font-bold">{title}</h4>
+          <h4 className="text-xl sm:text-2xl font-bold leading-tight break-words">{title}</h4>
           <p className="mt-1 font-semibold">{description}</p>
         </div>
         <div>
           <span className="font-bold">Incluye:</span>
-          <ul className="list-disc mt-1 text-sm text-left inline-block">
+          <ul className="list-disc mt-1 text-xs sm:text-sm text-left inline-block">
             {includes.map((inc, i) => (
               <li key={i}>{inc}</li>
             ))}
           </ul>
         </div>
-        <div className="text-3xl font-bold mt-2">{price}</div>
+        <div className="text-2xl sm:text-3xl font-bold mt-2 leading-tight break-words">{price}</div>
       </div>
     </a>
   );
@@ -139,7 +139,7 @@ export default function Services() {
     <section id="servicios" className="py-12 sm:py-16 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Títulos */}
-        <h2 className="text-center text-3xl sm:text-4xl font-urbanist mb-4">
+        <h2 className="text-center text-3xl sm:text-4xl font-urbanist mb-4 break-words">
           SERVICIOS DISPONIBLES
         </h2>
         <div className="mx-auto mb-10 max-w-3xl rounded-xl border border-neutral-200 bg-neutral-50 p-5 text-center">
@@ -150,7 +150,7 @@ export default function Services() {
             No abrimos nuevas plazas de mantenimiento periódico. Puedes solicitar lista de espera o contratar servicios puntuales según disponibilidad.
           </p>
         </div>
-        <h3 className="text-center text-2xl font-urbanist font-light mb-10 sm:mb-12">
+        <h3 className="text-center text-2xl font-urbanist font-light mb-10 sm:mb-12 break-words">
           MANTENIMIENTOS PERIÓDICOS
         </h3>
 
@@ -199,7 +199,7 @@ export default function Services() {
         </div>
 
         {/* Servicios puntuales */}
-        <h3 className="text-center text-3xl font-urbanist mb-8 sm:mb-12">
+        <h3 className="text-center text-3xl font-urbanist mb-8 sm:mb-12 break-words">
           SERVICIOS PUNTUALES DISPONIBLES
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12">
