@@ -28,11 +28,11 @@ type ResultadoCalculo = { total: number; desglose: Record<string, Linea> };
 
 // ─── constantes ───────────────────────────────────────────────────────────────
 
-const TARJETAS: { id: ServicioId; nombre: string; icono: string; desde: string }[] = [
-  { id: "cesped",   nombre: "Césped",   icono: "🌿", desde: "0,36 €/m²" },
-  { id: "setos",    nombre: "Setos",    icono: "✂️", desde: "7,00 €/ml" },
-  { id: "piscina",  nombre: "Piscina",  icono: "💧", desde: "2,40 €/m²" },
-  { id: "desbroce", nombre: "Desbroce", icono: "🏗️", desde: "0,70 €/m²" },
+const TARJETAS: { id: ServicioId; nombre: string; unidad: string; desde: string }[] = [
+  { id: "cesped",   nombre: "Césped",   unidad: "m²", desde: "0,36 €/m²" },
+  { id: "setos",    nombre: "Setos",    unidad: "ml", desde: "7,00 €/ml" },
+  { id: "piscina",  nombre: "Piscina",  unidad: "💧", desde: "2,40 €/m²" },
+  { id: "desbroce", nombre: "Desbroce", unidad: "m²", desde: "0,70 €/m²" },
 ];
 
 const ESTADO_INICIAL: Estado = {
@@ -110,6 +110,31 @@ function MedidaInput({ label, placeholder, value, onChange, error, hint }: {
       {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
       {hint && !error && <p className="text-xs text-neutral-400 mt-1">{hint}</p>}
     </div>
+  );
+}
+
+function ServicioIcono({ id, unidad, activo = false, small = false }: {
+  id: ServicioId;
+  unidad: string;
+  activo?: boolean;
+  small?: boolean;
+}) {
+  if (id === "piscina") {
+    return <span className={small ? "text-base leading-none" : "text-2xl leading-none"}>{unidad}</span>;
+  }
+
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center justify-center rounded-full border font-semibold tracking-tight ${
+        small ? "h-5 w-5 text-[10px]" : "h-8 w-8 text-xs"
+      } ${
+        activo
+          ? "border-white/40 bg-white/10 text-white"
+          : "border-neutral-300 bg-neutral-50 text-neutral-700"
+      }`}
+    >
+      {unidad}
+    </span>
   );
 }
 
@@ -217,7 +242,7 @@ export default function PriceCalculator() {
         1. ¿Qué necesitas?
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        {TARJETAS.map(({ id, nombre, icono, desde }) => {
+        {TARJETAS.map(({ id, nombre, unidad, desde }) => {
           const activo = seleccionados.includes(id);
           return (
             <button
@@ -235,7 +260,7 @@ export default function PriceCalculator() {
                   </svg>
                 </span>
               )}
-              <span className="text-2xl">{icono}</span>
+              <ServicioIcono id={id} unidad={unidad} activo={activo} />
               <span className="text-sm font-semibold">{nombre}</span>
               <span className={`text-[11px] ${activo ? "text-neutral-300" : "text-neutral-400"}`}>{desde}</span>
             </button>
@@ -253,7 +278,7 @@ export default function PriceCalculator() {
             {seleccionados.includes("cesped") && (
               <div className="border border-neutral-200 rounded-xl bg-white overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-3 bg-neutral-50 border-b border-neutral-100">
-                  <span>🌿</span>
+                  <ServicioIcono id="cesped" unidad="m²" small />
                   <span className="text-sm font-semibold">Césped</span>
                   <button type="button" onClick={() => toggle("cesped")} className="ml-auto text-xs text-neutral-400 hover:text-black transition">Quitar ×</button>
                 </div>
@@ -278,7 +303,7 @@ export default function PriceCalculator() {
             {seleccionados.includes("setos") && (
               <div className="border border-neutral-200 rounded-xl bg-white overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-3 bg-neutral-50 border-b border-neutral-100">
-                  <span>✂️</span>
+                  <ServicioIcono id="setos" unidad="ml" small />
                   <span className="text-sm font-semibold">Setos</span>
                   <button type="button" onClick={() => toggle("setos")} className="ml-auto text-xs text-neutral-400 hover:text-black transition">Quitar ×</button>
                 </div>
@@ -335,7 +360,7 @@ export default function PriceCalculator() {
             {seleccionados.includes("piscina") && (
               <div className="border border-neutral-200 rounded-xl bg-white overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-3 bg-neutral-50 border-b border-neutral-100">
-                  <span>💧</span>
+                  <ServicioIcono id="piscina" unidad="💧" small />
                   <span className="text-sm font-semibold">Piscina</span>
                   <button type="button" onClick={() => toggle("piscina")} className="ml-auto text-xs text-neutral-400 hover:text-black transition">Quitar ×</button>
                 </div>
@@ -398,7 +423,7 @@ export default function PriceCalculator() {
             {seleccionados.includes("desbroce") && (
               <div className="border border-neutral-200 rounded-xl bg-white overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-3 bg-neutral-50 border-b border-neutral-100">
-                  <span>🏗️</span>
+                  <ServicioIcono id="desbroce" unidad="m²" small />
                   <span className="text-sm font-semibold">Desbroce</span>
                   <button type="button" onClick={() => toggle("desbroce")} className="ml-auto text-xs text-neutral-400 hover:text-black transition">Quitar ×</button>
                 </div>
