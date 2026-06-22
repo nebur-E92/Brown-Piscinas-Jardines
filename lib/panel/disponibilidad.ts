@@ -1,5 +1,5 @@
 import type postgres from "postgres";
-import { FRANJAS, MAX_POR_FRANJA, type Franja } from "./reservas";
+import { FRANJAS, MAX_POR_FRANJA, isReservaPermitida, type Franja } from "./reservas";
 
 export type OcupacionDia = Record<Franja, number>;
 export type Ocupacion = Record<string, OcupacionDia>;
@@ -23,8 +23,32 @@ function bloquear(ocupacion: Ocupacion, fecha: string, franja: Franja | null) {
   for (const f of FRANJAS) dia[f] = MAX_POR_FRANJA;
 }
 
+function addDays(date: Date, days: number): Date {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function toISODate(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function aplicarCalendarioReservas(ocupacion: Ocupacion, desde: string, hasta: string) {
+  const start = new Date(`${desde}T12:00:00`);
+  const end = new Date(`${hasta}T12:00:00`);
+
+  for (let d = start; d <= end; d = addDays(d, 1)) {
+    const fecha = toISODate(d);
+    for (const franja of FRANJAS) {
+      if (!isReservaPermitida(fecha, franja)) bloquear(ocupacion, fecha, franja);
+    }
+  }
+}
+
 export async function getOcupacion(sql: postgres.Sql, desde: string, hasta: string): Promise<Ocupacion> {
   const ocupacion: Ocupacion = {};
+
+  aplicarCalendarioReservas(ocupacion, desde, hasta);
 
   const reservas = await sql<{ fecha: string; franja: Franja; total: number }[]>`
     SELECT fecha::text, franja, COUNT(*)::int AS total

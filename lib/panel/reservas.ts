@@ -12,6 +12,8 @@ export const FRANJA_LABEL: Record<Franja, string> = {
   tarde: "Tarde (15:00–19:00)",
 };
 
+const DIAS_RESERVA_PERMITIDOS = new Set([1, 3, 5]); // lunes, miercoles, viernes
+
 export const TIPO_LABEL: Record<ReservaTipo, string> = {
   visita_tecnica: "Visita técnica gratuita",
   cesped: "Mantenimiento de césped",
@@ -25,6 +27,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function isFranja(value: unknown): value is Franja {
   return typeof value === "string" && FRANJAS.includes(value as Franja);
+}
+
+export function isReservaPermitida(fecha: string, franja: Franja): boolean {
+  if (franja !== "manana") return false;
+  const date = new Date(`${fecha}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return false;
+  return DIAS_RESERVA_PERMITIDOS.has(date.getDay());
 }
 
 export function isReservaTipo(value: unknown): value is ReservaTipo {

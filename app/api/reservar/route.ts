@@ -8,6 +8,7 @@ import {
   escapeHtml,
   FRANJA_LABEL,
   isFranja,
+  isReservaPermitida,
   isReservaTipo,
   isValidEmail,
   isValidISODate,
@@ -52,6 +53,13 @@ export async function POST(req: NextRequest) {
 
   if (!isValidISODate(fecha) || !isFranja(franja) || !nombre || !isValidEmail(email)) {
     return NextResponse.json({ error: "Datos de reserva no válidos." }, { status: 400 });
+  }
+
+  if (!isReservaPermitida(fecha, franja)) {
+    return NextResponse.json(
+      { error: "Solo se admiten reservas lunes, miércoles y viernes por la mañana." },
+      { status: 400 },
+    );
   }
 
   const tipoLabel   = TIPO_LABEL[tipo];

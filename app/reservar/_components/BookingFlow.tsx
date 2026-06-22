@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MAX_POR_FRANJA } from "../../../lib/panel/reservas";
+import { MAX_POR_FRANJA, isReservaPermitida } from "../../../lib/panel/reservas";
 
 // ─── tipos ────────────────────────────────────────────────────────────────────
 
@@ -56,12 +56,13 @@ function esDisponible(iso: string, ocupacion: Ocupacion): boolean {
   const d = new Date(iso + "T12:00:00");
   if (d.getDay() === 0) return false; // domingo
   if (esFestivo(iso)) return false;
+  if (!isReservaPermitida(iso, "manana")) return false;
   const ocu = ocupacion[iso];
-  if (!ocu) return true;
-  return ocu.manana < MAX_POR_FRANJA || ocu.tarde < MAX_POR_FRANJA;
+  return !ocu || ocu.manana < MAX_POR_FRANJA;
 }
 
 function franjaDisponible(iso: string, franja: Franja, ocupacion: Ocupacion): boolean {
+  if (!isReservaPermitida(iso, franja)) return false;
   const ocu = ocupacion[iso];
   if (!ocu) return true;
   return ocu[franja] < MAX_POR_FRANJA;
@@ -69,8 +70,9 @@ function franjaDisponible(iso: string, franja: Franja, ocupacion: Ocupacion): bo
 
 function huecosDia(iso: string, ocupacion: Ocupacion): number {
   const ocu = ocupacion[iso];
-  if (!ocu) return MAX_POR_FRANJA * 2;
-  return Math.max(0, (MAX_POR_FRANJA * 2) - ocu.manana - ocu.tarde);
+  if (!isReservaPermitida(iso, "manana")) return 0;
+  if (!ocu) return MAX_POR_FRANJA;
+  return Math.max(0, MAX_POR_FRANJA - ocu.manana);
 }
 
 // ─── Calendario ───────────────────────────────────────────────────────────────
@@ -137,9 +139,10 @@ function Calendario({
           const d = new Date(mes.getFullYear(), mes.getMonth(), dia);
           const iso = toISO(d);
           const disponible = esDisponible(iso, ocupacion);
+          const cumpleCalendario = isReservaPermitida(iso, "manana");
           const esDom = d.getDay() === 0;
           const pasado = iso <= toISO(new Date());
-          const completo = !pasado && !esDom && !esFestivo(iso) && !disponible;
+          const completo = !pasado && cumpleCalendario && !esFestivo(iso) && !disponible;
           const activo = iso === seleccionado;
           const huecos = huecosDia(iso, ocupacion);
 
@@ -165,7 +168,7 @@ function Calendario({
       </div>
 
       <p className="text-xs text-neutral-400 text-center mt-3">
-        Lunes a sábado · Responderemos en menos de 24 h para confirmar
+        Reservas disponibles lunes, miércoles y viernes por la mañana
       </p>
     </div>
   );
@@ -334,7 +337,7 @@ export default function BookingFlow({
           <button onClick={pasoAntes} className="flex items-center gap-1 text-xs text-neutral-400 hover:text-black mb-5 transition">
             ← Volver
           </button>
-          <h2 className="text-xl font-bold mb-1">¿Mañana o tarde?</h2>
+          <h2 className="text-xl font-bold mb-1">Elige franja</h2>
           <p className="text-sm text-neutral-500 mb-6 capitalize">{fechaLabel}</p>
           <div className="grid grid-cols-2 gap-3">
             {(["manana", "tarde"] as Franja[]).map((f) => {
@@ -355,7 +358,7 @@ export default function BookingFlow({
                   <p className="text-xs text-neutral-500 mt-0.5">
                     {f === "manana" ? "9:00 – 14:00" : "15:00 – 19:00"}
                   </p>
-                  {!disponible && <p className="text-xs text-red-400 mt-1">Completo</p>}
+                  {!disponible && <p className="text-xs text-red-400 mt-1">{f === "tarde" ? "No disponible" : "Completo"}</p>}
                 </button>
               );
             })}
