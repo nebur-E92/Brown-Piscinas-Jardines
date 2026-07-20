@@ -1,16 +1,19 @@
 import { getDb } from "../../../../../lib/panel/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { FiArrowLeft, FiPlus } from "react-icons/fi";
+import { FiArrowLeft, FiPlus, FiFileText } from "react-icons/fi";
 import { NuevaPropiedadForm } from "./_components/NuevaPropiedadForm";
+import { EditarPropiedadForm } from "./_components/EditarPropiedadForm";
 import { AccionesVisita } from "./_components/AccionesVisita";
 import { AccionesCliente } from "./_components/AccionesCliente";
+import { HistoricoParametros } from "./_components/HistoricoParametros";
 
 export const dynamic = "force-dynamic";
 
 type Cliente = { id: string; nombre: string; telefono: string | null; email: string | null; municipio: string | null; direccion: string | null; notas: string | null };
-type Propiedad = { id: string; tipo: string; tamano_jardin: string | null; tamano_piscina: string | null; municipio: string | null; direccion: string | null; precio_acordado: string | null; notas: string | null };
+type Propiedad = { id: string; tipo: string; tamano_jardin: string | null; tamano_piscina: string | null; municipio: string | null; direccion: string | null; precio_acordado: string | null; notas: string | null; ref_servicio: string | null; tipo_cliente: string | null; contexto_equipo: string | null };
 type Visita = { id: string; fecha: string; tipo: string; estado: string; precio: string | null; notas: string | null; propiedad_id: string | null };
+type ParteResumen = { id: string; propiedad_id: string; numero_temporada: number | null; estado: string; fecha: string };
 
 const TIPO_PROP: Record<string, string> = { jardin: "Jardín", piscina: "Piscina", combinado: "Combinado" };
 const TAMANO: Record<string, string>    = { pequeno: "Pequeño", mediano: "Mediano", grande: "Grande" };
@@ -32,7 +35,7 @@ async function getData(id: string) {
   if (!cliente) return null;
 
   const propiedades = await sql<Propiedad[]>`
-    SELECT id, tipo, tamano_jardin, tamano_piscina, municipio, direccion, precio_acordado::text, notas
+    SELECT id, tipo, tamano_jardin, tamano_piscina, municipio, direccion, precio_acordado::text, notas, ref_servicio, tipo_cliente, contexto_equipo
     FROM propiedades WHERE cliente_id = ${id} AND activa = true ORDER BY created_at
   `;
 
@@ -44,7 +47,19 @@ async function getData(id: string) {
     LIMIT 30
   `;
 
-  return { cliente, propiedades, visitas };
+  const partes = await sql<ParteResumen[]>`
+    SELECT pv.id, pv.propiedad_id, pv.numero_temporada,
+           ver.estado, ver.fecha::text AS fecha
+    FROM partes_visita pv
+    LEFT JOIN LATERAL (
+      SELECT estado, fecha FROM partes_versiones
+      WHERE parte_id = pv.id ORDER BY version DESC LIMIT 1
+    ) ver ON true
+    WHERE pv.propiedad_id = ANY(${propiedades.map((p) => p.id)})
+    ORDER BY pv.created_at DESC
+  `;
+
+  return { cliente, propiedades, visitas, partes };
 }
 
 export default async function ClienteDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -52,7 +67,7 @@ export default async function ClienteDetailPage({ params }: { params: Promise<{ 
   const data = await getData(id);
   if (!data) return notFound();
 
-  const { cliente, propiedades, visitas } = data;
+  const { cliente, propiedades, visitas, partes } = data;
 
   return (
     <div className="w-full max-w-3xl p-4 sm:p-6 md:p-8">
@@ -108,7 +123,48 @@ export default async function ClienteDetailPage({ params }: { params: Promise<{ 
                   <span className="text-sm font-semibold">{p.precio_acordado} €/mes</span>
                 )}
               </div>
-              {p.notas && <p className="text-xs text-neutral-400 mt-2">{p.notas}</p>}
+              {p.ref_servicio && (
+                <p className="text-xs text-neutral-500 mt-1">Ref: <span className="font-mono">{p.ref_servicio}</span></p>
+              )}
+              {p.notas && <p className="text-xs text-neutral-400 mt-1">{p.notas}</p>}
+              <EditarPropiedadForm propiedad={p} />
+
+              {/* Botón Nuevo Parte + listado de partes */}
+              <div className="mt-3 pt-3 border-t">
+                {p.ref_servicio ? (
+                  <Link
+                    href={`/panel/partes/nuevo?propiedad_id=${p.id}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-black hover:bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-1.5 transition"
+                  >
+                    <FiFileText size={12} /> Nuevo parte
+                  </Link>
+                ) : (
+                  <p className="text-[11px] text-neutral-400">Configura la referencia de servicio para crear partes.</p>
+                )}
+
+                {partes.filter((pt) => pt.propiedad_id === p.id).length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    {partes.filter((pt) => pt.propiedad_id === p.id).slice(0, 5).map((pt) => (
+                      <Link key={pt.id} href={`/panel/partes/${pt.id}`} className="flex items-center justify-between text-xs py-1 hover:bg-neutral-50 rounded px-1">
+                        <span>{pt.fecha ? fmtDate(pt.fecha) : "—"} {pt.numero_temporada != null && `· nº ${pt.numero_temporada}`}</span>
+                        <span className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium ${
+                          pt.estado === "enviada" ? "bg-green-50 text-green-700" :
+                          pt.estado === "finalizado" ? "bg-blue-50 text-blue-700" :
+                          pt.estado === "borrador" ? "bg-yellow-50 text-yellow-700" :
+                          "bg-neutral-100 text-neutral-500"
+                        }`}>{pt.estado}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Histórico de parámetros (solo si incluye piscina) */}
+              {(p.tipo === "piscina" || p.tipo === "combinado") && (
+                <div className="mt-3 pt-3 border-t">
+                  <HistoricoParametros propiedadId={p.id} />
+                </div>
+              )}
             </div>
           ))}
 

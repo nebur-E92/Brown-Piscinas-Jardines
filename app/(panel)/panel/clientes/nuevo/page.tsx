@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
-import { LOCATIONS } from "../../../../../lib/seo";
+import { MunicipioInput } from "../../../../components/MunicipioInput";
 
 export default function NuevoClientePage() {
   const router = useRouter();
@@ -92,17 +92,13 @@ export default function NuevoClientePage() {
           </Field>
         </div>
 
-        <Field label="Municipio">
-          <select
+        <Field label="Municipio o localidad">
+          <MunicipioInput
             value={municipio}
             onChange={(e) => setMunicipio(e.target.value)}
+            placeholder="Escribe para buscar o añade otra localidad"
             className={INPUT}
-          >
-            <option value="">— Sin especificar —</option>
-            {LOCATIONS.map((l) => (
-              <option key={l.slug} value={l.name}>{l.name}</option>
-            ))}
-          </select>
+          />
         </Field>
 
         <Field label="Dirección">

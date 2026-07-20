@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { MunicipioInput } from "./MunicipioInput";
 
 type Props = { defaults?: Partial<Record<string, string>> };
 
@@ -62,7 +63,6 @@ export default function ContactForm({ defaults }: Props) {
           <input type="hidden" name="servicios"  value={form.servicios} />
           <input type="hidden" name="tamano"     value={form.tamano} />
           <input type="hidden" name="frecuencia" value={form.frecuencia} />
-          <input type="hidden" name="municipio"  value={form.municipio} />
           <input type="hidden" name="precio"     value={form.precio} />
           <input type="hidden" name="qr_source"  value={form.qr_source} />
           <div className="hidden" aria-hidden="true">
@@ -107,6 +107,20 @@ export default function ContactForm({ defaults }: Props) {
             value={form.email}
             onChange={handleChange}
           />
+
+          <div>
+            <label htmlFor="contacto-municipio" className="mb-1.5 block text-xs font-medium text-neutral-400">
+              Municipio o localidad
+            </label>
+            <MunicipioInput
+              id="contacto-municipio"
+              name="municipio"
+              placeholder="Escribe para buscar o añade otra localidad"
+              className={inputCls}
+              value={form.municipio}
+              onChange={handleChange}
+            />
+          </div>
 
           <textarea
             name="mensaje"

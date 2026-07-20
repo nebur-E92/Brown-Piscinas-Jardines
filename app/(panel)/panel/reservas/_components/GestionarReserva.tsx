@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { MunicipioInput } from "../../../../components/MunicipioInput";
 
 const INPUT = "w-full border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black bg-white";
 
@@ -173,8 +174,8 @@ export function GestionarReserva({ reserva, clientes }: { reserva: Reserva; clie
                 <input value={nuevo.email} onChange={(e) => setNuevo({ ...nuevo, email: e.target.value })} className={INPUT} />
               </div>
               <div>
-                <label className="block text-xs font-medium text-neutral-600 mb-1">Municipio</label>
-                <input value={nuevo.municipio} onChange={(e) => setNuevo({ ...nuevo, municipio: e.target.value })} className={INPUT} />
+                <label className="block text-xs font-medium text-neutral-600 mb-1">Municipio o localidad</label>
+                <MunicipioInput value={nuevo.municipio} onChange={(e) => setNuevo({ ...nuevo, municipio: e.target.value })} placeholder="Escribe para buscar" className={INPUT} />
               </div>
             </div>
           )}

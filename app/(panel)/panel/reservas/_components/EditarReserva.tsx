@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { MunicipioInput } from "../../../../components/MunicipioInput";
 
 const TIPOS = [
   { id: "visita_tecnica", label: "Visita técnica" },
@@ -10,12 +11,6 @@ const TIPOS = [
   { id: "setos",          label: "Setos" },
   { id: "desbroce",       label: "Desbroce" },
   { id: "otro",           label: "Otro" },
-];
-
-const MUNICIPIOS = [
-  "Salamanca","Alba de Tormes","Carbajosa de la Sagrada","Villamayor",
-  "Santa Marta de Tormes","Castellanos de Villiquera","Cabrerizos",
-  "Monterrubio de Armuña","Urb. La Rad","Urb. Los Cisnes","Calzada de Vandunciel","Otro",
 ];
 
 type Props = {
@@ -129,15 +124,13 @@ export function EditarReserva({ reserva }: Props) {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-neutral-600 mb-1">Municipio</label>
-              <select
+              <label className="block text-xs font-medium text-neutral-600 mb-1">Municipio o localidad</label>
+              <MunicipioInput
                 value={form.municipio}
                 onChange={(e) => setForm({ ...form, municipio: e.target.value })}
-                className={inputCls + " bg-white"}
-              >
-                <option value="">—</option>
-                {MUNICIPIOS.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
+                placeholder="Escribe para buscar"
+                className={inputCls}
+              />
             </div>
           </div>
 

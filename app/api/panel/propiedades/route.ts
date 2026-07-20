@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
 
   const body = await req.json();
-  const { cliente_id, tipo, tamano_jardin, tamano_piscina, municipio, direccion, precio_acordado, notas } = body;
+  const { cliente_id, tipo, tamano_jardin, tamano_piscina, municipio, direccion, precio_acordado, notas, ref_servicio, tipo_cliente, contexto_equipo } = body;
 
   if (!cliente_id || !tipo) {
     return NextResponse.json({ error: "cliente_id y tipo son obligatorios." }, { status: 400 });
@@ -17,10 +17,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Tipo no válido." }, { status: 400 });
   }
 
+  const tiposClienteValidos = ["particular", "comunidad", "casa_rural"];
+  if (tipo_cliente && !tiposClienteValidos.includes(tipo_cliente)) {
+    return NextResponse.json({ error: "Tipo de cliente no válido." }, { status: 400 });
+  }
+
   const sql = getDb();
   const [row] = await sql`
     INSERT INTO propiedades
-      (cliente_id, tipo, tamano_jardin, tamano_piscina, municipio, direccion, precio_acordado, notas)
+      (cliente_id, tipo, tamano_jardin, tamano_piscina, municipio, direccion, precio_acordado, notas, ref_servicio, tipo_cliente, contexto_equipo)
     VALUES (
       ${cliente_id},
       ${tipo}::tipo_propiedad,
@@ -29,7 +34,10 @@ export async function POST(req: NextRequest) {
       ${municipio      ?? null},
       ${direccion      ?? null},
       ${precio_acordado != null ? parseFloat(precio_acordado) : null},
-      ${notas          ?? null}
+      ${notas          ?? null},
+      ${ref_servicio   ?? null},
+      ${tipo_cliente   ?? null},
+      ${contexto_equipo ?? null}
     )
     RETURNING id
   `;

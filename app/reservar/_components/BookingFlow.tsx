@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { MAX_POR_FRANJA, isReservaPermitida } from "../../../lib/panel/reservas";
+import { MunicipioInput } from "../../components/MunicipioInput";
 
 // ─── tipos ────────────────────────────────────────────────────────────────────
 
@@ -27,13 +28,6 @@ const TIPOS = [
   { id: "setos",          label: "Recorte puntual de setos",           desc: "Hoja pequeña o conífera, con o sin suplemento",      icono: "✂️" },
   { id: "desbroce",       label: "Desbroce puntual de terreno",        desc: "Parcelas y solares en cualquier estado",             icono: "🏗️" },
   { id: "visita_tecnica", label: "Lista de espera mantenimiento",      desc: "Agenda periódica completa; avísanos para futuras plazas", icono: "📋" },
-];
-
-const MUNICIPIOS = [
-  "Salamanca", "Alba de Tormes", "Carbajosa de la Sagrada", "Villamayor",
-  "Santa Marta de Tormes", "Castellanos de Villiquera", "Cabrerizos",
-  "Monterrubio de Armuña", "Urb. La Rad", "Urb. Los Cisnes", "Calzada de Vandunciel",
-  "Otro",
 ];
 
 const MESES_ES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
@@ -443,15 +437,13 @@ export default function BookingFlow({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-600 mb-1.5">Municipio</label>
-              <select
+              <label className="block text-xs font-medium text-neutral-600 mb-1.5">Municipio o localidad</label>
+              <MunicipioInput
                 value={datos.municipio}
                 onChange={(e) => setDatos({ ...datos, municipio: e.target.value })}
+                placeholder="Escribe para buscar o añade otra localidad"
                 className="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-white focus:outline-none focus:border-black transition"
-              >
-                <option value="">Selecciona...</option>
-                {MUNICIPIOS.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
+              />
             </div>
 
             <div>

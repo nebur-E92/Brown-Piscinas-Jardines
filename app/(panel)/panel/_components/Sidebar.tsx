@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FiHome, FiUsers, FiCalendar, FiLogOut, FiInbox, FiBookmark } from "react-icons/fi";
+import { FiHome, FiUsers, FiCalendar, FiLogOut, FiInbox, FiBookmark, FiSettings } from "react-icons/fi";
 
 const NAV = [
   { href: "/panel",           label: "Inicio",    icon: FiHome,     exact: true },
@@ -10,6 +10,7 @@ const NAV = [
   { href: "/panel/clientes",  label: "Clientes",  icon: FiUsers,    exact: false },
   { href: "/panel/agenda",    label: "Agenda",    icon: FiCalendar, exact: false },
   { href: "/panel/leads",     label: "Leads",     icon: FiInbox,    exact: false },
+  { href: "/panel/config",    label: "Config",    icon: FiSettings, exact: false },
 ];
 
 export function Sidebar() {

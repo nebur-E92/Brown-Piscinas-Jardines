@@ -11,6 +11,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   const body = await req.json();
   const sql = getDb();
 
+  const tiposClienteValidos = ["particular", "comunidad", "casa_rural"];
+  if (body.tipo_cliente && !tiposClienteValidos.includes(body.tipo_cliente)) {
+    return NextResponse.json({ error: "Tipo de cliente no válido." }, { status: 400 });
+  }
+
   await sql`
     UPDATE propiedades SET
       tipo            = COALESCE(${body.tipo            ?? null}::tipo_propiedad, tipo),
@@ -20,6 +25,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
       direccion       = COALESCE(${body.direccion       ?? null}, direccion),
       precio_acordado = COALESCE(${body.precio_acordado != null ? parseFloat(body.precio_acordado) : null}, precio_acordado),
       notas           = COALESCE(${body.notas           ?? null}, notas),
+      ref_servicio    = COALESCE(${body.ref_servicio    ?? null}, ref_servicio),
+      tipo_cliente    = COALESCE(${body.tipo_cliente    ?? null}, tipo_cliente),
+      contexto_equipo = COALESCE(${body.contexto_equipo ?? null}, contexto_equipo),
       updated_at = now()
     WHERE id = ${id}
   `;
