@@ -48,6 +48,7 @@ const RANGOS: Record<string, { min: string; max: string; unidad: string }> = {
   ph:              { min: "7,2",  max: "7,8",  unidad: "" },
   temperatura:     { min: "-",    max: "-",    unidad: "°C" },
   cianurico:       { min: "-",    max: "75",   unidad: "mg/l" },
+  salinidad:       { min: "3000", max: "5000", unidad: "ppm" },
 };
 
 const PARAM_LABELS: Record<string, string> = {
@@ -57,6 +58,7 @@ const PARAM_LABELS: Record<string, string> = {
   temperatura: "Temperatura",
   turbidez: "Turbidez",
   cianurico: "Ác. cianúrico",
+  salinidad: "Sal (ppm)",
 };
 
 const ESTADO_LABELS: Record<string, string> = {

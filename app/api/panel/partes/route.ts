@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "../../../../lib/panel/auth";
 import { getDb } from "../../../../lib/panel/db";
-import { normalizeJsonArray, type Actuacion } from "../../../../lib/panel/partes";
+import { normalizeJsonArray, type Actuacion, type Medicion } from "../../../../lib/panel/partes";
 
 // GET /api/panel/partes?propiedad_id=X — listar partes de una instalación
 export async function GET(req: NextRequest) {
@@ -42,7 +42,10 @@ export async function POST(req: NextRequest) {
   if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
 
   const body = await req.json();
-  const { propiedad_id, visita_id } = body;
+  const { propiedad_id, visita_id, copiar_de } = body;
+  const fechaInicial = typeof body.fecha === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.fecha)
+    ? body.fecha
+    : null;
 
   if (!propiedad_id) return NextResponse.json({ error: "propiedad_id requerido." }, { status: 400 });
 
@@ -51,6 +54,24 @@ export async function POST(req: NextRequest) {
   // Verificar que la propiedad existe y está activa
   const [prop] = await sql`SELECT id, tipo FROM propiedades WHERE id = ${propiedad_id} AND activa = true`;
   if (!prop) return NextResponse.json({ error: "Propiedad no encontrada." }, { status: 404 });
+
+  // Una copia siempre parte de una versión cerrada de la misma instalación.
+  let origenCopia = null;
+  if (typeof copiar_de === "string" && copiar_de) {
+    [origenCopia] = await sql`
+      SELECT pver.*
+      FROM partes_versiones pver
+      JOIN partes_visita pv ON pv.id = pver.parte_id
+      WHERE pv.id = ${copiar_de}
+        AND pv.propiedad_id = ${propiedad_id}
+        AND pver.estado IN ('finalizado', 'enviada')
+      ORDER BY pver.version DESC
+      LIMIT 1
+    `;
+    if (!origenCopia) {
+      return NextResponse.json({ error: "El parte de origen no está disponible para copiar." }, { status: 404 });
+    }
+  }
 
   // Buscar última versión enviada de esta propiedad para precarga
   const [ultimaEnviada] = await sql`
@@ -66,7 +87,9 @@ export async function POST(req: NextRequest) {
 
   // Crear parte + borrador en transacción
   const result = await sql.begin(async (tx) => {
-    const actuacionesPrevias = normalizeJsonArray<Actuacion>(ultimaEnviada?.actuaciones);
+    const precarga = origenCopia ?? ultimaEnviada;
+    const medicionesPrevias = origenCopia ? normalizeJsonArray<Medicion>(origenCopia.mediciones) : [];
+    const actuacionesPrevias = normalizeJsonArray<Actuacion>(precarga?.actuaciones);
     const [parte] = await tx`
       INSERT INTO partes_visita (propiedad_id, visita_id)
       VALUES (${propiedad_id}, ${visita_id ?? null})
@@ -76,20 +99,31 @@ export async function POST(req: NextRequest) {
     const [version] = await tx`
       INSERT INTO partes_versiones (
         parte_id, version, estado, fecha,
-        actuaciones, estado_agua, estado_liner, estado_equipos, estado_jardin, restos_vegetales
+        hora_entrada, hora_salida,
+        mediciones, actuaciones,
+        estado_agua, estado_liner, estado_equipos, estado_jardin,
+        cierre_preventivo, cierre_motivo,
+        incidencias, recomendaciones, stock_titular, restos_vegetales
       ) VALUES (
-        ${parte.id}, 1, 'borrador', CURRENT_DATE,
+        ${parte.id}, 1, 'borrador', COALESCE(${fechaInicial}::date, CURRENT_DATE),
+        null, null,
+        ${tx.json(medicionesPrevias)},
         ${tx.json(actuacionesPrevias)},
-        ${ultimaEnviada?.estado_agua ?? null},
-        ${ultimaEnviada?.estado_liner ?? null},
-        ${ultimaEnviada?.estado_equipos ?? null},
-        ${ultimaEnviada?.estado_jardin ?? null},
-        ${ultimaEnviada?.restos_vegetales ?? null}
+        ${precarga?.estado_agua ?? null},
+        ${precarga?.estado_liner ?? null},
+        ${precarga?.estado_equipos ?? null},
+        ${precarga?.estado_jardin ?? null},
+        ${origenCopia?.cierre_preventivo ?? false},
+        ${origenCopia?.cierre_motivo ?? null},
+        ${origenCopia?.incidencias ?? null},
+        ${origenCopia?.recomendaciones ?? null},
+        ${origenCopia?.stock_titular ?? null},
+        ${precarga?.restos_vegetales ?? null}
       )
       RETURNING id
     `;
 
-    return { parte_id: parte.id, version_id: version.id };
+    return { parte_id: parte.id, version_id: version.id, copiado: Boolean(origenCopia) };
   });
 
   return NextResponse.json(result, { status: 201 });

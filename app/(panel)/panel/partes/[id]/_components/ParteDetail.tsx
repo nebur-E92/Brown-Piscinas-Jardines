@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FiArrowLeft, FiFileText, FiShare2, FiEdit2 } from "react-icons/fi";
+import { FiArrowLeft, FiCopy, FiFileText, FiShare2, FiEdit2 } from "react-icons/fi";
+import { PARAMETROS_AGUA } from "../../../../../../lib/panel/partes";
 
 type Parte = {
   id: string;
@@ -191,7 +192,9 @@ export function ParteDetail({ parte, versiones }: { parte: Parte; versiones: Ver
           <div className="grid grid-cols-2 gap-2 text-sm">
             {ultima.mediciones.map((m) => (
               <div key={m.codigo} className="flex justify-between border-b border-neutral-100 pb-1">
-                <span className="text-neutral-500 text-xs">{m.codigo.replace("_", " ")}</span>
+                <span className="text-neutral-500 text-xs">
+                  {PARAMETROS_AGUA.find((parametro) => parametro.codigo === m.codigo)?.label ?? m.codigo.replaceAll("_", " ")}
+                </span>
                 <span className="font-medium text-xs">{m.valor ?? m.opcion ?? "—"}</span>
               </div>
             ))}
@@ -248,10 +251,16 @@ export function ParteDetail({ parte, versiones }: { parte: Parte; versiones: Ver
       )}
 
       {/* Acciones */}
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         {ultima.estado === "borrador" && (
           <Link href={`/panel/partes/nuevo?propiedad_id=${parte.propiedad_id}&parte_id=${parte.id}`} className="flex-1 flex items-center justify-center gap-1.5 border border-neutral-300 py-2.5 rounded-lg text-sm hover:bg-neutral-50">
             <FiEdit2 size={14} /> Editar borrador
+          </Link>
+        )}
+
+        {(ultima.estado === "finalizado" || ultima.estado === "enviada") && (
+          <Link href={`/panel/partes/nuevo?propiedad_id=${parte.propiedad_id}&copiar_de=${parte.id}`} className="flex-1 flex items-center justify-center gap-1.5 border border-neutral-300 py-2.5 px-3 rounded-lg text-sm hover:bg-neutral-50">
+            <FiCopy size={14} /> Crear copia
           </Link>
         )}
 

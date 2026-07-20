@@ -18,7 +18,7 @@ type Propiedad = {
   cliente_email: string | null;
 };
 
-type CatalogoItem = { id: string; ambito: string; nombre: string; orden: number };
+type CatalogoItem = { id: string; ambito: "piscina" | "jardin"; nombre: string; orden: number };
 
 type Medicion = { codigo: string; valor: number | null; opcion: string | null; obs: string | null };
 type Actuacion = { nombre: string; ambito: string; estado: "si" | "no" | "na"; detalle: string | null };
@@ -44,16 +44,47 @@ const INPUT = "w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:
 const emptyMediciones = (): Medicion[] =>
   PARAMETROS_AGUA.map((p) => ({ codigo: p.codigo, valor: null, opcion: null, obs: null }));
 
+function mergeMediciones(guardadas: Medicion[]): Medicion[] {
+  const porCodigo = new Map(guardadas.map((medicion) => [medicion.codigo, medicion]));
+  const codigosActuales = new Set(PARAMETROS_AGUA.map((parametro) => parametro.codigo));
+  return [
+    ...PARAMETROS_AGUA.map((parametro) => porCodigo.get(parametro.codigo) ?? {
+      codigo: parametro.codigo,
+      valor: null,
+      opcion: null,
+      obs: null,
+    }),
+    ...guardadas.filter((medicion) => !codigosActuales.has(medicion.codigo as typeof PARAMETROS_AGUA[number]["codigo"])),
+  ];
+}
+
+function toTimeValue(value: string | null): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
+function toVisitDateTime(fecha: string, hora: string): string | null {
+  if (!fecha || !hora) return null;
+  const date = new Date(`${fecha}T${hora}:00`);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
 export function ParteForm({
   propiedad,
   catalogo,
   visitaId,
   existingParteId,
+  copyFromParteId,
+  initialDate,
 }: {
   propiedad: Propiedad;
   catalogo: CatalogoItem[];
   visitaId: string | null;
   existingParteId: string | null;
+  copyFromParteId: string | null;
+  initialDate: string;
 }) {
   const router = useRouter();
   const [parteId, setParteId] = useState<string | null>(null);
@@ -61,7 +92,7 @@ export function ParteForm({
   const [error, setError] = useState<string | null>(null);
 
   // Datos del formulario
-  const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]);
+  const [fecha, setFecha] = useState(initialDate);
   const [horaEntrada, setHoraEntrada] = useState<string | null>(null);
   const [horaSalida, setHoraSalida] = useState<string | null>(null);
   const [mediciones, setMediciones] = useState<Medicion[]>(emptyMediciones);
@@ -108,17 +139,23 @@ export function ParteForm({
     stock_titular?: string | null;
     restos_vegetales?: string | null;
   }) {
-    setFecha(ver.fecha ? ver.fecha.split("T")[0] : new Date().toISOString().split("T")[0]);
+    setFecha(ver.fecha ? ver.fecha.split("T")[0] : initialDate);
     setHoraEntrada(ver.hora_entrada ?? null);
     setHoraSalida(ver.hora_salida ?? null);
     const medicionesCargadas = normalizeJsonArray<Medicion>(ver.mediciones);
     const actuacionesCargadas = normalizeJsonArray<Actuacion>(ver.actuaciones);
-    setMediciones(medicionesCargadas.length ? medicionesCargadas : emptyMediciones());
-    if (actuacionesCargadas.length) {
-      setActuaciones(actuacionesCargadas);
-    } else {
-      setActuaciones(catalogo.map((c) => ({ nombre: c.nombre, ambito: c.ambito, estado: "no" as const, detalle: null })));
-    }
+    setMediciones(mergeMediciones(medicionesCargadas));
+    const guardadasPorNombre = new Map(actuacionesCargadas.map((actuacion) => [`${actuacion.ambito}:${actuacion.nombre}`, actuacion]));
+    const catalogoActual = new Set(catalogo.map((item) => `${item.ambito}:${item.nombre}`));
+    setActuaciones([
+      ...catalogo.map((item) => guardadasPorNombre.get(`${item.ambito}:${item.nombre}`) ?? {
+        nombre: item.nombre,
+        ambito: item.ambito,
+        estado: "no" as const,
+        detalle: null,
+      }),
+      ...actuacionesCargadas.filter((actuacion) => !catalogoActual.has(`${actuacion.ambito}:${actuacion.nombre}`)),
+    ]);
     setEstadoAgua(ver.estado_agua ?? null);
     setEstadoLiner(ver.estado_liner ?? null);
     setEstadoEquipos(ver.estado_equipos ?? null);
@@ -185,7 +222,7 @@ export function ParteForm({
           const res = await fetch("/api/panel/partes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ propiedad_id: propiedad.id, visita_id: visitaId }),
+            body: JSON.stringify({ propiedad_id: propiedad.id, visita_id: visitaId, copiar_de: copyFromParteId, fecha }),
           });
           if (!res.ok) {
             const d = await res.json();
@@ -343,9 +380,25 @@ export function ParteForm({
 
   // Capturar hora
   function capturarHora(tipo: "entrada" | "salida") {
-    const now = new Date().toISOString();
-    if (tipo === "entrada") setHoraEntrada(now);
-    else setHoraSalida(now);
+    const now = new Date();
+    const hora = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    const value = toVisitDateTime(fecha, hora);
+    if (tipo === "entrada") setHoraEntrada(value);
+    else setHoraSalida(value);
+    setSaveStatus("saving");
+  }
+
+  function actualizarFecha(value: string) {
+    setFecha(value);
+    setHoraEntrada((actual) => toVisitDateTime(value, toTimeValue(actual)));
+    setHoraSalida((actual) => toVisitDateTime(value, toTimeValue(actual)));
+    setSaveStatus("saving");
+  }
+
+  function actualizarHora(tipo: "entrada" | "salida", value: string) {
+    const nuevaHora = toVisitDateTime(fecha, value);
+    if (tipo === "entrada") setHoraEntrada(nuevaHora);
+    else setHoraSalida(nuevaHora);
     setSaveStatus("saving");
   }
 
@@ -404,12 +457,20 @@ export function ParteForm({
         <FiArrowLeft size={14} /> Volver
       </Link>
 
-      <h1 className="text-xl font-bold mb-1">{existingParteId ? "Editar parte de visita" : "Nuevo parte de visita"}</h1>
+      <h1 className="text-xl font-bold mb-1">
+        {existingParteId ? "Editar parte de visita" : copyFromParteId ? "Nuevo parte desde copia" : "Nuevo parte de visita"}
+      </h1>
       <p className="text-sm text-neutral-500 mb-6">
         {propiedad.direccion ?? "Sin dirección"} {propiedad.ref_servicio && <span className="font-mono">· {propiedad.ref_servicio}</span>}
       </p>
 
       {error && <p className="text-xs text-red-600 mb-4 bg-red-50 border border-red-200 rounded p-2">{error}</p>}
+
+      {copyFromParteId && !existingParteId && (
+        <p className="text-xs text-blue-700 mb-4 bg-blue-50 border border-blue-200 rounded p-2">
+          Se han copiado los datos del parte anterior. La fecha es de hoy y las horas están vacías.
+        </p>
+      )}
 
       {showRestoreBanner && (
         <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-center justify-between text-xs">
@@ -427,7 +488,7 @@ export function ParteForm({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-neutral-600 mb-1">Fecha</label>
-              <input type="date" value={fecha} onChange={(e) => { setFecha(e.target.value); setSaveStatus("saving"); }} className={INPUT} />
+              <input type="date" value={fecha} onChange={(e) => actualizarFecha(e.target.value)} className={INPUT} />
             </div>
             <div>
               <label className="block text-xs font-medium text-neutral-600 mb-1">Cliente</label>
@@ -435,15 +496,9 @@ export function ParteForm({
             </div>
           </div>
 
-          <div className="flex gap-3">
-            <button onClick={() => capturarHora("entrada")} className="flex-1 flex items-center justify-center gap-1.5 border border-neutral-300 py-2.5 rounded-lg text-sm hover:bg-neutral-50">
-              <FiClock size={14} />
-              {horaEntrada ? `Entrada: ${new Date(horaEntrada).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}` : "Iniciar visita"}
-            </button>
-            <button onClick={() => capturarHora("salida")} className="flex-1 flex items-center justify-center gap-1.5 border border-neutral-300 py-2.5 rounded-lg text-sm hover:bg-neutral-50">
-              <FiClock size={14} />
-              {horaSalida ? `Salida: ${new Date(horaSalida).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}` : "Cerrar visita"}
-            </button>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <TimeField label="Hora de entrada" value={toTimeValue(horaEntrada)} onChange={(value) => actualizarHora("entrada", value)} onNow={() => capturarHora("entrada")} />
+            <TimeField label="Hora de salida" value={toTimeValue(horaSalida)} onChange={(value) => actualizarHora("salida", value)} onNow={() => capturarHora("salida")} />
           </div>
         </div>
       </Section>
@@ -496,7 +551,7 @@ export function ParteForm({
                       <span className="text-neutral-400 font-normal"> ({param.min}–{param.max})</span>
                     )}
                   </label>
-                  <input type="number" step="0.1" value={m.valor ?? ""} onChange={(e) => updateMedicion(m.codigo, "valor", e.target.value ? parseFloat(e.target.value) : null)} className={INPUT} />
+                  <input type="number" step={m.codigo === "salinidad" ? "1" : "0.1"} value={m.valor ?? ""} onChange={(e) => updateMedicion(m.codigo, "valor", e.target.value ? parseFloat(e.target.value) : null)} className={INPUT} />
                 </div>
               );
             })}
@@ -687,4 +742,18 @@ function SelectField({ label, value, onChange, options }: {
 function CharCount({ value, max }: { value: string; max: number }) {
   if (value.length < max * 0.7) return null;
   return <p className={`text-[11px] mt-0.5 ${value.length >= max ? "text-red-500" : "text-neutral-400"}`}>{value.length}/{max}</p>;
+}
+
+function TimeField({ label, value, onChange, onNow }: { label: string; value: string; onChange: (value: string) => void; onNow: () => void }) {
+  return (
+    <div>
+      <label className="block text-xs font-medium text-neutral-600 mb-1">{label}</label>
+      <div className="flex gap-2">
+        <input type="time" value={value} onChange={(event) => onChange(event.target.value)} className={INPUT} />
+        <button type="button" onClick={onNow} className="shrink-0 inline-flex items-center gap-1 border border-neutral-300 rounded px-3 text-xs font-medium hover:bg-neutral-50">
+          <FiClock size={13} /> Ahora
+        </button>
+      </div>
+    </div>
+  );
 }

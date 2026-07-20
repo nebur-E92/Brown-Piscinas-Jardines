@@ -3,7 +3,7 @@
 export type EstadoParte = "borrador" | "finalizado" | "enviada" | "archivada";
 
 export type Medicion = {
-  codigo: string;       // cloro_libre, cloro_combinado, ph, temperatura, turbidez, cianurico
+  codigo: string;       // cloro_libre, cloro_combinado, ph, temperatura, turbidez, cianurico, salinidad
   valor: number | null;
   opcion: string | null; // para turbidez: clara/ligeramente_turbia/turbia; cianurico: medido/no_medido
   obs: string | null;
@@ -35,6 +35,7 @@ export const PARAMETROS_AGUA = [
   { codigo: "temperatura", label: "Temperatura (°C)", min: null, max: null },
   { codigo: "turbidez", label: "Turbidez", min: null, max: null },
   { codigo: "cianurico", label: "Ác. cianúrico (mg/l)", min: null, max: 75 },
+  { codigo: "salinidad", label: "Sal (ppm)", min: 3000, max: 5000 },
 ] as const;
 
 export const ESTADOS_AGUA = ["optimo", "aceptable", "deficiente", "critico"] as const;

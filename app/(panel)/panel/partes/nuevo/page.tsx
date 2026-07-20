@@ -5,18 +5,19 @@ import { ParteForm } from "./_components/ParteForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function NuevoPartePage({ searchParams }: { searchParams: Promise<{ propiedad_id?: string; visita_id?: string; parte_id?: string }> }) {
+export default async function NuevoPartePage({ searchParams }: { searchParams: Promise<{ propiedad_id?: string; visita_id?: string; parte_id?: string; copiar_de?: string }> }) {
   const session = await getSession();
   if (!session) redirect("/panel-login");
 
   const sp = await searchParams;
   const propiedadId = sp.propiedad_id;
   if (!propiedadId) return notFound();
+  const initialDate = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Madrid" }).format(new Date());
 
   const sql = getDb();
 
   type PropRow = { id: string; tipo: string; direccion: string | null; ref_servicio: string | null; tipo_cliente: string | null; contexto_equipo: string | null; cliente_nombre: string; cliente_telefono: string | null; cliente_email: string | null };
-  type CatRow = { id: string; ambito: string; nombre: string; orden: number };
+  type CatRow = { id: string; ambito: "piscina" | "jardin"; nombre: string; orden: number };
 
   const [prop] = await sql<PropRow[]>`
     SELECT p.id, p.tipo, p.direccion, p.ref_servicio, p.tipo_cliente, p.contexto_equipo,
@@ -41,6 +42,8 @@ export default async function NuevoPartePage({ searchParams }: { searchParams: P
         catalogo={catalogo}
         visitaId={sp.visita_id ?? null}
         existingParteId={sp.parte_id ?? null}
+        copyFromParteId={sp.copiar_de ?? null}
+        initialDate={initialDate}
       />
     </div>
   );

@@ -15,6 +15,7 @@ const PARAMS = [
   { codigo: "temperatura", label: "Temp. (°C)" },
   { codigo: "turbidez", label: "Turbidez" },
   { codigo: "cianurico", label: "Cianúrico" },
+  { codigo: "salinidad", label: "Sal (ppm)" },
 ];
 
 export function HistoricoParametros({ propiedadId }: { propiedadId: string }) {
