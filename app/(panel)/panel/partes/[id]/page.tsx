@@ -6,6 +6,12 @@ import { normalizeJsonArray, type Actuacion, type Medicion } from "../../../../.
 
 export const dynamic = "force-dynamic";
 
+function serializeDate(value: unknown): string | null {
+  if (value instanceof Date) return value.toISOString();
+  if (typeof value === "string") return value;
+  return null;
+}
+
 export default async function ParteDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) redirect("/panel-login");
@@ -44,6 +50,10 @@ export default async function ParteDetailPage({ params }: { params: Promise<{ id
         parte={parte}
         versiones={versiones.map((version) => ({
           ...version,
+          fecha: serializeDate(version.fecha) ?? "",
+          hora_entrada: serializeDate(version.hora_entrada),
+          hora_salida: serializeDate(version.hora_salida),
+          enviada_at: serializeDate(version.enviada_at),
           mediciones: normalizeJsonArray<Medicion>(version.mediciones),
           actuaciones: normalizeJsonArray<Actuacion>(version.actuaciones),
         }))}

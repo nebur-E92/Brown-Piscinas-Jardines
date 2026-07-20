@@ -126,13 +126,15 @@ export function ParteDetail({ parte, versiones }: { parte: Parte; versiones: Ver
     setLoading(false);
   }
 
-  function fmtDate(d: string) {
+  function fmtDate(d: string | Date) {
     if (!d) return "—";
-    const [y, m, dd] = d.split("T")[0].split("-");
+    const value = d instanceof Date ? d.toISOString() : d;
+    const [y, m, dd] = value.split("T")[0].split("-");
+    if (!y || !m || !dd) return "—";
     return `${dd}/${m}/${y}`;
   }
 
-  function fmtTime(d: string | null) {
+  function fmtTime(d: string | Date | null) {
     if (!d) return "—";
     return new Date(d).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
   }
