@@ -19,6 +19,12 @@ function getLogoSrc(): Promise<string> {
   return logoSrcPromise;
 }
 
+function serializeDate(value: unknown): string | null {
+  if (value instanceof Date) return value.toISOString();
+  if (typeof value === "string") return value;
+  return null;
+}
+
 export async function GET(req: NextRequest, { params }: { params: Params }) {
   if (!(await getSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
 
@@ -65,9 +71,9 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
     numero_temporada: version.numero_temporada,
     anio: version.anio,
     version: version.version,
-    fecha: version.fecha,
-    hora_entrada: version.hora_entrada,
-    hora_salida: version.hora_salida,
+    fecha: serializeDate(version.fecha) ?? "",
+    hora_entrada: serializeDate(version.hora_entrada),
+    hora_salida: serializeDate(version.hora_salida),
     mediciones: normalizeJsonArray<Medicion>(version.mediciones),
     actuaciones: normalizeJsonArray<Actuacion>(version.actuaciones),
     estado_agua: version.estado_agua,
@@ -80,7 +86,7 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
     recomendaciones: version.recomendaciones,
     stock_titular: version.stock_titular,
     restos_vegetales: version.restos_vegetales,
-    enviada_at: version.enviada_at,
+    enviada_at: serializeDate(version.enviada_at),
     snapshot: version.snapshot_datos_fijos,
   };
 
